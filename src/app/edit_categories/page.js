@@ -1,9 +1,7 @@
+import CategoryForm from "./[id]/page";
 
 
 
-import CategoriesPage from "./all_categories/allcategories";
-import OrdersPage from "./allorder/allorder";
-import CategoryForm from "./edit_categories/edit";
 
 
 

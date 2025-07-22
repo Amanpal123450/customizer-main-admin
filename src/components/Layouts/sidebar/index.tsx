@@ -55,7 +55,7 @@ export function Sidebar() {
 
       <aside
         className={cn(
-          "max-w-[290px] overflow-hidden border-r border-gray-200 bg-white transition-[width] duration-200 ease-linear dark:border-gray-800 dark:bg-gray-dark",
+          "max-w-[220px] overflow-hidden border-r border-gray-200 bg-white transition-[width] duration-300 ease-out dark:border-gray-800 dark:bg-gray-900",
           isMobile ? "fixed bottom-0 top-0 z-50" : "sticky top-0 h-screen",
           isOpen ? "w-full" : "w-0",
         )}
@@ -63,38 +63,41 @@ export function Sidebar() {
         aria-hidden={!isOpen}
         inert={!isOpen}
       >
-        <div className="flex h-full flex-col py-10 pl-[25px] pr-[7px]">
-          <div className="relative pr-4.5">
-            <Link
-              href={"/"}
-              onClick={() => isMobile && toggleSidebar()}
-              className="px-0 py-2.5 min-[850px]:py-0"
-            >
-              <Logo />
-            </Link>
-
-            {isMobile && (
-              <button
-                onClick={toggleSidebar}
-                className="absolute left-3/4 right-4.5 top-1/2 -translate-y-1/2 text-right"
+        <div className="flex h-full flex-col">
+          {/* Header */}
+          <div className=" border-gray-200 px-6 py-4 dark:border-gray-800">
+            <div className="flex items-center justify-between">
+              <Link
+                href={"/"}
+                onClick={() => isMobile && toggleSidebar()}
+                className="flex items-center gap-3 text-lg font-semibold text-gray-900 dark:text-white"
               >
-                <span className="sr-only">Close Menu</span>
+                <Logo className="h-8 w-8" />
+                <span>Brand</span>
+              </Link>
 
-                <ArrowLeftIcon className="ml-auto size-7" />
-              </button>
-            )}
+              {isMobile && (
+                <button
+                  onClick={toggleSidebar}
+                  className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+                >
+                  <span className="sr-only">Close Menu</span>
+                  <ArrowLeftIcon className="size-5" />
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Navigation */}
-          <div className="custom-scrollbar mt-6 flex-1 overflow-y-auto pr-3 min-[850px]:mt-10">
+          <div className="custom-scrollbar flex-1 overflow-y-auto px-4 py-6 shadow-[30px]">
             {NAV_DATA.map((section) => (
-              <div key={section.label} className="mb-6">
-                <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-dark-6">
+              <div key={section.label} className="mb-8">
+                <h2 className="mb-3 px-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                   {section.label}
                 </h2>
 
                 <nav role="navigation" aria-label={section.label}>
-                  <ul className="space-y-2">
+                  <ul className="space-y-1">
                     {section.items.map((item) => (
                       <li key={item.title}>
                         {item.items.length ? (
@@ -104,19 +107,23 @@ export function Sidebar() {
                                 ({ url }) => url === pathname,
                               )}
                               onClick={() => toggleExpanded(item.title)}
+                              className="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
                             >
                               <item.icon
-                                className="size-6 shrink-0"
+                                className="size-5 shrink-0 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300"
                                 aria-hidden="true"
                               />
 
-                              <span>{item.title}</span>
+                              <span className="flex-1 text-left text-gray-700 group-hover:text-gray-900 dark:text-gray-300 dark:group-hover:text-white">
+                                {item.title}
+                              </span>
 
                               <ChevronUp
                                 className={cn(
-                                  "ml-auto rotate-180 transition-transform duration-200",
-                                  expandedItems.includes(item.title) &&
-                                    "rotate-0",
+                                  "size-4 shrink-0 text-gray-500 transition-transform duration-200",
+                                  expandedItems.includes(item.title) 
+                                    ? "rotate-0" 
+                                    : "rotate-180",
                                 )}
                                 aria-hidden="true"
                               />
@@ -124,7 +131,7 @@ export function Sidebar() {
 
                             {expandedItems.includes(item.title) && (
                               <ul
-                                className="ml-9 mr-0 space-y-1.5 pb-[15px] pr-0 pt-2"
+                                className="ml-8 mt-2 space-y-1 border-l border-gray-200 pl-4 dark:border-gray-700"
                                 role="menu"
                               >
                                 {item.items.map((subItem) => (
@@ -133,6 +140,12 @@ export function Sidebar() {
                                       as="link"
                                       href={subItem.url}
                                       isActive={pathname === subItem.url}
+                                      className={cn(
+                                        "block rounded-md px-3 py-2 text-sm transition-colors",
+                                        pathname === subItem.url
+                                          ? "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400"
+                                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+                                      )}
                                     >
                                       <span>{subItem.title}</span>
                                     </MenuItem>
@@ -151,17 +164,29 @@ export function Sidebar() {
 
                             return (
                               <MenuItem
-                                className="flex items-center gap-3 py-3"
+                                className={cn(
+                                  "group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                                  pathname === href
+                                    ? "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400"
+                                    : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
+                                )}
                                 as="link"
                                 href={href}
                                 isActive={pathname === href}
                               >
                                 <item.icon
-                                  className="size-6 shrink-0"
+                                  className={cn(
+                                    "size-5 shrink-0 transition-colors",
+                                    pathname === href
+                                      ? "text-blue-600 dark:text-blue-400"
+                                      : "text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300"
+                                  )}
                                   aria-hidden="true"
                                 />
 
-                                <span>{item.title}</span>
+                                <span className="flex-1 text-left">
+                                  {item.title}
+                                </span>
                               </MenuItem>
                             );
                           })()
@@ -173,6 +198,9 @@ export function Sidebar() {
               </div>
             ))}
           </div>
+
+          {/* Footer */}
+          
         </div>
       </aside>
     </>

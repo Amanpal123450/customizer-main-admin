@@ -12,7 +12,7 @@ export default function OrdersPage() {
         const token = localStorage.getItem("token");
 
         const res = await fetch(
-          "https://ecomm-backend-7g4k.onrender.com/api/v1/orders/all-orders",
+          "https://e-com-customizer.onrender.com/api/v1/orders/all-orders",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -45,39 +45,46 @@ export default function OrdersPage() {
           <thead className="bg-gray-100 text-gray-700">
             <tr>
               <th className="p-3 border-b">Order ID</th>
-              <th className="p-3 border-b">Customer</th>
+              <th className="p-3 border-b">shippingAddress</th>
               <th className="p-3 border-b">Total (₹)</th>
               <th className="p-3 border-b">Status</th>
               <th className="p-3 border-b text-center">Actions</th>
             </tr>
           </thead>
-          <tbody>
-            {orders.length > 0 ? (
-              orders.map((o,i) => (
-                <tr key={o._id} className="hover:bg-gray-50 transition">
-                  <td className="p-3 border-b">{o._id}</td>
-                  <td className="p-3 border-b">{o.products[0]?.title || "N/A"}</td>
+         <tbody>
+  {orders.length > 0 ? (
+    orders.map((o, i) => (
+      <tr key={o._id} className="hover:bg-gray-50 transition">
+        <td className="p-3 border-b">
+          <Link
+            href={`/orderbyid/${o._id}`}
+            className="text-blue-600 hover:underline"
+          >
+            {o._id}
+          </Link>
+        </td>
+        <td className="p-3 border-b">{o.shippingAddress || "N/A"}</td>
+        <td className="p-3 border-b">₹{o.totalAmount?.toLocaleString()}</td>
+        <td className="p-3 border-b">{o.orderStatus}</td>
+        <td className="p-3 border-b text-center">
+          <Link
+            href={`/admin/edit_order/${o._id}`}
+            className="text-blue-600 hover:underline"
+          >
+            Edit
+          </Link>
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="5" className="p-6 text-center text-gray-500">
+        No orders found.
+      </td>
+    </tr>
+  )}
+</tbody>
 
-                  <td className="p-3 border-b">₹{o.totalAmount}</td>
-                  <td className="p-3 border-b">{o.orderStatus}</td>
-                  <td className="p-3 border-b text-center">
-                    <Link
-                      href={`/admin/edit_order/${o._id}`}
-                      className="text-blue-600 hover:underline"
-                    >
-                      Edit
-                    </Link>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" className="p-6 text-center text-gray-500">
-                  No orders found.
-                </td>
-              </tr>
-            )}
-          </tbody>
         </table>
       </div>
     </div>

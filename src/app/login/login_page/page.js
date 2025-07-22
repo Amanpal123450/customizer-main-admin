@@ -1,16 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
+import { useRouter } from "next/navigation";
 const generateCaptcha = (length = 6) =>
   Math.random().toString(36).slice(2, 2 + length).toUpperCase();
-
+ 
 const Login = () => {
   const [formData, setFormData] = useState({
     emailOrPhone: "",
     password: "",
     captchaInput: "",
   });
+  const router=useRouter();
 
   const [captchaCode, setCaptchaCode] = useState("");
 
@@ -37,7 +38,7 @@ const Login = () => {
   }
 
   try {
-    const res = await fetch("https://ecomm-backend-7g4k.onrender.com/api/v1/adminLogin", {
+    const res = await fetch("https://e-com-customizer.onrender.com/api/v1/adminLogin", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -49,7 +50,7 @@ const Login = () => {
     });
 
     const data = await res.json();
-//  console.log(data.user._id);
+    console.log(data.user._id);
     if (!res.ok) {
       alert(data.message || "Login failed!");
       return;
@@ -61,11 +62,12 @@ const Login = () => {
 
     // Optionally save token
     localStorage.setItem("token", data.token);
+    localStorage.setItem("Admin_ID", data.user._id);
 
-    localStorage.setItem("user",data.user._id)
+    // localStorage.setItem("user",data.user._id)
     
     // Redirect or do something next
-    // router.push("/admin/dashboard");
+    router.push("/");
   } catch (error) {
     console.error("Login error:", error);
     alert("Something went wrong while logging in.");

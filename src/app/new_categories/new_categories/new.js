@@ -29,7 +29,7 @@ export default function CreateCategory() {
 
     try {
       const res = await fetch(
-        "https://ecomm-backend-7g4k.onrender.com/api/v1/createCategory",
+        "https://e-com-customizer.onrender.com/api/v1/createCategory",
         {
           method: "POST",
           headers: {

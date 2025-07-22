@@ -55,7 +55,7 @@ const Signup = () => {
     try {
       setLoading(true);
 
-      const res = await fetch("https://ecomm-backend-7g4k.onrender.com/api/v1/signup", {
+      const res = await fetch("https://e-com-customizer.onrender.com/api/v1/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -80,6 +80,7 @@ const Signup = () => {
 
       if (res.ok) {
         alert("Signup successful!");
+        
       } else {
         alert(data.message || "Signup failed.");
       }
