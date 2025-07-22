@@ -1,14 +1,9 @@
-import EditUserPage from "./edit/edit";
-
-
-// import UsersPage from "./user_all/user_page
+import EditUserPage from "./[id]/page";
 
 export default function Uaer____111() {
-  return (<>
-{/* <UsersPage /> */}
-<EditUserPage />
-</>
-
+  return (
+    <>
+      <EditUserPage />
+    </>
   );
-
 }
