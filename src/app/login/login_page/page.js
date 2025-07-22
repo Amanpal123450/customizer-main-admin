@@ -155,7 +155,7 @@ const Login = () => {
 
       
         <p className="text-sm text-center text-gray-500 dark:text-gray-400 mt-6">
-          Don't have an account?{" "}
+          Don t have an account?{" "}
           <a href="/signup" className="text-blue-600 hover:underline font-medium">
             Sign up here
           </a>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function CreateProduct() {
@@ -213,7 +214,7 @@ export default function CreateProduct() {
             className="w-full rounded border px-4 py-2"
           />
           {preview && (
-            <img
+            <Image
               src={preview}
               alt="Preview"
               className="mt-2 h-32 w-32 rounded object-contain"

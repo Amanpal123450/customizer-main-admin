@@ -50,7 +50,7 @@ export function OverviewCardsGroup() {
         });
       } catch (error) {
         console.error("Dashboard fetch error:", error);
-        setError(error.message);
+        
       } finally {
         setLoading(false);
       }

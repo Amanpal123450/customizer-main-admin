@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Image from 'next/image';
+
 
 export default function OrderDetailPage() {
   const { id } = useParams(); // URL: /orders/[id]
@@ -52,11 +54,14 @@ export default function OrderDetailPage() {
               const item = product.productId;
               return (
                 <div key={index} className="border p-4 rounded shadow">
-                  <img
-                    src={item?.thumbnail?.[0] || "/placeholder.jpg"}
-                    alt={item?.title || "Product Image"}
-                    className="w-full h-40 object-contain rounded mb-2"
-                  />
+                 <Image
+  src={item?.thumbnail?.[0] || "/placeholder.jpg"}
+  alt={item?.title || "Product Image"}
+  width={300}
+  height={160}
+  className="object-contain rounded mb-2 w-full h-40"
+/>
+
                   <h3 className="text-lg font-semibold">{item?.title || "Untitled Product"}</h3>
                   <p className="text-sm text-gray-600 mb-1">{item?.description || "No description available."}</p>
                   <p className="text-gray-800 font-medium">Price: ₹{item?.price || "N/A"}</p>

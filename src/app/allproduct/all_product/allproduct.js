@@ -12,6 +12,7 @@ import {
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import { Download, Printer } from "lucide-react";
+import Image from "next/image";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -98,7 +99,9 @@ export default function ProductsPage() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/totalProduct");
+        const res = await fetch(
+          "https://e-com-customizer.onrender.com/api/v1/totalProduct",
+        );
         const data = await res.json();
         setProducts(data.AllProduct.reverse() || []);
         console.log(data);
@@ -207,7 +210,7 @@ export default function ProductsPage() {
       </div>
 
       {/* Search Bar */}
-      <div className="border-b bg-gray-50 p-6 flex justify-between">
+      <div className="flex justify-between border-b bg-gray-50 p-6">
         <div className="relative max-w-md">
           <FontAwesomeIcon
             icon={faSearch}
@@ -288,9 +291,11 @@ export default function ProductsPage() {
                   <td className="px-4 py-4">
                     <div className="flex h-16 w-16 items-center justify-center overflow-hidden border-gray-200 bg-gray-50">
                       {product.thumbnail?.[0] ? (
-                        <img
+                        <Image
                           src={product.thumbnail[0]}
                           alt={product.title}
+                          width={300} // provide appropriate width
+                          height={300} // and height
                           className="h-full w-full object-contain"
                           onError={(e) => {
                             e.target.style.display = "none";

@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from 'next/image';
+
 
 export default function NewSubcategoryPage() {
   const [title, setTitle] = useState("");
@@ -109,11 +111,13 @@ export default function NewSubcategoryPage() {
         <label className="block font-medium mb-1">Thumbnail Image</label>
         <input type="file" accept="image/*" onChange={handleFileChange} required />
         {preview && (
-          <img
-            src={preview}
-            alt="Thumbnail Preview"
-            className="mt-2 h-24 w-24 rounded object-cover"
-          />
+         <Image
+  src={preview}
+  alt="Thumbnail Preview"
+  width={96} // w-24 = 24 * 4 = 96px
+  height={96} // h-24 = 24 * 4 = 96px
+  className="mt-2 h-24 w-24 rounded object-cover"
+/>
         )}
       </div>
 

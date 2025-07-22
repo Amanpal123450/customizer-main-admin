@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
+
 
 export default function EditProductPage() {
   const { id } = useParams();
@@ -85,7 +87,7 @@ export default function EditProductPage() {
             Authorization: `Bearer ${token}`,
           },
           body: formData,
-        }
+        },
       );
 
       const data = await res.json();
@@ -106,8 +108,8 @@ export default function EditProductPage() {
   };
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Edit Product</h1>
+    <div className="mx-auto max-w-xl p-6">
+      <h1 className="mb-4 text-2xl font-bold">Edit Product</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
@@ -116,7 +118,7 @@ export default function EditProductPage() {
           placeholder="Title"
           value={form.title}
           onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full rounded border px-3 py-2"
           required
         />
 
@@ -125,7 +127,7 @@ export default function EditProductPage() {
           placeholder="Description"
           value={form.description}
           onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full rounded border px-3 py-2"
           required
         />
 
@@ -135,7 +137,7 @@ export default function EditProductPage() {
           placeholder="Price"
           value={form.price}
           onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full rounded border px-3 py-2"
           required
         />
 
@@ -145,7 +147,7 @@ export default function EditProductPage() {
           placeholder="Quantity"
           value={form.quantity}
           onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full rounded border px-3 py-2"
           required
         />
 
@@ -155,7 +157,7 @@ export default function EditProductPage() {
           placeholder="Color"
           value={form.color}
           onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full rounded border px-3 py-2"
           required
         />
 
@@ -165,20 +167,22 @@ export default function EditProductPage() {
             type="file"
             accept="image/*"
             onChange={handleImageUpload}
-            className="w-full border px-3 py-2 rounded"
+            className="w-full rounded border px-3 py-2"
           />
           {preview && (
-            <img
+            <Image
               src={preview}
               alt="Preview"
-              className="mt-2 h-32 w-32 object-contain rounded"
+              width={128}
+              height={128}
+              className="mt-2 h-32 w-32 rounded object-contain"
             />
           )}
         </div>
 
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
         >
           {loading ? "Updating..." : "Update Product"}
         </button>

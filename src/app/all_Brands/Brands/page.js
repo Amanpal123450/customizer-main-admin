@@ -11,6 +11,7 @@ import {
   Filter,
   Upload,
 } from "lucide-react";
+import Image from "next/image";
 
 const dummyBrands = [
   { id: 1, name: "Nike", logo: "/brand/nike.png", active: true, sortOrder: 1 },
@@ -424,7 +425,8 @@ const toggleStatus = async (id) => {
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center">
                           <div className="h-12 w-12 overflow-hidden rounded-lg bg-gray-100">
-                            <img
+                            <Image
+                              
                               src={
                                 brand.logoUrl ||
                                 `https://ui-avatars.com/api/?name=${brand.name}&background=6366f1&color=fff`

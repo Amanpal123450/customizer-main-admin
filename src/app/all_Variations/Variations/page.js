@@ -19,7 +19,7 @@ const dummyBrands = [
   { id: 3, name: "mk", active: false, sortOrder: 3 },
 ];
 
-export default function variationPage() {
+export default function VariationPage() {
   const [variations, setBrands] = useState([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All");
