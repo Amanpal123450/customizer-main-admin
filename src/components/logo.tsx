@@ -1,6 +1,9 @@
 import darkLogo from "@/assets/logos/dark.svg";
 import logo from "@/assets/logos/main.svg";
 import Image from "next/image";
+type LogoProps = {
+  className?: string;
+};
 
 export function Logo() {
   return (

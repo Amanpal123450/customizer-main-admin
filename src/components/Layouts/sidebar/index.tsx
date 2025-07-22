@@ -72,7 +72,7 @@ export function Sidebar() {
                 onClick={() => isMobile && toggleSidebar()}
                 className="flex items-center gap-3 text-lg font-semibold text-gray-900 dark:text-white"
               >
-                <Logo className="h-8 w-8" />
+                <Logo  />
                 <span>Brand</span>
               </Link>
 
