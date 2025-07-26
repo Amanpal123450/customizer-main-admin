@@ -78,6 +78,10 @@ export default function PaymentHistoryPagesss() {
     return `px-3 py-1 rounded-lg text-sm font-medium border ${styles[method] || 'bg-gray-100 text-gray-800'}`;
   };
 
+  function Export(table){
+
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 p-6">
@@ -195,7 +199,7 @@ export default function PaymentHistoryPagesss() {
 
             {/* Action Buttons */}
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <button onClick={()=> Export(currentPayments)} className="flex items-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                 <Download className="h-4 w-4" />
                 Export
               </button>
