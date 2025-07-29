@@ -265,7 +265,7 @@ const handleStatusUpdate = async (orderId, newStatus) => {
 
     const token = localStorage.getItem("token");
 
-    const res = await fetch(`http://localhost:4000/api/v1/ordersStatus/${orderId}`, {
+    const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/ordersStatus/${orderId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
