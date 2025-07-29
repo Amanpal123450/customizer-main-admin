@@ -10,9 +10,11 @@ import {
   faPlus,
   faImage,
   faSearch,
+  faTag,
 } from "@fortawesome/free-solid-svg-icons";
 import { Download, Printer } from "lucide-react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -21,12 +23,13 @@ export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
+  const [discounts, setDiscounts] = useState([]);
+  const [discountLookup, setDiscountLookup] = useState({});
 
   const toggleDropdown = (id) => {
     setOpenDropdownId((prev) => (prev === id ? null : id));
   };
 
-  // Filter products based on search term
   const filteredProducts = products.filter(
     (product) =>
       product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -34,16 +37,11 @@ export default function ProductsPage() {
       product.subCategory?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  // Pagination logic
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = filteredProducts.slice(
-    indexOfFirstItem,
-    indexOfLastItem,
-  );
+  const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Reset to page 1 when search changes
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
@@ -53,7 +51,7 @@ export default function ProductsPage() {
   };
 
   const getPaginationNumbers = () => {
-    const delta = 2; // Number of pages to show on each side of current page
+    const delta = 2;
     const range = [];
     const rangeWithDots = [];
 
@@ -95,16 +93,15 @@ export default function ProductsPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const res = await fetch(
-          "https://e-com-customizer.onrender.com/api/v1/totalProduct",
-        );
+        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/totalProduct");
         const data = await res.json();
         setProducts(data.AllProduct.reverse() || []);
-        console.log(data);
+        console.log("Products:", data);
       } catch (err) {
         console.error("Failed to fetch products:", err);
       } finally {
@@ -114,6 +111,49 @@ export default function ProductsPage() {
 
     fetchProducts();
   }, []);
+
+  // Fetch discounts
+  useEffect(() => {
+    async function fetchDiscounts() {
+      try {
+        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/discounts");
+        const data = await res.json();
+
+        // Extract discount array properly
+        const discountArray = Array.isArray(data?.data) ? data.data : [];
+        setDiscounts(discountArray);
+        console.log("Discounts:", data);
+        
+        // Build discount lookup object
+        const lookup = {};
+        discountArray.forEach(discount => {
+          // Using the correct field names from your API response
+          if (discount.product && discount.discountValue) {
+            lookup[discount.product] = discount.discountValue;
+          }
+        });
+        
+        setDiscountLookup(lookup);
+        console.log("Discount Lookup:", lookup);
+        
+      } catch (e) {
+        console.error("Failed to fetch discounts", e);
+        setDiscounts([]);
+        setDiscountLookup({});
+      }
+    }
+    fetchDiscounts();
+  }, []);
+
+  // Calculate discounted price
+  const getDiscountedPrice = (originalPrice, productId) => {
+    const discountPercentage = discountLookup[productId] || 0;
+    if (discountPercentage > 0) {
+      const discountedPrice = originalPrice - (originalPrice * discountPercentage / 100);
+      return discountedPrice;
+    }
+    return originalPrice;
+  };
 
   const handleDelete = async (id) => {
     const token = localStorage.getItem("token");
@@ -141,20 +181,28 @@ export default function ProductsPage() {
       }
     }
   };
+
   const handleExportCSV = () => {
     if (filteredProducts.length === 0) {
       alert("No data to export.");
       return;
     }
 
-    const headers = ["Title", "Description", "Price", "Stock", "SubCategory"];
-    const rows = filteredProducts.map((product) => [
-      `"${product.title || ""}"`,
-      `"${product.description || ""}"`,
-      product.price || 0,
-      product.quantity || 0,
-      `"${product.subCategory || ""}"`,
-    ]);
+    const headers = ["Title", "Description", "Price", "Discounted Price", "Discount %", "Stock", "SubCategory"];
+    const rows = filteredProducts.map((product) => {
+      const discountPercentage = discountLookup[product._id] || 0;
+      const discountedPrice = getDiscountedPrice(product.price, product._id);
+      
+      return [
+        `"${product.title || ""}"`,
+        `"${product.description || ""}"`,
+        product.price || 0,
+        discountedPrice.toFixed(2),
+        `${discountPercentage}%`,
+        product.quantity || 0,
+        `"${product.subCategory || ""}"`,
+      ];
+    });
 
     const csvContent = [headers, ...rows].map((e) => e.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -170,9 +218,7 @@ export default function ProductsPage() {
 
   const truncateText = (text, maxLength = 50) => {
     if (!text) return "N/A";
-    return text.length > maxLength
-      ? text.substring(0, maxLength) + "..."
-      : text;
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
   };
 
   if (loading) {
@@ -193,6 +239,21 @@ export default function ProductsPage() {
     );
   }
 
+  // Framer Motion Variants
+  const productRowVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.07, type: "spring", stiffness: 80 },
+    }),
+  };
+
+  const dropdownVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.15 } },
+  };
+
   return (
     <div className="overflow-hidden rounded-xl bg-gray-50 shadow-lg">
       {/* Header */}
@@ -203,8 +264,14 @@ export default function ProductsPage() {
             href="/product"
             className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 font-medium text-blue-600 shadow-md transition-colors duration-200 hover:bg-gray-100"
           >
-            <FontAwesomeIcon icon={faPlus} className="text-sm" />
-            Add Product
+            <motion.span
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-2"
+            >
+              <FontAwesomeIcon icon={faPlus} className="text-sm" />
+              Add Product
+            </motion.span>
           </Link>
         </div>
       </div>
@@ -225,22 +292,26 @@ export default function ProductsPage() {
           />
         </div>
         <div className="flex gap-3">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={handleExportCSV}
             type="button"
             className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-3 text-white transition-colors hover:bg-blue-700"
           >
             <Download className="h-4 w-4" />
             Export
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => window.print()}
             className="flex items-center gap-2 rounded-lg bg-gray-600 px-4 py-3 text-white transition-colors hover:bg-gray-700"
           >
             <Printer className="h-4 w-4" />
             Print
-          </button>
+          </motion.button>
         </div>
       </div>
 
@@ -275,6 +346,9 @@ export default function ProductsPage() {
               <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">
                 Category
               </th>
+              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">
+                Discount
+              </th>
               <th className="px-4 py-4 text-center text-sm font-semibold text-gray-700">
                 Actions
               </th>
@@ -282,122 +356,176 @@ export default function ProductsPage() {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {currentProducts.length > 0 ? (
-              currentProducts.map((product) => (
-                <tr
-                  key={product._id}
-                  className="transition-colors duration-150 hover:bg-gray-50"
-                >
-                  {/* Image */}
-                  <td className="px-4 py-4">
-                    <div className="flex h-16 w-16 items-center justify-center overflow-hidden border-gray-200 bg-gray-50">
-                      {product.thumbnail?.[0] ? (
-                        <Image
-                          src={product.thumbnail[0]}
-                          alt={product.title}
-                          width={300} // provide appropriate width
-                          height={300} // and height
-                          className="h-full w-full object-contain"
-                          onError={(e) => {
-                            e.target.style.display = "none";
-                            e.target.nextSibling.style.display = "flex";
-                          }}
-                        />
-                      ) : (
-                        <FontAwesomeIcon
-                          icon={faImage}
-                          className="text-xl text-gray-400"
-                        />
-                      )}
-                      <div className="hidden h-full w-full items-center justify-center">
-                        <FontAwesomeIcon
-                          icon={faImage}
-                          className="text-xl text-gray-400"
-                        />
+              currentProducts.map((product, index) => {
+                const discountPercentage = discountLookup[product._id] || 0;
+                const discountedPrice = getDiscountedPrice(product.price, product._id);
+                const hasDiscount = discountPercentage > 0;
+                
+                return (
+                  <motion.tr
+                    key={product._id}
+                    custom={index}
+                    initial="hidden"
+                    animate="visible"
+                    variants={productRowVariants}
+                    className="transition-colors duration-150 hover:bg-gray-50"
+                  >
+                    {/* Image */}
+                    <td className="px-4 py-4">
+                      <div className="flex h-16 w-16 items-center justify-center overflow-hidden border border-gray-200 bg-gray-50 rounded-md">
+                        {product.thumbnail?.[0] ? (
+                          <Image
+                            src={product.thumbnail[0]}
+                            alt={product.title}
+                            width={300}
+                            height={300}
+                            className="h-full w-full object-contain"
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                              e.target.nextSibling.style.display = "flex";
+                            }}
+                          />
+                        ) : (
+                          <FontAwesomeIcon
+                            icon={faImage}
+                            className="text-xl text-gray-400"
+                          />
+                        )}
+                        <div className="hidden h-full w-full items-center justify-center">
+                          <FontAwesomeIcon
+                            icon={faImage}
+                            className="text-xl text-gray-400"
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </td>
+                    </td>
 
-                  {/* Product Details */}
-                  <td className="px-4 py-4">
-                    <div className="max-w-xs">
+                    {/* Product Details */}
+                    <td className="px-4 py-4 max-w-xs">
                       <h3 className="mb-1 font-medium text-gray-900">
                         {truncateText(product.title, 30)}
                       </h3>
                       <p className="text-sm text-gray-600">
                         {truncateText(product.description, 60)}
                       </p>
-                    </div>
-                  </td>
+                    </td>
 
-                  {/* Price */}
-                  <td className="px-4 py-4">
-                    <span className="text-lg font-semibold text-green-600">
-                      ₹{product.price?.toLocaleString() || "N/A"}
-                    </span>
-                  </td>
-
-                  {/* Stock */}
-                  <td className="px-4 py-4">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        product.quantity > 10
-                          ? "bg-green-100 text-green-800"
-                          : product.quantity > 0
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {product.quantity || 0} units
-                    </span>
-                  </td>
-
-                  {/* Category */}
-                  <td className="px-4 py-4">
-                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                      {product.subCategory || "N/A"}
-                    </span>
-                  </td>
-
-                  {/* Actions */}
-                  <td className="relative px-4 py-4 text-center">
-                    <button
-                      onClick={() => toggleDropdown(product._id)}
-                      data-dropdown-toggle
-                      className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-150 hover:bg-gray-100"
-                    >
-                      <FontAwesomeIcon
-                        icon={faEllipsisVertical}
-                        className="text-sm text-gray-600"
-                      />
-                    </button>
-
-                    {openDropdownId === product._id && (
-                      <div
-                        className="absolute right-0 top-12 z-30 w-32 rounded-lg border bg-white shadow-lg"
-                        data-dropdown
-                      >
-                        <Link
-                          href={`/edit_product/${product._id}`}
-                          className="flex items-center gap-2 rounded-t-lg px-4 py-2 text-sm text-blue-600 transition-colors duration-150 hover:bg-blue-50"
-                        >
-                          <FontAwesomeIcon icon={faEdit} className="text-xs" />
-                          Edit
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(product._id)}
-                          className="flex w-full items-center gap-2 rounded-b-lg border-t px-4 py-2 text-sm text-red-600 transition-colors duration-150 hover:bg-red-50"
-                        >
-                          <FontAwesomeIcon icon={faTrash} className="text-xs" />
-                          Delete
-                        </button>
+                    {/* Price */}
+                    <td className="px-4 py-4">
+                      <div className="flex flex-col">
+                        {hasDiscount ? (
+                          <>
+                            <span className="text-lg font-semibold text-green-600">
+                              ₹{discountedPrice.toLocaleString()}
+                            </span>
+                            <span className="text-sm text-gray-500 line-through">
+                              ₹{product.price?.toLocaleString() || "N/A"}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-lg font-semibold text-green-600">
+                            ₹{product.price?.toLocaleString() || "N/A"}
+                          </span>
+                        )}
                       </div>
-                    )}
-                  </td>
-                </tr>
-              ))
+                    </td>
+
+                    {/* Stock */}
+                    <td className="px-4 py-4">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          product.quantity > 10
+                            ? "bg-green-100 text-green-800"
+                            : product.quantity > 0
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {product.quantity || 0} units
+                      </span>
+                    </td>
+
+                    {/* Category */}
+                    <td className="px-4 py-4">
+                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                        {product.subCategory || "N/A"}
+                      </span>
+                    </td>
+
+                    {/* Discount */}
+                    <td className="px-4 py-4">
+                      <div className="flex flex-col items-start">
+                        <span 
+                          className={`text-sm font-semibold ${
+                            hasDiscount ? "text-purple-600" : "text-gray-500"
+                          }`}
+                        >
+                          {discountPercentage}%
+                        </span>
+                        {hasDiscount && (
+                          <span className="text-xs text-green-600 font-medium">
+                            Save ₹{(product.price - discountedPrice).toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+
+                    {/* Actions */}
+                    <td className="relative px-4 py-4 text-center">
+                      <button
+                        onClick={() => toggleDropdown(product._id)}
+                        data-dropdown-toggle
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-150 hover:bg-gray-100"
+                        aria-label="Toggle actions menu"
+                      >
+                        <FontAwesomeIcon
+                          icon={faEllipsisVertical}
+                          className="text-sm text-gray-600"
+                        />
+                      </button>
+
+                      <AnimatePresence>
+                        {openDropdownId === product._id && (
+                          <motion.div
+                            initial="hidden"
+                            animate="visible"
+                            exit="hidden"
+                            variants={dropdownVariants}
+                            className="absolute right-0 top-12 z-30 w-32 rounded-lg border bg-white shadow-lg"
+                            data-dropdown
+                          >
+                            <Link
+                              href={`/edit_product/${product._id}`}
+                              className="flex items-center gap-2 rounded-t-lg px-4 py-2 text-sm text-blue-600 transition-colors duration-150 hover:bg-blue-50"
+                            >
+                              <FontAwesomeIcon icon={faEdit} className="text-xs" />
+                              Edit
+                            </Link>
+                            <button
+                              onClick={() => handleDelete(product._id)}
+                              className="flex w-full items-center gap-2 border-t px-4 py-2 text-sm text-red-600 transition-colors duration-150 hover:bg-red-50"
+                            >
+                              <FontAwesomeIcon icon={faTrash} className="text-xs" />
+                              Delete
+                            </button>
+
+                            <Link 
+                              className="flex items-center gap-2 rounded-b-lg border-t px-4 py-2 text-sm text-green-600 transition-colors duration-150 hover:bg-green-50" 
+                              href={`/discount/${product._id}`}
+                            >
+                              <FontAwesomeIcon icon={faTag} className="text-xs" />
+                              Discount
+                            </Link>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </td>
+                  </motion.tr>
+                );
+              })
             ) : (
               <tr>
-                <td colSpan="6" className="px-4 py-12 text-center">
+                <td colSpan="7" className="px-4 py-12 text-center">
                   <div className="flex flex-col items-center gap-3">
                     <FontAwesomeIcon
                       icon={faImage}
@@ -435,9 +563,11 @@ export default function ProductsPage() {
             </div>
             <nav className="flex items-center gap-1">
               {/* Previous Button */}
-              <button
+              <motion.button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
+                whileHover={currentPage !== 1 ? { scale: 1.05 } : {}}
+                whileTap={currentPage !== 1 ? { scale: 0.95 } : {}}
                 className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${
                   currentPage === 1
                     ? "cursor-not-allowed bg-gray-100 text-gray-400"
@@ -445,7 +575,7 @@ export default function ProductsPage() {
                 }`}
               >
                 Previous
-              </button>
+              </motion.button>
 
               {/* Page Numbers */}
               {getPaginationNumbers().map((pageNumber, index) => (
@@ -453,8 +583,10 @@ export default function ProductsPage() {
                   {pageNumber === "..." ? (
                     <span className="px-3 py-1 text-gray-400">...</span>
                   ) : (
-                    <button
+                    <motion.button
                       onClick={() => handlePageChange(pageNumber)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                       className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${
                         currentPage === pageNumber
                           ? "bg-blue-600 text-white"
@@ -462,15 +594,17 @@ export default function ProductsPage() {
                       }`}
                     >
                       {pageNumber}
-                    </button>
+                    </motion.button>
                   )}
                 </span>
               ))}
 
               {/* Next Button */}
-              <button
+              <motion.button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
+                whileHover={currentPage !== totalPages ? { scale: 1.05 } : {}}
+                whileTap={currentPage !== totalPages ? { scale: 0.95 } : {}}
                 className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${
                   currentPage === totalPages
                     ? "cursor-not-allowed bg-gray-100 text-gray-400"
@@ -478,7 +612,7 @@ export default function ProductsPage() {
                 }`}
               >
                 Next
-              </button>
+              </motion.button>
             </nav>
           </div>
         </div>

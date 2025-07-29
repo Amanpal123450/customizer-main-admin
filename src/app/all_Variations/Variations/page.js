@@ -216,7 +216,7 @@ export default function VariationPage() {
 
 const toggleStatus = async (id) => {
   try {
-    const response = await fetch(`https://e-com-customizer.onrender.com/api/v1/variation/${id}`,{
+    const response = await fetch(`https://e-com-customizer.onrender.com/api/v1/variationToggle/${id}`,{
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

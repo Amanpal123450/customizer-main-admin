@@ -7,7 +7,7 @@ import EditProductPage from "./[id]/page";
 
 // import UsersPage from "./user_all/user_page";
 
-export default function Edit_product() {
+export default function Edit_product() {  
   return (<>
 
 <EditProductPage />

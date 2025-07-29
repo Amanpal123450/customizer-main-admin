@@ -209,7 +209,7 @@ const matchesSearch =
 
   //              method: "GET",
   //         headers: {
-  //           Authorization: `Bearer ${token}`,
+  //           Authorization: Bearer ${token},
   //         },
   //           }
   //         );
@@ -250,14 +250,44 @@ const matchesSearch =
   };
 
   // Action handlers
-  const handleStatusUpdate = (orderId, newStatus) => {
-    setOrders(
-      orders.map((order) =>
-        order._id === orderId ? { ...order, orderStatus: newStatus } : order,
-      ),
+// import axios from "axios";
+
+const handleStatusUpdate = async (orderId, newStatus) => {
+  try {
+    console.log("Updating order status:", orderId, newStatus);
+
+  
+    setOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order._id === orderId ? { ...order, orderStatus: newStatus } : order
+      )
     );
-    // Here you would make an API call to update the status
-  };
+
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(`http://localhost:4000/api/v1/ordersStatus/${orderId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ orderStatus: newStatus }),
+    });
+
+    const data = await res.json();
+
+    console.log(data);
+    if (data.success) {
+      console.log("Order updated successfully", data.order);
+    } else {
+      console.error("Failed to update order");
+    }
+  } catch (error) {
+    console.error("Error updating order:", error);
+  }
+};
+
+
 
   const handleRefund = (orderId) => {
     // Handle refund logic
@@ -387,7 +417,7 @@ const matchesSearch =
 
   //   const GetUser = async (id) => {
   //     try {
-  //       const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/getUser/${id}`);
+  //       const res = await fetch(https://e-com-customizer.onrender.com/api/v1/getUser/${id});
   //       const data = await res.json();
   //       setUser(data?.data); // adjust based on your API response
   //       console.log(data)
@@ -812,7 +842,7 @@ const matchesSearch =
                              {order.userId ? `${order.userId.firstName} ${order.userId.lastName}` : "N/A"}
                           </div>
                           {/* <div className="text-sm text-gray-500">
-                            {order.userId ? `${order.userId.email.slice(1.10)}...`: "N/A"}
+                            {order.userId ? ${order.userId.email.slice(1.10)}...: "N/A"}
                           </div> */}
                         </div>
                       </td>
@@ -824,10 +854,11 @@ const matchesSearch =
                           <span
                             className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getPaymentStatusColor(order.paymentStatus)}`}
                           >
-                            {order.paymentStatus}
+                            {/* {order.paymentStatus} */}
+                             {order.paymentMethod}
                           </span>
                           <div className="mt-1 text-xs text-gray-500">
-                            {order.paymentMethod}
+                           
                           </div>
                         </div>
                       </td>

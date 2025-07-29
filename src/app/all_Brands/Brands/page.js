@@ -13,37 +13,6 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
-const dummyBrands = [
-  { id: 1, name: "Nike", logo: "/brand/nike.png", active: true, sortOrder: 1 },
-  {
-    id: 2,
-    name: "Apple",
-    logo: "/brand/apple.png",
-    active: true,
-    sortOrder: 2,
-  },
-  {
-    id: 3,
-    name: "Samsung",
-    logo: "/brand/samsung.png",
-    active: false,
-    sortOrder: 3,
-  },
-  {
-    id: 4,
-    name: "Adidas",
-    logo: "/brand/adidas.png",
-    active: true,
-    sortOrder: 4,
-  },
-  {
-    id: 5,
-    name: "Microsoft",
-    logo: "/brand/microsoft.png",
-    active: true,
-    sortOrder: 5,
-  },
-];
 
 export default function BrandsPage() {
   const [brands, setBrands] = useState([]);
@@ -169,7 +138,7 @@ export default function BrandsPage() {
       const result = await res.json();
       console.log(result)
       console.log(result);
-      setBrands(result); // ✅ Fix: extract the array from result.data
+      setBrands(result); 
       setFiltered(result);
     }
 
@@ -432,6 +401,8 @@ const toggleStatus = async (id) => {
                                 `https://ui-avatars.com/api/?name=${brand.name}&background=6366f1&color=fff`
                               }
                               alt={brand.name}
+                              width={50}
+                              height={50}
                               className="h-full w-full object-cover"
                               onError={(e) => {
                                 e.target.src = `https://ui-avatars.com/api/?name=${brand.name}&background=6366f1&color=fff`;
