@@ -54,7 +54,7 @@ const OrderManagementPage = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        " http://localhost:4000/api/v1/orders/all-orders",
+        " https://e-com-customizer.onrender.com/api/v1/orders/all-orders",
       );
       const data = await response.json();
       console.log(data);
