@@ -274,7 +274,7 @@ export default function CreateDiscount() {
   const filteredDiscounts = discounts.filter(discount => discount.product === params.id);
   console.log("Filtered Discounts:", filteredDiscounts);
 
-  // Issue 2: Add safety checks in deleteDiscount function
+  //  Add safety checks in deleteDiscount function
   const deleteDiscount = async () => {
     // Check if there are any discounts to delete
     if (!filteredDiscounts || filteredDiscounts.length === 0) {
