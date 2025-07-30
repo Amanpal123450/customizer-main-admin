@@ -17,7 +17,7 @@ export function OverviewCardsGroup() {
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      try {
+      try { 
         setLoading(true);
         setError(null);
         const token = localStorage.getItem("token");

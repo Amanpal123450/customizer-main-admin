@@ -96,9 +96,7 @@ export default function UnitsPage() {
         alert("✅ Unit added: " + data.name);
         // setUnitName('');
 
-        main("/units");
-      } else {
-        alert("❌ Error: " + (data.message || "Something went wrong"));
+        // main("/units");
       }
     } catch (error) {
       alert("❌ Network error: " + error.message);

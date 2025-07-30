@@ -87,7 +87,7 @@ export default function CreateCategory() {
         {preview && (
           <div>
             <p className="text-sm text-gray-500 mb-1">Preview:</p>
-            <Image src={preview} alt="Preview" className="w-32 h-32 object-cover rounded" />
+            <Image src={preview} alt="Preview" width={128} height={128} className="w-32 h-32 object-cover rounded" />
           </div>
         )}
 

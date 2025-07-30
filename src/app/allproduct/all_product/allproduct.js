@@ -34,7 +34,9 @@ export default function ProductsPage() {
     (product) =>
       product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.subCategory?.toLowerCase().includes(searchTerm.toLowerCase()),
+      product.subCategory.title?.toLowerCase().includes(searchTerm.toLowerCase())
+      // console.log(product.subCategory)
+
   );
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
@@ -448,7 +450,7 @@ export default function ProductsPage() {
                     {/* Category */}
                     <td className="px-4 py-4">
                       <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                        {product.subCategory || "N/A"}
+                        {product.subCategory.title}
                       </span>
                     </td>
 

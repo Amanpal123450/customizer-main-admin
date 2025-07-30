@@ -7,22 +7,22 @@ export const NAV_DATA = [
     items: [
       {
         title: "Dashboard",
-       
+
         icon: FaHome,
-         url: "/",
+        url: "/",
         items: [
-          
+
         ],
       },
 
       {
-        
+
         title: "Products",
         icon: FaBoxOpen,
-           items: [
-            {
+        items: [
+          {
             title: "All Products",
-             url: "/allproduct",
+            url: "/allproduct",
           },
           {
             title: "All categories",
@@ -33,23 +33,23 @@ export const NAV_DATA = [
             title: "All Variations",
             url: "/all_Variations",
           },
-           {
+          {
             title: "All Brands",
             url: "/all_Brands",
           },
-           {
+          {
             title: "All Units",
             url: "/all_units",
           },
-            {
+          {
             title: "All Taxes",
             url: "/all_Taxes",
           },
-    
+
         ],
-      }, 
-      
-       {
+      },
+
+      {
         title: "Users",
         icon: FaUsers,
         items: [
@@ -64,39 +64,31 @@ export const NAV_DATA = [
         ],
       },
 
-    
+
 
 
       {
         title: "Categories",
         icon: MdCategory,
-         url: "/categories",
+        url: "/categories",
         items: [
-         
+
+        ],
+      },
+
+      {
+        title: "Orders",
+        icon: FaClipboardList,
+        url: "/orders",
+        items: [
+
         ],
       },
       {
-        title: "Subcategories",
-        icon: FaSitemap,
-         url: "/new_subcategories",
-        items: [
-         
-        ],
-      },
-    
-        {
-        title: "Orders",
-        icon: FaClipboardList,
-         url: "/orders",
-        items: [
-          
-        ],
-      },
-       {
         title: "Payment",
-         icon: FaMoneyCheckAlt,
+        icon: FaMoneyCheckAlt,
         url: "/payment",
-        
+
         items: [],
       },
 
@@ -106,11 +98,11 @@ export const NAV_DATA = [
         icon: FaUser,
         items: [],
       },
-      
-      
-      
-     
-    
+
+
+
+
+
     ],
   },
 ];

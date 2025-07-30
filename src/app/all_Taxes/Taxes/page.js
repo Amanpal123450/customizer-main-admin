@@ -19,8 +19,8 @@ const dummyBrands = [
   { id: 3, name: "mk", active: false, sortOrder: 3 },
 ];
 
-export default function TaxePage() {
-  const [Taxes, setBrands] = useState([]);
+export default function TaxPage() {
+  const [Taxs, setBrands] = useState([]);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All");
   const [filtered, setFiltered] = useState([]);
@@ -38,16 +38,16 @@ export default function TaxePage() {
   const itemsPerPage = 5;
   const main = useRouter();
   useEffect(() => {
-    const filteredData = Taxes.filter(
-      (Taxe) =>
-        Taxe.name.toLowerCase().includes(search.toLowerCase()) &&
+    const filteredData = Taxs.filter(
+      (Tax) =>
+        Tax.name.toLowerCase().includes(search.toLowerCase()) &&
         (status === "All" ||
-          (status === "Active" && Taxe.active) ||
-          (status === "Inactive" && !Taxe.active)),
+          (status === "Active" && Tax.active) ||
+          (status === "Inactive" && !Tax.active)),
     );
     setFiltered(filteredData);
     setCurrentPage(1);
-  }, [search, status, Taxes]);
+  }, [search, status, Taxs]);
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -74,10 +74,9 @@ export default function TaxePage() {
 
     GetAllvariation();
   }, []);
-  const handleAddUnit = async () => {
-    // if (!unitName.trim()) return alert('Unit name is required!');
 
-    // setLoading(true);
+  const handleAddTax = async () => {
+   
     try {
       const res = await fetch(
         "https://e-com-customizer.onrender.com/api/v1/addTax",
@@ -89,23 +88,13 @@ export default function TaxePage() {
           body: JSON.stringify({ name: form.name, active: form.active }),
         },
       );
-
-      const data = await res.json();
-      console.log(data);
-      if (res.ok) {
-        alert("✅ Unit added: " + data.name);
-        // setUnitName('');
-
-        main("/units");
-      } else {
-        alert("❌ Error: " + (data.message || "Something went wrong"));
-      }
+      alert(" Tax added: " + form.name);
     } catch (error) {
       alert("❌ Network error: " + error.message);
     }
   };
 
-  const handleUpdateUnit = async (id) => {
+  const handleUpdateTax = async (id) => {
     console.log("sdcs");
     try {
       const res = await fetch(
@@ -122,20 +111,11 @@ export default function TaxePage() {
         },
       );
 
-      const data = await res.json();
-      console.log(data);
-      closeModal();
-      // fetchTaxe();
-
-      if (res.ok) {
-        alert("Unit updated successfully!");
-        setModalOpen(false);
-        fetchTaxe(); // call to refresh the unit list
-      } else {
-        alert(data.message || "Update failed.");
-      }
+     
+        fetchTax(); // call to refresh the Tax list
+   
     } catch (error) {
-      console.error("Error updating unit:", error);
+      console.error("Error updating Tax:", error);
       alert("Something went wrong!");
     }
   };
@@ -148,7 +128,7 @@ export default function TaxePage() {
 
     if (editing) {
       setBrands(
-        Taxes.map((b) => (b.id === editing.id ? { ...b, ...form } : b)),
+        Taxs.map((b) => (b.id === editing.id ? { ...b, ...form } : b)),
       );
     } else {
       const newBrand = {
@@ -160,7 +140,7 @@ export default function TaxePage() {
         active: form.active,
         sortOrder: form.sortOrder,
       };
-      setBrands([...Taxes, newBrand]);
+      setBrands([...Taxs, newBrand]);
     }
     closeModal();
   };
@@ -171,15 +151,15 @@ export default function TaxePage() {
     setModalOpen(true);
   };
 
-  const openEditModal = (unit) => {
-    setForm({ name: unit.name, active: unit.active });
-    setEditId(unit._id);
+  const openEditModal = (Tax) => {
+    setForm({ name: Tax.name, active: Tax.active });
+    setEditId(Tax._id);
     setEditing(true);
     setModalOpen(true);
   };
 
-  // const openModal = (Taxe) => {
-  //   seids(Taxe);
+  // const openModal = (Tax) => {
+  //   seids(Tax);
   //   setEditing(true)
   //   setModalOpen(true);
   // };
@@ -191,7 +171,7 @@ export default function TaxePage() {
   };
 
   const handleDelete = async (id) => {
-  if (confirm("Are you sure you want to delete this unit?")) {
+  if (confirm("Are you sure you want to delete this Tax?")) {
     try {
       const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/tax/${id}`, {
         method: "DELETE",
@@ -202,12 +182,12 @@ export default function TaxePage() {
       if (res.ok) {
         
         
-        alert("Unit deleted successfully!");
+        alert("Tax deleted successfully!");
       } else {
-        alert("Failed to delete unit. Please try again.");
+        alert("Failed to delete Tax. Please try again.");
       }
     } catch (error) {
-      console.error("Error deleting unit:", error);
+      console.error("Error deleting Tax:", error);
       alert("Something went wrong. Please try again.");
     }
   }
@@ -216,7 +196,7 @@ export default function TaxePage() {
 
 const toggleStatus = async (id) => {
   try {
-    const response = await fetch(`https://e-com-customizer.onrender.com/api/v1/unitToggle/${id}`,{
+    const response = await fetch(`https://e-com-customizer.onrender.com/api/v1/TaxToggle/${id}`,{
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -226,9 +206,9 @@ const toggleStatus = async (id) => {
   const data = await response.json();
   console.log(data)
     if (response.ok) {
-      setBrands((prevTaxe) =>
-        prevTaxe.map((unit) =>
-          unit._id === id ? { ...unit, active: !unit.active } : unit
+      setBrands((prevTax) =>
+        prevTax.map((Tax) =>
+          Tax._id === id ? { ...Tax, active: !Tax.active } : Tax
         )
       );
     } else {
@@ -249,14 +229,14 @@ const toggleStatus = async (id) => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Taxe Management
+                Tax Management
               </h1>
               <nav className="mt-2 flex items-center space-x-2 text-sm text-gray-500">
                 <span>Dashboard</span>
                 <span>/</span>
                 <span>Products</span>
                 <span>/</span>
-                <span className="font-medium text-indigo-600">Taxe</span>
+                <span className="font-medium text-indigo-600">Tax</span>
               </nav>
             </div>
             <button
@@ -264,7 +244,7 @@ const toggleStatus = async (id) => {
               className="flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white shadow-lg transition-colors hover:bg-indigo-700"
             >
               <Plus size={20} />
-              Add New Taxe
+              Add New Tax
             </button>
           </div>
         </div>
@@ -274,9 +254,9 @@ const toggleStatus = async (id) => {
           <div className="rounded-lg bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Taxe</p>
+                <p className="text-sm text-gray-600">Total Tax</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {Taxes.length}
+                  {Taxs.length}
                 </p>
               </div>
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100">
@@ -289,7 +269,7 @@ const toggleStatus = async (id) => {
               <div>
                 <p className="text-sm text-gray-600">Active Brands</p>
                 <p className="text-2xl font-bold text-green-600">
-                  {Taxes.filter((b) => b.active).length}
+                  {Taxs.filter((b) => b.active).length}
                 </p>
               </div>
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
@@ -302,7 +282,7 @@ const toggleStatus = async (id) => {
               <div>
                 <p className="text-sm text-gray-600">Inactive Brands</p>
                 <p className="text-2xl font-bold text-red-600">
-                  {Taxes.filter((b) => !b.active).length}
+                  {Taxs.filter((b) => !b.active).length}
                 </p>
               </div>
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100">
@@ -322,7 +302,7 @@ const toggleStatus = async (id) => {
               />
               <input
                 type="text"
-                placeholder="Search Taxes by name..."
+                placeholder="Search Taxs by name..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
@@ -370,9 +350,9 @@ const toggleStatus = async (id) => {
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
                 {paginatedData.length > 0 ? (
-                  paginatedData.map((Taxe, index) => (
+                  paginatedData.map((Tax, index) => (
                     <tr
-                      key={Taxe._id}
+                      key={Tax._id}
                       className="transition-colors hover:bg-gray-50"
                     >
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
@@ -382,11 +362,11 @@ const toggleStatus = async (id) => {
                         <div className="flex items-center">
                           <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden">
                             <img 
-                              src={Taxe.logo || `https://ui-avatars.com/api/?name=${Taxe.name}&background=6366f1&color=fff`}
-                              alt={Taxe.name}
+                              src={Tax.logo || `https://ui-avatars.com/api/?name=${Tax.name}&background=6366f1&color=fff`}
+                              alt={Tax.name}
                               className="w-full h-full object-cover"
                               onError={(e) => {
-                                e.target.src = `https://ui-avatars.com/api/?name=${Taxe.name}&background=6366f1&color=fff`;
+                                e.target.src = `https://ui-avatars.com/api/?name=${Tax.name}&background=6366f1&color=fff`;
                               }}
                             />
                           </div>
@@ -394,47 +374,47 @@ const toggleStatus = async (id) => {
                       </td> */}
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="text-sm font-semibold text-gray-900">
-                          {Taxe.name}
+                          {Tax.name}
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <button
-                          onClick={() => toggleStatus(Taxe._id)}
+                          onClick={() => toggleStatus(Tax._id)}
                           className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                           style={{
-                            backgroundColor: Taxe.active
+                            backgroundColor: Tax.active
                               ? "#10b981"
                               : "#d1d5db",
                           }}
                         >
                           <span
                             className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              Taxe.active ? "translate-x-6" : "translate-x-1"
+                              Tax.active ? "translate-x-6" : "translate-x-1"
                             }`}
 
 
                           />
                         </button>
                         <span
-                          className={`ml-3 text-sm font-medium ${Taxe.active ? "text-green-600" : "text-red-600"}`}
+                          className={`ml-3 text-sm font-medium ${Tax.active ? "text-green-600" : "text-red-600"}`}
                         >
-                          {Taxe.active ? "Active" : "Inactive"}
+                          {Tax.active ? "Active" : "Inactive"}
                         </span>
                       </td>
                       {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {Taxe.sortOrder || 0}
+                        {Tax.sortOrder || 0}
                       </td> */}
                       <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                         <div className="flex justify-end gap-2">
                           <button
-                            onClick={() => openEditModal(Taxe)}
+                            onClick={() => openEditModal(Tax)}
                             className="rounded-lg p-2 text-indigo-600 transition-colors hover:bg-indigo-50 hover:text-indigo-900"
                             title="Edit Brand"
                           >
                             <Edit size={16} />
                           </button>
                           <button
-                            onClick={() => handleDelete(Taxe._id)}
+                            onClick={() => handleDelete(Tax._id)}
                             className="rounded-lg p-2 text-red-600 transition-colors hover:bg-red-50 hover:text-red-900"
                             title="Delete Brand"
                           >
@@ -454,7 +434,7 @@ const toggleStatus = async (id) => {
                         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
                           <Search size={24} className="text-gray-400" />
                         </div>
-                        <p className="text-lg font-medium">No Taxes found</p>
+                        <p className="text-lg font-medium">No Taxs found</p>
                         <p className="text-sm">
                           Try adjusting your search or filter criteria
                         </p>
@@ -473,7 +453,7 @@ const toggleStatus = async (id) => {
                 <div className="text-sm text-gray-700">
                   Showing {startIndex + 1} to{" "}
                   {Math.min(startIndex + itemsPerPage, filtered.length)} of{" "}
-                  {filtered.length} Taxes
+                  {filtered.length} Taxs
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -526,23 +506,23 @@ const toggleStatus = async (id) => {
           <div className="z-10 w-full max-w-md transform rounded-xl bg-white shadow-2xl transition-all">
             <div className="border-b border-gray-200 p-6">
               <h2 className="text-xl font-semibold text-gray-900">
-                {editing ? "Edit Unit" : "Add New Unit"}
+                {editing ? "Edit Tax" : "Add New Tax"}
               </h2>
               <p className="mt-1 text-sm text-gray-500">
                 {editing
-                  ? "Update Taxe information"
-                  : "Create a new Taxe entry"}
+                  ? "Update Tax information"
+                  : "Create a new Tax entry"}
               </p>
             </div>
 
             <div className="space-y-6 p-6">
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700">
-                  Unit Name *
+                  Tax Name *
                 </label>
                 <input
                   type="text"
-                  placeholder="Enter Taxe name"
+                  placeholder="Enter Tax name"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
@@ -587,7 +567,7 @@ const toggleStatus = async (id) => {
                   />
                 </button>
                 <label className="text-sm font-medium text-gray-700">
-                  Taxe is {form.active ? "active" : "inactive"}
+                  Tax is {form.active ? "active" : "inactive"}
                 </label>
               </div>
             </div>
@@ -600,10 +580,10 @@ const toggleStatus = async (id) => {
                 Cancel
               </button>
               <button
-                onClick={()=>editing ? handleUpdateUnit() : handleAddUnit()}
+                onClick={()=>editing ? handleUpdateTax() : handleAddTax()}
                 className="rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white transition-colors hover:bg-indigo-700"
               >
-                {editing ? "Update Taxe" : "Create Unit"}
+                {editing ? "Update Tax" : "Create Tax"}
               </button>
             </div>
           </div>

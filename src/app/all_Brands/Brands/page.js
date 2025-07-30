@@ -74,8 +74,6 @@ export default function BrandsPage() {
     const data = await res.json();
     if (res.ok) {
       alert("✅ Brand added: " + data.name);
-    } else {
-      alert("❌ " + data.message);
     }
   } catch (err) {
     console.error(err);
@@ -113,8 +111,6 @@ export default function BrandsPage() {
         alert("Unit updated successfully!");
         setModalOpen(false);
         fetchUnits(); // call to refresh the unit list
-      } else {
-        alert(data.message || "Update failed.");
       }
     } catch (error) {
       console.error("Error updating unit:", error);
@@ -403,7 +399,7 @@ const toggleStatus = async (id) => {
                               alt={brand.name}
                               width={50}
                               height={50}
-                              className="h-full w-full object-cover"
+                              className="h-full w-full object-contain "
                               onError={(e) => {
                                 e.target.src = `https://ui-avatars.com/api/?name=${brand.name}&background=6366f1&color=fff`;
                               }}
