@@ -1,7 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import "toastify-js/src/toastify.css";
+import Toastify from "toastify-js";
 
+
+const showToast = (text, type = "success") => {
+  Toastify({
+    text,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    close: true,
+    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+  }).showToast();
+};
 const Signup = () => {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -17,6 +30,7 @@ const Signup = () => {
     captchaInput: "",
     countryCode: "+91",
   });
+  
 
   const [captchaCode, setCaptchaCode] = useState("");
 
@@ -41,12 +55,12 @@ const Signup = () => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      showToast("Passwords do not match!");
       return;
     }
 
     if (formData.captchaInput !== captchaCode) {
-      alert("Invalid captcha!");
+      showToast("Invalid captcha!");
       return;
     }
 
@@ -77,10 +91,10 @@ const Signup = () => {
 
       const data = await res.json();
       console.log("Signup Response:", data);
-      alert(data.message || "Signup successful!");
+      showToast(data.message || "Signup successful!");
     } catch (error) {
       console.error("Signup error:", error);
-      alert("Something went wrong.");
+      showToast("Something went wrong.");
     }
   };
 

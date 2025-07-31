@@ -3,6 +3,21 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
+import "toastify-js/src/toastify.css";
+import Toastify from "toastify-js";
+
+
+const showToast = (text, type = "success") => {
+  Toastify({
+    text,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    close: true,
+    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+  }).showToast();
+};
+
 
 export default function CreateCategory() {
   const [title, setTitle] = useState("");
@@ -45,15 +60,15 @@ export default function CreateCategory() {
       const result = await res.json();
 
       if (!res.ok) {
-        alert(result.message || "❌ Failed to create category");
+        showToast(result.message || "❌ Failed to create category");
         return;
       }
 
-      alert("✅ Category created successfully");
+      showToast("✅ Category created successfully");
       router.push("/admin/categories");
     } catch (err) {
       console.error("Error submitting form:", err);
-      alert("Something went wrong.");
+      showToast("Something went wrong.");
     }
   };
 

@@ -266,13 +266,13 @@ export default function CreateProduct() {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Token missing. Please log in.");
+      showToast("Token missing. Please log in.");
       setLoading(false);
       return;
     }
 
     if (!imageFile) {
-      alert("Please select an image.");
+      showToast("Please select an image.");
       setLoading(false);
       return;
     }
@@ -302,15 +302,15 @@ export default function CreateProduct() {
 
       if (!res.ok) {
         console.error("Create failed:", result);
-        alert(result.message || "❌ Product creation failed.");
+        showToast(result.message || "❌ Product creation failed.");
         return;
       }
 
-      alert("✅ Product created successfully!");
+      showToast("✅ Product created successfully!");
       router.push("/allproduct");
     } catch (err) {
       console.error("Error:", err);
-      alert("Something went wrong.");
+      showToast("Something went wrong.");
     } finally {
       setLoading(false);
     }

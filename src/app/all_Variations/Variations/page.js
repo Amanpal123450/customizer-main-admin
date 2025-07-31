@@ -12,7 +12,20 @@ import {
   Upload,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import "toastify-js/src/toastify.css";
+import Toastify from "toastify-js";
 
+
+const showToast = (text, type = "success") => {
+  Toastify({
+    text,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    close: true,
+    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+  }).showToast();
+};
 const dummyBrands = [
   { id: 1, name: "kg", active: true, sortOrder: 1 },
   { id: 2, name: "pcs", active: true, sortOrder: 2 },
@@ -75,7 +88,7 @@ export default function VariationPage() {
     GetAllvariation();
   }, []);
   const handleAddUnit = async () => {
-    // if (!unitName.trim()) return alert('Unit name is required!');
+    // if (!unitName.trim()) return showToast('Unit name is required!');
 
     // setLoading(true);
     try {
@@ -93,15 +106,15 @@ export default function VariationPage() {
       const data = await res.json();
       console.log(data);
       if (res.ok) {
-        alert("✅ Unit added: " + data.name);
+        showToast("✅ Unit added: " + data.name);
         // setUnitName('');
 
         main("/units");
       } else {
-        alert("❌ Error: " + (data.message || "Something went wrong"));
+        showToast("❌ Error: " + (data.message || "Something went wrong"));
       }
     } catch (error) {
-      alert("❌ Network error: " + error.message);
+      showToast("❌ Network error: " + error.message);
     }
   };
 
@@ -128,21 +141,21 @@ export default function VariationPage() {
       // fetchvariation();
 
       if (res.ok) {
-        alert("Unit updated successfully!");
+        showToast("Unit updated successfully!");
         setModalOpen(false);
         fetchvariation(); // call to refresh the unit list
       } else {
-        alert(data.message || "Update failed.");
+        showToast(data.message || "Update failed.");
       }
     } catch (error) {
       console.error("Error updating unit:", error);
-      alert("Something went wrong!");
+      showToast("Something went wrong!");
     }
   };
 
   const handleSave = () => {
     if (!form.name.trim()) {
-      alert("Brand name is required");
+      showToast("Brand name is required");
       return;
     }
 
@@ -202,13 +215,13 @@ export default function VariationPage() {
       if (res.ok) {
         
         
-        alert("Unit deleted successfully!");
+        showToast("Unit deleted successfully!");
       } else {
-        alert("Failed to delete unit. Please try again.");
+        showToast("Failed to delete unit. Please try again.");
       }
     } catch (error) {
       console.error("Error deleting unit:", error);
-      alert("Something went wrong. Please try again.");
+      showToast("Something went wrong. Please try again.");
     }
   }
 };

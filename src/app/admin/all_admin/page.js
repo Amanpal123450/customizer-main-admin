@@ -3,6 +3,21 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
+import "toastify-js/src/toastify.css";
+import Toastify from "toastify-js";
+
+
+const showToast = (text, type = "success") => {
+  Toastify({
+    text,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    close: true,
+    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+  }).showToast();
+};
+
 export default function AdminPage() {
   const [users, setUsers] = useState([]);
 
@@ -48,11 +63,11 @@ export default function AdminPage() {
       const result = await res.json();
       if (!res.ok) throw new Error(result.message || "Failed to delete user");
 
-      alert("✅ User deleted successfully!");
+      showToast("✅ User deleted successfully!");
       setUsers((prev) => prev.filter((u) => u._id !== id));
     } catch (err) {
       console.error("Delete error:", err);
-      alert("❌ Failed to delete user.");
+      showToast("❌ Failed to delete user.");
     }
   };
 

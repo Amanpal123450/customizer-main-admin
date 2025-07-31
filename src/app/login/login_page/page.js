@@ -2,6 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
+import "toastify-js/src/toastify.css";
+import Toastify from "toastify-js";
+
+
+const showToast = (text, type = "success") => {
+  Toastify({
+    text,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    close: true,
+    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+  }).showToast();
+};
 const generateCaptcha = (length = 6) =>
   Math.random().toString(36).slice(2, 2 + length).toUpperCase();
  
@@ -33,7 +48,7 @@ const Login = () => {
   e.preventDefault();
 
   if (formData.captchaInput !== captchaCode) {
-    alert("Invalid captcha");
+    showToast("Invalid captcha");
     return;
   }
 
@@ -52,11 +67,11 @@ const Login = () => {
     const data = await res.json();
     console.log(data.user._id);
     if (!res.ok) {
-      alert(data.message || "Login failed!");
+      showToast(data.message || "Login failed!");
       return;
     }
   //  localStorage.setItem("token", data.token);
-    alert("Login successful!");
+    showToast("Login successful!");
 
     //  router.push("/admin/dashboard");
 
@@ -70,7 +85,7 @@ const Login = () => {
     router.push("/");
   } catch (error) {
     console.error("Login error:", error);
-    alert("Something went wrong while logging in.");
+    showToast("Something went wrong while logging in.");
   }
 };
 

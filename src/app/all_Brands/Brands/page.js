@@ -12,6 +12,20 @@ import {
   Upload,
 } from "lucide-react";
 import Image from "next/image";
+import "toastify-js/src/toastify.css";
+import Toastify from "toastify-js";
+
+
+const showToast = (text, type = "success") => {
+  Toastify({
+    text,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    close: true,
+    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+  }).showToast();
+};
 
 
 export default function BrandsPage() {
@@ -73,11 +87,11 @@ export default function BrandsPage() {
 
     const data = await res.json();
     if (res.ok) {
-      alert("✅ Brand added: " + data.name);
+      showToast("✅ Brand added: " + data.name);
     }
   } catch (err) {
     console.error(err);
-    alert("❌ Network error");
+    showToast("❌ Network error");
   }
 };
 
@@ -108,13 +122,13 @@ export default function BrandsPage() {
       // fetchUnits();
 
       if (res.ok) {
-        alert("Unit updated successfully!");
+        showToast("Unit updated successfully!");
         setModalOpen(false);
         fetchUnits(); // call to refresh the unit list
       }
     } catch (error) {
       console.error("Error updating unit:", error);
-      alert("Something went wrong!");
+      showToast("Something went wrong!");
     }
   };
 
@@ -143,7 +157,7 @@ export default function BrandsPage() {
 
   const handleSave = () => {
     if (!form.name.trim()) {
-      alert("Brand name is required");
+      showToast("Brand name is required");
       return;
     }
 
@@ -209,13 +223,13 @@ export default function BrandsPage() {
     const data = await res.json();
 
     if (res.ok) {
-      alert("✅ Brand deleted successfully!");
+      showToast("✅ Brand deleted successfully!");
       setBrands(brands.filter((b) => b._id !== id)); // Make sure you're using _id not id
     } else {
-      alert("❌ Failed to delete brand: " + (data.message || "Unknown error"));
+      showToast("❌ Failed to delete brand: " + (data.message || "Unknown error"));
     }
   } catch (error) {
-    alert("❌ Network error: " + error.message);
+    showToast("❌ Network error: " + error.message);
   }
 };
 
@@ -237,11 +251,11 @@ const toggleStatus = async (id) => {
         )
       );
     } else {
-      alert(data.message || "Failed to toggle status.");
+      showToast(data.message || "Failed to toggle status.");
     }
   } catch (error) {
     console.error("Error toggling status:", error);
-    alert("Something went wrong!");
+    showToast("Something went wrong!");
   }
 };
 

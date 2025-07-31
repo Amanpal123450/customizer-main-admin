@@ -3,7 +3,21 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";  
+import "toastify-js/src/toastify.css";
+import Toastify from "toastify-js";
+
+
+const showToast = (text, type = "success") => {
+  Toastify({
+    text,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    close: true,
+    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+  }).showToast();
+};
 
 // Progress tracker (matches your creation page)
 function ProgressSection({ formData }) {
@@ -132,7 +146,7 @@ export default function EditProductPage() {
   // useEffect(() => {
   //   const fetchProduct = async () => {
   //     try {
-  //       const res = await fetch(`http://localhost:4000/api/v1/getProduct/${id}`);
+  //       const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/getProduct/${id}`);
   //       const data = await res.json();
   //       if (!res.ok) throw new Error(data.message || "Failed to fetch product");
   //       setForm({
@@ -145,7 +159,7 @@ export default function EditProductPage() {
   //       setPreview(data.data.thumbnail);
   //       setImageFilled(!!data.data.thumbnail);
   //     } catch (err) {
-  //       alert(" Failed to load product");
+  //       showToast(" Failed to load product");
   //     }
   //   };
   //   if (id) fetchProduct();
@@ -180,7 +194,7 @@ export default function EditProductPage() {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `http://localhost:4000/api/v1/updateProduct/${id}`,
+        `/api/v1/updateProduct/${id}`,
         {
           method: "PUT",
           headers: {
@@ -192,13 +206,13 @@ export default function EditProductPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || " Failed to update");
+        showToast(data.message || " Failed to update");
         return;
       }
-      alert(" Product updated successfully!");
+      showToast(" Product updated successfully!");
       router.push("/allproduct");
     } catch (err) {
-      alert(" Something went wrong!");
+      showToast(" Something went wrong!");
     } finally {
       setLoading(false);
     }

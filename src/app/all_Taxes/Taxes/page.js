@@ -13,6 +13,21 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import "toastify-js/src/toastify.css";
+import Toastify from "toastify-js";
+
+
+const showToast = (text, type = "success") => {
+  Toastify({
+    text,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    close: true,
+    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+  }).showToast();
+};
+
 const dummyBrands = [
   { id: 1, name: "kg", active: true, sortOrder: 1 },
   { id: 2, name: "pcs", active: true, sortOrder: 2 },
@@ -88,9 +103,9 @@ export default function TaxPage() {
           body: JSON.stringify({ name: form.name, active: form.active }),
         },
       );
-      alert(" Tax added: " + form.name);
+      showToast(" Tax added: " + form.name);
     } catch (error) {
-      alert("❌ Network error: " + error.message);
+      showToast("❌ Network error: " + error.message);
     }
   };
 
@@ -116,13 +131,13 @@ export default function TaxPage() {
    
     } catch (error) {
       console.error("Error updating Tax:", error);
-      alert("Something went wrong!");
+      showToast("Something went wrong!");
     }
   };
 
   const handleSave = () => {
     if (!form.name.trim()) {
-      alert("Brand name is required");
+      showToast("Brand name is required");
       return;
     }
 
@@ -182,13 +197,13 @@ export default function TaxPage() {
       if (res.ok) {
         
         
-        alert("Tax deleted successfully!");
+        showToast("Tax deleted successfully!");
       } else {
-        alert("Failed to delete Tax. Please try again.");
+        showToast("Failed to delete Tax. Please try again.");
       }
     } catch (error) {
       console.error("Error deleting Tax:", error);
-      alert("Something went wrong. Please try again.");
+      showToast("Something went wrong. Please try again.");
     }
   }
 };

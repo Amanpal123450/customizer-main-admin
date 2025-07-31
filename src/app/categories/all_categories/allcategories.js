@@ -14,6 +14,20 @@ import {
   faSearch,
   faFilter,
 } from "@fortawesome/free-solid-svg-icons";
+import "toastify-js/src/toastify.css";
+import Toastify from "toastify-js";
+
+
+const showToast = (text, type = "success") => {
+  Toastify({
+    text,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    close: true,
+    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+  }).showToast();
+};
 
 export default function CategoriesPage1() {
   const [categories, setCategories] = useState([]);
@@ -82,7 +96,7 @@ export default function CategoriesPage1() {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      alert("Authentication required. Please login first.");
+      showToast("Authentication required. Please login first.");
       return;
     }
 
@@ -101,7 +115,7 @@ export default function CategoriesPage1() {
         const data = await res.json();
 
         if (res.ok) {
-          alert(data.message || "Category deleted successfully");
+          showToast(data.message || "Category deleted successfully");
           const updatedCategories = categories.filter((c) => c._id !== id);
           setCategories(updatedCategories);
           setFilteredCategories(
@@ -110,11 +124,11 @@ export default function CategoriesPage1() {
             ),
           );
         } else {
-          alert(data.message || "Failed to delete category");
+          showToast(data.message || "Failed to delete category");
         }
       } catch (err) {
         console.error("Delete failed:", err);
-        alert("Failed to delete category. Please try again.");
+        showToast("Failed to delete category. Please try again.");
       }
     }
   };

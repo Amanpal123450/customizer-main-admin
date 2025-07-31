@@ -30,6 +30,21 @@ const LOADING_MESSAGES = [
   "Convincing APIs to cooperate..."
 ];
 
+import "toastify-js/src/toastify.css";
+import Toastify from "toastify-js";
+
+
+const showToast = (text, type = "success") => {
+  Toastify({
+    text,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    close: true,
+    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+  }).showToast();
+};
+
 export default function CategoryDetailPage() {
   const { id } = useParams();
   const [category, setCategory] = useState(null);
@@ -101,7 +116,7 @@ export default function CategoryDetailPage() {
     console.log(data);
     if (res.ok) {
       router.push("/categories");
-      alert("Successfully deleted subcategory!");
+      showToast("Successfully deleted subcategory!");
     }
   }
 
@@ -147,7 +162,7 @@ export default function CategoryDetailPage() {
     setIsSubmitting(true);
 
     if (!thumbnail) {
-      alert("Please upload a thumbnail image.");
+      showToast("Please upload a thumbnail image.");
       setIsSubmitting(false);
       return;
     }
@@ -172,12 +187,12 @@ export default function CategoryDetailPage() {
       const result = await res.json();
 
       if (!res.ok) {
-        alert(result.message || "❌ Failed to create subcategory.");
+        showToast(result.message || "❌ Failed to create subcategory.");
         setIsSubmitting(false);
         return;
       }
 
-      alert("🎉 Subcategory created successfully! " + easterEggMessage);
+      showToast("🎉 Subcategory created successfully! " + easterEggMessage);
       setIsSubmitting(false);
       closeModal();
 
@@ -185,7 +200,7 @@ export default function CategoryDetailPage() {
       window.location.reload();
     } catch (err) {
       console.error("Create Subcategory Failed:", err);
-      alert("Something went wrong. The internet gremlins are at it again! 🤖");
+      showToast("Something went wrong. The internet gremlins are at it again! 🤖");
       setIsSubmitting(false);
     }
   };

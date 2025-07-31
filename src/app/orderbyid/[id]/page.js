@@ -54,13 +54,13 @@ export default function OrderDetailPage() {
               const item = product.productId;
               return (
                 <div key={index} className="border p-4 rounded shadow">
-                 <Image
-  src={item?.thumbnail?.[0] || "/placeholder.jpg"}
-  alt={item?.title || "Product Image"}
-  width={300}
-  height={160}
-  className="object-contain rounded mb-2 w-full h-40"
-/>
+                  <Image
+                    src={item?.thumbnail?.[0] || "/placeholder.jpg"}
+                    alt={item?.title || "Product Image"}
+                    width={300}
+                    height={160}
+                    className="object-contain rounded mb-2 w-full h-40"
+                  />
 
                   <h3 className="text-lg font-semibold">{item?.title || "Untitled Product"}</h3>
                   <p className="text-sm text-gray-600 mb-1">{item?.description || "No description available."}</p>

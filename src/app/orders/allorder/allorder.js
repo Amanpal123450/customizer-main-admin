@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import jsPDF from "jspdf";
+import axios from 'axios'
 import "jspdf-autotable"; // 
 import {
   Search,
@@ -29,10 +30,25 @@ import {
 } from "lucide-react";
 import autoTable from "jspdf-autotable";
 
+import "toastify-js/src/toastify.css";
+import Toastify from "toastify-js";
+
+
+const showToast = (text, type = "success") => {
+  Toastify({
+    text,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    close: true,
+    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+  }).showToast();
+};
+
 const OrderManagementPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState("");
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [filters, setFilters] = useState({
     search: "",
@@ -147,6 +163,7 @@ const OrderManagementPage = () => {
       // ];
 
       setOrders(data.orders.reverse());
+      console.log(data)
     } catch (error) {
       console.error("Error fetching orders:", error);
       // Use mock data on error
@@ -158,36 +175,36 @@ const OrderManagementPage = () => {
 
   // Filter orders based on current filters
   const filteredOrders = orders.filter((order) => {
-  const search = filters.search?.toLowerCase().trim() || "";
+    const search = filters.search?.toLowerCase().trim() || "";
 
-const matchesSearch =
-  !search ||
-  order._id?.toLowerCase().includes(search) ||
-  order.customerName?.toLowerCase().includes(search) ||
-  order.userId?.firstName?.toLowerCase().includes(search) ||
-  order.userId?.lastName?.toLowerCase().includes(search) ||
-  order.userId?.email?.toLowerCase().includes(search) ||
-  new Date(order.createdAt).toLocaleDateString("en-IN").includes(search) ||
-  order.products?.some((product) =>
-    product.title?.toLowerCase().includes(search)
-  );
+    const matchesSearch =
+      !search ||
+      order._id?.toLowerCase().includes(search) ||
+      order.customerName?.toLowerCase().includes(search) ||
+      order.userId?.firstName?.toLowerCase().includes(search) ||
+      order.userId?.lastName?.toLowerCase().includes(search) ||
+      order.userId?.email?.toLowerCase().includes(search) ||
+      new Date(order.createdAt).toLocaleDateString("en-IN").includes(search) ||
+      order.products?.some((product) =>
+        product.title?.toLowerCase().includes(search)
+      );
 
-  const matchesStatus =
-    !filters.status || order.orderStatus === filters.status;
+    const matchesStatus =
+      !filters.status || order.orderStatus === filters.status;
 
-  const matchesPaymentStatus =
-    !filters.paymentStatus || order.paymentStatus === filters.paymentStatus;
+    const matchesPaymentStatus =
+      !filters.paymentStatus || order.paymentStatus === filters.paymentStatus;
 
-  const matchesPaymentMethod =
-    !filters.paymentMethod || order.paymentMethod === filters.paymentMethod;
+    const matchesPaymentMethod =
+      !filters.paymentMethod || order.paymentMethod === filters.paymentMethod;
 
-  return (
-    matchesSearch &&
-    matchesStatus &&
-    matchesPaymentStatus &&
-    matchesPaymentMethod
-  );
-});
+    return (
+      matchesSearch &&
+      matchesStatus &&
+      matchesPaymentStatus &&
+      matchesPaymentMethod
+    );
+  });
 
 
   // Pagination
@@ -198,14 +215,15 @@ const matchesSearch =
     indexOfLastOrder,
   );
   const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
-   
+
+
   // useEffect(()=>{
-     
+
   //   const GetUser = async () => {
   //     const token =localStorage.getItem("token");
   //       try {
   //         const res = await fetch(
-  //           ` http://localhost:4000/api/v1/orders/all-orders`,{
+  //           ` https://e-com-customizer.onrender.com/api/v1/orders/all-orders`,{
 
   //              method: "GET",
   //         headers: {
@@ -250,48 +268,48 @@ const matchesSearch =
   };
 
   // Action handlers
-// import axios from "axios";
+  // import axios from "axios";
 
-const handleStatusUpdate = async (orderId, newStatus) => {
-  try {
-    console.log("Updating order status:", orderId, newStatus);
+  const handleStatusUpdate = async (orderId, newStatus) => {
+    try {
+      console.log("Updating order status:", orderId, newStatus);
 
-  
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order._id === orderId ? { ...order, orderStatus: newStatus } : order
-      )
-    );
 
-    const token = localStorage.getItem("token");
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order._id === orderId ? { ...order, orderStatus: newStatus } : order
+        )
+      );
 
-    const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/ordersStatus/${orderId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ orderStatus: newStatus }),
-    });
+      const token = localStorage.getItem("token");
 
-    const data = await res.json();
+      const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/ordersStatus/${orderId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ orderStatus: newStatus }),
+      });
 
-    console.log(data);
-    if (data.success) {
-      console.log("Order updated successfully", data.order);
-    } else {
-      console.error("Failed to update order");
+      const data = await res.json();
+
+      console.log("dddd", data);
+      if (data.success) {
+        console.log("Order updated successfully", data.order);
+      } else {
+        console.error("Failed to update order");
+      }
+    } catch (error) {
+      console.error("Error updating order:", error);
     }
-  } catch (error) {
-    console.error("Error updating order:", error);
-  }
-};
+  };
 
 
 
   const handleRefund = (orderId) => {
     // Handle refund logic
-    alert(`Refund initiated for order ${orderId}`);
+    showToast(`Refund initiated for order ${orderId}`);
   };
 
   const handlePrintInvoice = (order) => {
@@ -300,137 +318,148 @@ const handleStatusUpdate = async (orderId, newStatus) => {
   };
 
   const handleDownloadInvoice = (order) => {
-  const doc = new jsPDF();
+    const doc = new jsPDF();
 
-  // Title
-  doc.setFontSize(18);
-  doc.text("Invoice", 14, 20);
+    // Title
+    doc.setFontSize(18);
+    doc.text("Invoice", 14, 20);
 
-  // Order Details
-  doc.setFontSize(12);
-  doc.text(`Order ID: ${order._id}`, 14, 30);
-  doc.text(`User ID: ${order.userId}`, 14, 36);
-  doc.text(`Order Status: ${order.orderStatus}`, 14, 42);
-  doc.text(`Total Amount: ₹${order.totalAmount}`, 14, 48);
-  doc.text(
-    `Shipping Address: ${order.shippingAddress || "N/A"}`,
-    14,
-    54
-  );
+    // Order Details
+    doc.setFontSize(12);
+    doc.text(`Order ID: ${order._id}`, 14, 30);
+    doc.text(`User ID: ${order.userId}`, 14, 36);
+    doc.text(`Order Status: ${order.orderStatus}`, 14, 42);
+    doc.text(`Total Amount: ₹${order.totalAmount}`, 14, 48);
+    doc.text(
+      `Shipping Address: ${order.shippingAddress || "N/A"}`,
+      14,
+      54
+    );
 
-  // Table Data
-  const products = order.products.map((p, index) => [
-    index + 1,
-    p.product?.title || "Product",
-    p.quantity,
-    `₹${p.price}`,
-    `₹${p.price * p.quantity}`,
-  ]);
+    // Table Data
+    const products = order.products.map((p, index) => [
+      index + 1,
+      p.product?.title || "Product",
+      p.quantity,
+      `₹${p.price}`,
+      `₹${p.price * p.quantity}`,
+    ]);
 
-  // Products Table
-  autoTable(doc, {
-    startY: 60,
-    head: [["#", "Product", "Qty", "Unit Price", "Total"]],
-    body: products,
-  });
+    // Products Table
+    autoTable(doc, {
+      startY: 60,
+      head: [["#", "Product", "Qty", "Unit Price", "Total"]],
+      body: products,
+    });
 
-  // Footer message
-  // const finalY = doc.lastAutoTable?.finalY || 70;
-  // doc.text("Thank you for your purchase!", 14, finalY + 10);
+    // Footer message
+    // const finalY = doc.lastAutoTable?.finalY || 70;
+    // doc.text("Thank you for your purchase!", 14, finalY + 10);
 
-  // Save PDF
-  doc.save(`invoice_${order._id}.pdf`);
-};
+    // Save PDF
+    doc.save(`invoice_${order._id}.pdf`);
+  };
 
   const exportOrders = (format) => {
     console.log("dssf")
-  if (!format) return;
+    if (!format) return;
 
-  // Example orders array — replace with actual data from your API or state
-  const orders = [
-    {
-      _id: "ORDER123",
-      orderStatus: "Pending",
-      createdAt: "2025-07-18T09:03:54.643Z",
-      products: [
-        {
-          title: "I Phone 12 pro max",
-          price: 10000,
-          quantity: 7,
-          color: "Blue",
-        },
-      ],
-    },
-    // Add more orders if needed
-  ];
+    // Example orders array — replace with actual data from your API or state
+    const orders = [
+      {
+        _id: "ORDER123",
+        orderStatus: "Pending",
+        createdAt: "2025-07-18T09:03:54.643Z",
+        products: [
+          {
+            title: "I Phone 12 pro max",
+            price: 10000,
+            quantity: 7,
+            color: "Blue",
+          },
+        ],
+      },
+      // Add more orders if needed
+    ];
 
-  // CSV header
-  const headers = [
-    "Order ID",
-    "Order Status",
-    "Created At",
-    "Product Title",
-    "Price",
-    "Quantity",
-    "Color",
-  ];
+    // CSV header
+    const headers = [
+      "Order ID",
+      "Order Status",
+      "Created At",
+      "Product Title",
+      "Price",
+      "Quantity",
+      "Color",
+    ];
 
-  // Build CSV rows
-  const rows = format.flatMap((order) =>
-    order.products.map((product) => [
-      order._id,
-      order.orderStatus,
-      new Date(order.createdAt).toLocaleString(),
-      product.title,
-      product.price,
-      product.quantity,
-      product.color,
-    ])
-  );
+    // Build CSV rows
+    const rows = format.flatMap((order) =>
+      order.products.map((product) => [
+        order._id,
+        order.orderStatus,
+        new Date(order.createdAt).toLocaleString(),
+        product.title,
+        product.price,
+        product.quantity,
+        product.color,
+      ])
+    );
 
-  // Convert to CSV string
-  const csvContent =
-    [headers, ...rows]
-      .map((e) => e.join(","))
-      .join("\n");
+    // Convert to CSV string
+    const csvContent =
+      [headers, ...rows]
+        .map((e) => e.join(","))
+        .join("\n");
 
-  // Create blob and download
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
 
-  const link = document.createElement("a");
-  link.href = url;
-  link.setAttribute("download", `orders_${Date.now()}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `orders_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
-//  const [user, setUser] = useState();
-  const OrderModal = ({ order, onClose }) => {
-   
-  console.log(order.userId)
-  //  const [user, setUser] = useState(null);
-  //  setUser(order.userId);
-  // useEffect(() => {
-  //   if (!order) return;
+  //  const [user, setUser] = useState();
 
-  //   const GetUser = async (id) => {
-  //     try {
-  //       const res = await fetch(https://e-com-customizer.onrender.com/api/v1/getUser/${id});
-  //       const data = await res.json();
-  //       setUser(data?.data); // adjust based on your API response
-  //       console.log(data)
-  //     } catch (error) {
-  //       console.error("Error fetching user:", error);
-  //     }
-  //   };
+  const OrderModal = ({ selectedOrder, onClose }) => {
+   const [order, setOrder1] = useState(null);
+ console.log(selectedOrder)
+  useEffect(() => {
+    const fetchOrder = async () => {
+      try {
+        const res = await fetch(
+          `https://e-com-customizer.onrender.com/api/v1/orders/${selectedOrder}`
+        );
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const data = await res.json();
+        setOrder1(data.order);
+        console.log("Fetched order:", data);
 
-  //   GetUser(order.userId);
-  // }, [order]);
+         if (Array.isArray(data) && data.length > 0) {
+        setOrder1(data[0]);
+        console.log("Fetched single order:", data[0]);
+      } else {
+        console.log("No order found for this ID.");
+      }
+      } catch (error) {
+        console.log("Error fetching order:", error.message);
+      }
+    };
 
-  
-    if (!order) return null;
+    if (selectedOrder) {
+      fetchOrder();
+    }
+  }, [selectedOrder]);
+
+  if (!order) return <div>Loading order...</div>;
+
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
@@ -510,7 +539,7 @@ const handleStatusUpdate = async (orderId, newStatus) => {
                   </p>
                   <p>
                     <span className="font-medium">Shipping Address:</span>{" "}
-                    {/* {order.shippingAddress} */}
+                    {order.shippingAddress.address}, {order.shippingAddress.state}, {order.shippingAddress.city} ,{order.shippingAddress.pincode} ,{order.shippingAddress.country}
                   </p>
                   <p>
                     <span className="font-medium">Billing Address:</span>{" "}
@@ -530,11 +559,10 @@ const handleStatusUpdate = async (orderId, newStatus) => {
                 {order.statusTimeline?.map((timeline, index) => (
                   <div key={index} className="flex items-center gap-4">
                     <div
-                      className={`h-4 w-4 rounded-full border-2 ${
-                        timeline.completed
-                          ? "border-green-500 bg-green-500"
-                          : "border-gray-300"
-                      }`}
+                      className={`h-4 w-4 rounded-full border-2 ${timeline.completed
+                        ? "border-green-500 bg-green-500"
+                        : "border-gray-300"
+                        }`}
                     />
                     <div className="flex-1">
                       <p
@@ -555,29 +583,34 @@ const handleStatusUpdate = async (orderId, newStatus) => {
             <div>
               <h3 className="mb-4 text-lg font-semibold">Products</h3>
               <div className="space-y-4">
-                {order.products.map((product, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-4 rounded-lg border p-4"
-                  >
-                    <img
-                      src={product.thumbnail[0]}
-                      alt={product.title}
-                      className="h-16 w-16 rounded object-contain"
-                    />
-                    <div className="flex-1">
-                      <h4 className="font-medium">{product.title}</h4>
-                      <p className="text-sm text-gray-600">{product.variant}</p>
-                      <p className="text-sm">Quantity: {product.quantity}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium">₹{product.price}</p>
-                      <p className="text-sm text-gray-600">
-                        Subtotal: ₹{product.subtotal}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+               {Array.isArray(order.products) && order.products.length > 0 ? (
+  order.products.map((product, index) => (
+    <div
+      key={index}
+      className="flex items-center gap-4 rounded-lg border p-4"
+    >
+      <img
+        src={product?.thumbnail?.[0] || "/placeholder.jpg"}
+        alt={product?.title || "Product Image"}
+        className="h-16 w-16 rounded object-contain"
+      />
+      <div className="flex-1">
+        <h4 className="font-medium">{product?.title || "No Title"}</h4>
+        <p className="text-sm text-gray-600">{product?.variant || "N/A"}</p>
+        <p className="text-sm">Quantity: {product?.quantity || 0}</p>
+      </div>
+      <div className="text-right">
+        <p className="font-medium">₹{product?.price?.toFixed(2) || "0.00"}</p>
+        <p className="text-sm text-gray-600">
+          Subtotal: ₹{product?.subtotal?.toFixed(2) || "0.00"}
+        </p>
+      </div>
+    </div>
+  ))
+) : (
+  <p>No products found in this order.</p>
+)}
+
               </div>
             </div>
 
@@ -832,14 +865,14 @@ const handleStatusUpdate = async (orderId, newStatus) => {
                       <td className="whitespace-nowrap px-6 py-4">
                         <div>
                           <div className="text-sm font-medium text-gray-900">
-                            {order._id.slice(1, 15)}...
+                            {order._id}
                           </div>
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <div>
                           <div className="text-sm font-medium text-gray-900">
-                             {order.userId ? `${order.userId.firstName} ${order.userId.lastName}` : "N/A"}
+                            {order.userId ? `${order.userId.firstName} ${order.userId.lastName}` : "N/A"}
                           </div>
                           {/* <div className="text-sm text-gray-500">
                             {order.userId ? ${order.userId.email.slice(1.10)}...: "N/A"}
@@ -855,10 +888,10 @@ const handleStatusUpdate = async (orderId, newStatus) => {
                             className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getPaymentStatusColor(order.paymentStatus)}`}
                           >
                             {/* {order.paymentStatus} */}
-                             {order.paymentMethod}
+                            {order.paymentMethod}
                           </span>
                           <div className="mt-1 text-xs text-gray-500">
-                           
+
                           </div>
                         </div>
                       </td>
@@ -876,7 +909,7 @@ const handleStatusUpdate = async (orderId, newStatus) => {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => {
-                              setSelectedOrder(order);
+                              setSelectedOrder(order._id);
                               setShowOrderModal(true);
                             }}
                             className="text-blue-600 hover:text-blue-900"
@@ -946,11 +979,10 @@ const handleStatusUpdate = async (orderId, newStatus) => {
                       <button
                         key={i + 1}
                         onClick={() => setCurrentPage(i + 1)}
-                        className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${
-                          currentPage === i + 1
-                            ? "z-10 border-blue-500 bg-blue-50 text-blue-600"
-                            : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
-                        }`}
+                        className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${currentPage === i + 1
+                          ? "z-10 border-blue-500 bg-blue-50 text-blue-600"
+                          : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
+                          }`}
                       >
                         {i + 1}
                       </button>
@@ -966,7 +998,7 @@ const handleStatusUpdate = async (orderId, newStatus) => {
       {/* Order Detail Modal */}
       {showOrderModal && (
         <OrderModal
-          order={selectedOrder}
+          selectedOrder={selectedOrder}
           onClose={() => {
             setShowOrderModal(false);
             setSelectedOrder(null);

@@ -16,6 +16,21 @@ import { Download, Printer } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
+import "toastify-js/src/toastify.css";
+import Toastify from "toastify-js";
+
+
+const showToast = (text, type = "success") => {
+  Toastify({
+    text,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    close: true,
+    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+  }).showToast();
+};
+
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [openDropdownId, setOpenDropdownId] = useState(null);
@@ -175,18 +190,18 @@ export default function ProductsPage() {
           setProducts((prev) => prev.filter((p) => p._id !== id));
           setOpenDropdownId(null);
         } else {
-          alert("Failed to delete product");
+          showToast("Failed to delete product");
         }
       } catch (err) {
         console.error("Delete failed:", err);
-        alert("Error deleting product");
+        showToast("Error deleting product");
       }
     }
   };
 
   const handleExportCSV = () => {
     if (filteredProducts.length === 0) {
-      alert("No data to export.");
+      showToast("No data to export.");
       return;
     }
 
