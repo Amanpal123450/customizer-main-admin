@@ -309,7 +309,7 @@ const OrderManagementPage = () => {
 
   const handleRefund = (orderId) => {
     // Handle refund logic
-    showToast(`Refund initiated for order ${orderId}`);
+    alert(`Refund initiated for order ${orderId}`);
   };
 
   const handlePrintInvoice = (order) => {
