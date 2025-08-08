@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import "toastify-js/src/toastify.css";
@@ -12,160 +13,161 @@ const showToast = (text, type = "success") => {
     gravity: "top",
     position: "right",
     close: true,
-    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+    backgroundColor:
+      type === "success"
+        ? "#4BB543"
+        : type === "info"
+        ? "#3498db"
+        : "#FF3E3E",
   }).showToast();
 };
-export default function EditSubCategory() {
-  const { id } = useParams();
-  const router = useRouter();
-  const [title, setTitle] = useState("");
-  const [categoryId, setCategoryId] = useState("");
-  const [thumbnail, setThumbnail] = useState("");
-  const [categories, setCategories] = useState([]);
-  const [imageFile, setImageFile] = useState(null);
-  const [preview, setPreview] = useState(null);
+
+const API_BASE = "https://ecomm-backend-7g4k.onrender.com/api/v1";
+const API_UPDATE = "https://e-com-customizer.onrender.com/api/v1";
+const { id } = useParams();
+const router = useRouter();
+const [title, setTitle] = useState("");
+const [categoryId, setCategoryId] = useState("");
+const [images, setImages] = useState("");
+const [categories, setCategories] = useState([]);
+const [imageFile, setImageFile] = useState(null);
+const [preview, setPreview] = useState(null);
+const [loading, setLoading] = useState(false);
 
 
-  // Fetch subcategory details
-  useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem("token");
-
-      // try {
-      //   if (id) {
-      //     const res = await fetch(`https://ecomm-backend-7g4k.onrender.com/api/v1/getSubCategory/${id}`, {
-      //       headers: {
-      //         Authorization: `Bearer ${token}`,
-      //       },
-      //     });
-
-      //     const data = await res.json();
-      //     const sub = data.subCategory;
-      //     console.log(sub);
-
-      //     setTitle(sub.title || "");
-      //     setCategoryId(sub.category || "");
-      //     setThumbnail(sub.thumbnail?.[0] || "");
-      //   }
-
-      //   // Fetch categories
-      //   const catRes = await fetch("https://ecomm-backend-7g4k.onrender.com/api/v1/showAllCategory");
-      //   const catData = await catRes.json();
-      //   setCategories(catData.data || []);
-      // } catch (err) {
-      //   console.error("Error fetching data:", err);
-      // }
-    };
-
-    fetchData();
-  }, [id]);
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setImageFile(file);
-    setPreview(URL.createObjectURL(file));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-    setCategoryId(id)
-    // 🔥 Prepare form data
-    const formData = new FormData();
-    formData.append("title", title);
-    // formData.append("categoryId", categoryId);
-
-    if (imageFile) {
-      formData.append("thumbnail", imageFile); // 👈 this is important
-    }
-
+// Fetch subcategory details and categories
+useEffect(() => {
+  const fetchData = async () => {
+    setLoading(true);
+  const token = localStorage.getItem("adminToken");
     try {
-      const res = await fetch(
-        `https://e-com-customizer.onrender.com/api/v1/updateCategory/${id}`,
-        {
-          method: "PUT",
+      if (id) {
+        const res = await fetch(`${API_BASE}/getSubCategory/${id}`, {
           headers: {
-            Authorization: `Bearer ${token}`, // ✅ no content-type here for FormData
+            Authorization: `Bearer ${token}`,
           },
-          body: formData,
-        }
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        showToast(data.message || "Failed to update");
-        return;
+        });
+        const data = await res.json();
+        const sub = data.subCategory;
+        setTitle(sub?.title || "");
+        setCategoryId(sub?.category || "");
+        setImages(sub?.images?.[0] || "");
+        setPreview(sub?.images?.[0] || null);
       }
-
-      showToast("✅ SubCategory updated successfully");
-      router.push("/categories");
+      // Fetch categories
+      const catRes = await fetch(`${API_BASE}/showAllCategory`);
+      const catData = await catRes.json();
+      setCategories(catData.data || []);
     } catch (err) {
-      console.error("Update error:", err);
-      showToast("Something went wrong.");
+      showToast("Error fetching data", "error");
+    } finally {
+      setLoading(false);
     }
   };
+  fetchData();
+}, [id]);
+
+const handleImageUpload = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  setImageFile(file);
+  setPreview(URL.createObjectURL(file));
+};
 
 
-  return (
-    <div className="max-w-xl mx-auto mt-6 bg-white p-6 shadow-md rounded">
-      <h1 className="text-2xl font-semibold mb-6">Edit SubCategory</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Title</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded"
-            required
-          />
-        </div>
-
-        {/* <div>
-          <label className="block text-sm font-medium">Category</label>
-          <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.)}
-            className="w-full px-3 py-2 border border-gray-300 rounded"
-            required
-          >
-            {/* <option value="">-- Select Category --</option>
-            {categories.map((cat) => (
-              <option key={cat._id} value={cat._id}>
-                {cat.title}
-              </option>
-            ))} */}
-        {/* </select>
-        </div> */}
-
-        {/* <div>
-          <label className="mb-1 block font-medium">Thumbnail Image</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="w-full rounded border px-4 py-2"
-          />
-          {preview && (
-            <img
-              src={preview}
-              alt="Preview"
-              className="mt-2 h-32 w-32 rounded object-cover"
-            />
-          )}
-        </div> */}
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  const token = localStorage.getItem("adminToken");
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("categoryId", categoryId);
+  if (imageFile) {
+    formData.append("images", imageFile);
+  }
+  try {
+    const res = await fetch(
+      `${API_UPDATE}/updateCategory/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }
+    );
+    const data = await res.json();
+    if (!res.ok) {
+      showToast(data.message || "Failed to update", "error");
+      return;
+    }
+    showToast("✅ SubCategory updated successfully", "success");
+    router.push("/categories");
+  } catch (err) {
+    showToast("Something went wrong.", "error");
+  } finally {
+    setLoading(false);
+  }
+};
 
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+return (
+  <div className="max-w-xl mx-auto mt-6 bg-white p-6 shadow-md rounded">
+    <h1 className="text-2xl font-semibold mb-6">Edit SubCategory</h1>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium">Title</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded"
+          required
+          disabled={loading}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium">Category</label>
+        <select
+          value={categoryId}
+          onChange={(e) => setCategoryId(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded"
+          required
+          disabled={loading}
         >
-          Update SubCategory
-        </button>
-      </form>
-    </div>
-  );
-}
+          <option value="">-- Select Category --</option>
+          {categories.map((cat) => (
+            <option key={cat._id} value={cat._id}>
+              {cat.title}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label className="mb-1 block font-medium">Image</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="w-full rounded border px-4 py-2"
+          disabled={loading}
+        />
+        {preview && (
+          <img
+            src={preview}
+            alt="Preview"
+            className="mt-2 h-32 w-32 rounded object-cover"
+          />
+        )}
+      </div>
+      <button
+        type="submit"
+        className={`w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 ${loading ? "opacity-60 cursor-not-allowed" : ""}`}
+        disabled={loading}
+      >
+        {loading ? "Updating..." : "Update SubCategory"}
+      </button>
+    </form>
+  </div>
+);
+

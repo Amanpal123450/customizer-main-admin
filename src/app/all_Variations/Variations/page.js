@@ -23,7 +23,12 @@ const showToast = (text, type = "success") => {
     gravity: "top",
     position: "right",
     close: true,
-    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+    backgroundColor:
+      type === "success"
+        ? "#4BB543"
+        : type === "info"
+        ? "#3498db"
+        : "#FF3E3E",
   }).showToast();
 };
 const dummyBrands = [
@@ -65,6 +70,12 @@ export default function VariationPage() {
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = filtered.slice(startIndex, startIndex + itemsPerPage);
+  // Get token from localStorage
+
+  const token = typeof window !== "undefined" ? localStorage.getItem("adminToken");; : null;
+
+  // Add Authorization header if token exists
+
 
   useEffect(() => {
     async function GetAllvariation() {
@@ -74,7 +85,7 @@ export default function VariationPage() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            // Authorization: `Bearer ${token}`,
+            "Authorization": `Bearer ${token}`,
           },
         },
       );
@@ -87,6 +98,7 @@ export default function VariationPage() {
 
     GetAllvariation();
   }, []);
+
   const handleAddUnit = async () => {
     // if (!unitName.trim()) return showToast('Unit name is required!');
 
@@ -98,6 +110,7 @@ export default function VariationPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
           },
           body: JSON.stringify({ name: form.name, active: form.active }),
         },
@@ -106,15 +119,15 @@ export default function VariationPage() {
       const data = await res.json();
       console.log(data);
       if (res.ok) {
-        showToast("✅ Unit added: " + data.name);
+        showToast("✅ Unit added: " + data.name, "success");
         // setUnitName('');
 
         main("/units");
       } else {
-        showToast("❌ Error: " + (data.message || "Something went wrong"));
+        showToast("❌ Error: " + (data.message || "Something went wrong"), "error");
       }
     } catch (error) {
-      showToast("❌ Network error: " + error.message);
+      showToast("❌ Network error: " + error.message, "error");
     }
   };
 
@@ -127,6 +140,7 @@ export default function VariationPage() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
           },
           body: JSON.stringify({
             name: form.name,
@@ -141,21 +155,21 @@ export default function VariationPage() {
       // fetchvariation();
 
       if (res.ok) {
-        showToast("Unit updated successfully!");
+        showToast("Unit updated successfully!", "success");
         setModalOpen(false);
         fetchvariation(); // call to refresh the unit list
       } else {
-        showToast(data.message || "Update failed.");
+        showToast(data.message || "Update failed.", "error");
       }
     } catch (error) {
       console.error("Error updating unit:", error);
-      showToast("Something went wrong!");
+      showToast("Something went wrong!", "error");
     }
   };
 
   const handleSave = () => {
     if (!form.name.trim()) {
-      showToast("Brand name is required");
+      showToast("Brand name is required", "error");
       return;
     }
 
@@ -179,7 +193,7 @@ export default function VariationPage() {
   };
 
   const openAddModal = () => {
-    setForm({ name: form.name, active:form.active });
+    setForm({ name: form.name, active: form.active });
     setEditing(false);
     setModalOpen(true);
   };
@@ -204,53 +218,57 @@ export default function VariationPage() {
   };
 
   const handleDelete = async (id) => {
-  if (confirm("Are you sure you want to delete this unit?")) {
-    try {
-      const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/variation/${id}`, {
-        method: "DELETE",
-      });
- const data = await res.json();
+    if (confirm("Are you sure you want to delete this unit?")) {
+      try {
+        const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/variation/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        const data = await res.json();
 
- console.log(data);
-      if (res.ok) {
-        
-        
-        showToast("Unit deleted successfully!");
+        console.log(data);
+        if (res.ok) {
+
+
+          showToast("Unit deleted successfully!", "success");
+        } else {
+          showToast("Failed to delete unit. Please try again.", "error");
+        }
+      } catch (error) {
+        console.error("Error deleting unit:", error);
+        showToast("Something went wrong. Please try again.", "error");
+      }
+    }
+  };
+
+
+  const toggleStatus = async (id) => {
+    try {
+      const response = await fetch(`https://e-com-customizer.onrender.com/api/v1/variationToggle/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+
+      });
+      const data = await response.json();
+      console.log(data)
+      if (response.ok) {
+        setBrands((prevvariation) =>
+          prevvariation.map((unit) =>
+            unit._id === id ? { ...unit, active: !unit.active } : unit
+          )
+        );
       } else {
-        showToast("Failed to delete unit. Please try again.");
+        console.error("Failed to toggle status");
       }
     } catch (error) {
-      console.error("Error deleting unit:", error);
-      showToast("Something went wrong. Please try again.");
+      console.error("Error toggling status:", error);
     }
-  }
-};
-
-
-const toggleStatus = async (id) => {
-  try {
-    const response = await fetch(`https://e-com-customizer.onrender.com/api/v1/variationToggle/${id}`,{
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-     
-    });
-  const data = await response.json();
-  console.log(data)
-    if (response.ok) {
-      setBrands((prevvariation) =>
-        prevvariation.map((unit) =>
-          unit._id === id ? { ...unit, active: !unit.active } : unit
-        )
-      );
-    } else {
-      console.error("Failed to toggle status");
-    }
-  } catch (error) {
-    console.error("Error toggling status:", error);
-  }
-};
+  };
 
 
 
@@ -421,9 +439,8 @@ const toggleStatus = async (id) => {
                           }}
                         >
                           <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              variation.active ? "translate-x-6" : "translate-x-1"
-                            }`}
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${variation.active ? "translate-x-6" : "translate-x-1"
+                              }`}
 
 
                           />
@@ -503,11 +520,10 @@ const toggleStatus = async (id) => {
                       <button
                         key={i}
                         onClick={() => setCurrentPage(i + 1)}
-                        className={`rounded-lg px-3 py-2 text-sm font-medium ${
-                          currentPage === i + 1
-                            ? "bg-indigo-600 text-white"
-                            : "border border-gray-300 hover:bg-gray-100"
-                        }`}
+                        className={`rounded-lg px-3 py-2 text-sm font-medium ${currentPage === i + 1
+                          ? "bg-indigo-600 text-white"
+                          : "border border-gray-300 hover:bg-gray-100"
+                          }`}
                       >
                         {i + 1}
                       </button>
@@ -589,14 +605,12 @@ const toggleStatus = async (id) => {
                 <button
                   type="button"
                   onClick={() => setForm({ ...form, active: !form.active })}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                    form.active ? "bg-indigo-600" : "bg-gray-200"
-                  }`}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${form.active ? "bg-indigo-600" : "bg-gray-200"
+                    }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      form.active ? "translate-x-6" : "translate-x-1"
-                    }`}
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${form.active ? "translate-x-6" : "translate-x-1"
+                      }`}
                   />
                 </button>
                 <label className="text-sm font-medium text-gray-700">
@@ -613,7 +627,7 @@ const toggleStatus = async (id) => {
                 Cancel
               </button>
               <button
-                onClick={()=>editing ? handleUpdateUnit() : handleAddUnit()}
+                onClick={() => editing ? handleUpdateUnit() : handleAddUnit()}
                 className="rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white transition-colors hover:bg-indigo-700"
               >
                 {editing ? "Update variation" : "Create variation"}

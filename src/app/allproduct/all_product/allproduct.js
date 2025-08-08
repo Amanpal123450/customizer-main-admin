@@ -22,12 +22,17 @@ import Toastify from "toastify-js";
 
 const showToast = (text, type = "success") => {
   Toastify({
-    text,
-    duration: 3000,
-    gravity: "top",
-    position: "right",
-    close: true,
-    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+          text,
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          close: true,
+          backgroundColor:
+            type === "success"
+              ? "#4BB543"
+              : type === "info"
+              ? "#3498db"
+              : "#FF3E3E",
   }).showToast();
 };
 
@@ -45,12 +50,20 @@ export default function ProductsPage() {
     setOpenDropdownId((prev) => (prev === id ? null : id));
   };
 
+  const token = localStorage.getItem("adminToken");
+
+  useEffect(() => {
+
+  }, [token])
+  
+
+
   const filteredProducts = products.filter(
     (product) =>
       product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.subCategory.title?.toLowerCase().includes(searchTerm.toLowerCase())
-      // console.log(product.subCategory)
+    // console.log(product.subCategory)
 
   );
 
@@ -140,7 +153,7 @@ export default function ProductsPage() {
         const discountArray = Array.isArray(data?.data) ? data.data : [];
         setDiscounts(discountArray);
         console.log("Discounts:", data);
-        
+
         // Build discount lookup object
         const lookup = {};
         discountArray.forEach(discount => {
@@ -149,10 +162,10 @@ export default function ProductsPage() {
             lookup[discount.product] = discount.discountValue;
           }
         });
-        
+
         setDiscountLookup(lookup);
         console.log("Discount Lookup:", lookup);
-        
+
       } catch (e) {
         console.error("Failed to fetch discounts", e);
         setDiscounts([]);
@@ -173,7 +186,7 @@ export default function ProductsPage() {
   };
 
   const handleDelete = async (id) => {
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("adminToken");
     if (confirm("Are you sure you want to delete this product?")) {
       try {
         const response = await fetch(
@@ -190,18 +203,18 @@ export default function ProductsPage() {
           setProducts((prev) => prev.filter((p) => p._id !== id));
           setOpenDropdownId(null);
         } else {
-          showToast("Failed to delete product");
+          showToast("Failed to delete product", "error");
         }
       } catch (err) {
         console.error("Delete failed:", err);
-        showToast("Error deleting product");
+        showToast("Error deleting product", "error");
       }
     }
   };
 
   const handleExportCSV = () => {
     if (filteredProducts.length === 0) {
-      showToast("No data to export.");
+      showToast("No data to export.", "info");
       return;
     }
 
@@ -209,7 +222,7 @@ export default function ProductsPage() {
     const rows = filteredProducts.map((product) => {
       const discountPercentage = discountLookup[product._id] || 0;
       const discountedPrice = getDiscountedPrice(product.price, product._id);
-      
+
       return [
         `"${product.title || ""}"`,
         `"${product.description || ""}"`,
@@ -371,13 +384,13 @@ export default function ProductsPage() {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          {token && (<tbody className="divide-y divide-gray-200">
             {currentProducts.length > 0 ? (
               currentProducts.map((product, index) => {
                 const discountPercentage = discountLookup[product._id] || 0;
                 const discountedPrice = getDiscountedPrice(product.price, product._id);
                 const hasDiscount = discountPercentage > 0;
-                
+
                 return (
                   <motion.tr
                     key={product._id}
@@ -390,9 +403,9 @@ export default function ProductsPage() {
                     {/* Image */}
                     <td className="px-4 py-4">
                       <div className="flex h-16 w-16 items-center justify-center overflow-hidden border border-gray-200 bg-gray-50 rounded-md">
-                        {product.thumbnail?.[0] ? (
+                        {product.images?.[0] ? (
                           <Image
-                            src={product.thumbnail[0]}
+                            src={product.images[0]}
                             alt={product.title}
                             width={300}
                             height={300}
@@ -450,13 +463,12 @@ export default function ProductsPage() {
                     {/* Stock */}
                     <td className="px-4 py-4">
                       <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          product.quantity > 10
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${product.quantity > 10
                             ? "bg-green-100 text-green-800"
                             : product.quantity > 0
                               ? "bg-yellow-100 text-yellow-800"
                               : "bg-red-100 text-red-800"
-                        }`}
+                          }`}
                       >
                         {product.quantity || 0} units
                       </span>
@@ -472,10 +484,9 @@ export default function ProductsPage() {
                     {/* Discount */}
                     <td className="px-4 py-4">
                       <div className="flex flex-col items-start">
-                        <span 
-                          className={`text-sm font-semibold ${
-                            hasDiscount ? "text-purple-600" : "text-gray-500"
-                          }`}
+                        <span
+                          className={`text-sm font-semibold ${hasDiscount ? "text-purple-600" : "text-gray-500"
+                            }`}
                         >
                           {discountPercentage}%
                         </span>
@@ -526,8 +537,8 @@ export default function ProductsPage() {
                               Delete
                             </button>
 
-                            <Link 
-                              className="flex items-center gap-2 rounded-b-lg border-t px-4 py-2 text-sm text-green-600 transition-colors duration-150 hover:bg-green-50" 
+                            <Link
+                              className="flex items-center gap-2 rounded-b-lg border-t px-4 py-2 text-sm text-green-600 transition-colors duration-150 hover:bg-green-50"
                               href={`/discount/${product._id}`}
                             >
                               <FontAwesomeIcon icon={faTag} className="text-xs" />
@@ -565,7 +576,7 @@ export default function ProductsPage() {
                 </td>
               </tr>
             )}
-          </tbody>
+          </tbody>)}
         </table>
       </div>
 
@@ -585,11 +596,10 @@ export default function ProductsPage() {
                 disabled={currentPage === 1}
                 whileHover={currentPage !== 1 ? { scale: 1.05 } : {}}
                 whileTap={currentPage !== 1 ? { scale: 0.95 } : {}}
-                className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${
-                  currentPage === 1
+                className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${currentPage === 1
                     ? "cursor-not-allowed bg-gray-100 text-gray-400"
                     : "border border-gray-300 bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                }`}
+                  }`}
               >
                 Previous
               </motion.button>
@@ -604,11 +614,10 @@ export default function ProductsPage() {
                       onClick={() => handlePageChange(pageNumber)}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${
-                        currentPage === pageNumber
+                      className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${currentPage === pageNumber
                           ? "bg-blue-600 text-white"
                           : "border border-gray-300 bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                      }`}
+                        }`}
                     >
                       {pageNumber}
                     </motion.button>
@@ -622,11 +631,10 @@ export default function ProductsPage() {
                 disabled={currentPage === totalPages}
                 whileHover={currentPage !== totalPages ? { scale: 1.05 } : {}}
                 whileTap={currentPage !== totalPages ? { scale: 0.95 } : {}}
-                className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${
-                  currentPage === totalPages
+                className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${currentPage === totalPages
                     ? "cursor-not-allowed bg-gray-100 text-gray-400"
                     : "border border-gray-300 bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                }`}
+                  }`}
               >
                 Next
               </motion.button>

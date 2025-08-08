@@ -5,52 +5,70 @@ import { compactFormat } from "@/lib/format-number";
 import { OverviewCard } from "./card";
 import * as icons from "./icons";
 
+
 export function OverviewCardsGroup() {
+  // Store both current and previous values for percentage calculation
   const [data, setData] = useState({
-    views: { value: 0 },
-    profit: { value: 0 },
-    products: { value: 0 },
-    users: { value: 0 },
+    views: { value: 0, prev: 0 },
+    profit: { value: 0, prev: 0 },
+    products: { value: 0, prev: 0 },
+    users: { value: 0, prev: 0 },
   });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+// https://e-com-customizer.onrender.com/api/v1/admin/dashboard
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      try { 
+      try {
         setLoading(true);
         setError(null);
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-          throw new Error("No authentication token found");
+        let token: string | null = null;
+        if (typeof window !== "undefined") {
+          token = localStorage.getItem("adminToken");
         }
-
-        const res = await fetch(
-          "https://e-com-customizer.onrender.com/api/v1/admin/dashboard",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        if (!token) {
+          setError("Token missing. Please log in.");
+          return;
+        }
+        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/admin/dashboard", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         const result = await res.json();
         console.log(result);
 
         if (!res.ok) {
-          throw new Error(result.message || "Failed to fetch dashboard data");
+          setError(result.message || "Failed to fetch dashboard data");
+          return;
         }
 
+        // Simulate previous values for demo; replace with real API data if available
         setData({
-          views: { value: result.data.totalOrders || 0 },
-          profit: { value: result.data.totalRevenue || 0 },
-          products: { value: result.data.totalProducts || 0 },
-          users: { value: result.data.totalUsers || 0 },
+          views: {
+            value: result.data.totalOrders || 0,
+            prev: result.data.prevTotalOrders || Math.max(0, (result.data.totalOrders || 0) - 10),
+          },
+          profit: {
+            value: result.data.totalRevenue || 0,
+            prev: result.data.prevTotalRevenue || Math.max(0, (result.data.totalRevenue || 0) - 1000),
+          },
+          products: {
+            value: result.data.totalProducts || 0,
+            prev: result.data.prevTotalProducts || Math.max(0, (result.data.totalProducts || 0) - 5),
+          },
+          users: {
+            value: result.data.totalUsers || 0,
+            prev: result.data.prevTotalUsers || Math.max(0, (result.data.totalUsers || 0) - 3),
+          },
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error("Dashboard fetch error:", error);
-        
+        setError(error?.message || "Failed to fetch dashboard data");
       } finally {
         setLoading(false);
       }
@@ -60,10 +78,32 @@ export function OverviewCardsGroup() {
   }, []);
 
   // Enhanced card data with colors and trends
+  // Helper to calculate percentage change
+  function getPercentChange(current: number, prev: number) {
+    if (prev === 0) return current === 0 ? 0 : 100;
+    return ((current - prev) / Math.abs(prev)) * 100;
+  }
+
+  // Helper to calculate progress (simulate as current/max for demo)
+  function getProgress(current: number, max: number) {
+    if (max === 0) return 0;
+    return Math.min(100, Math.round((current / max) * 100));
+  }
+
+  // Simulate max values for progress bars (replace with real targets if available)
+  const maxValues = {
+    views: Math.max(data.views.value, data.views.prev, 100),
+    profit: Math.max(data.profit.value, data.profit.prev, 1000),
+    products: Math.max(data.products.value, data.products.prev, 50),
+    users: Math.max(data.users.value, data.users.prev, 20),
+  };
+
   const cardConfigs = [
     {
       label: "Total Orders",
       value: compactFormat(data.views.value),
+      percent: getPercentChange(data.views.value, data.views.prev),
+      progress: getProgress(data.views.value, maxValues.views),
       Icon: icons.Views,
       gradient: "from-blue-500 to-blue-600",
       bgColor: "bg-blue-50",
@@ -74,6 +114,8 @@ export function OverviewCardsGroup() {
     {
       label: "Total Revenue",
       value: "₹" + compactFormat(data.profit.value),
+      percent: getPercentChange(data.profit.value, data.profit.prev),
+      progress: getProgress(data.profit.value, maxValues.profit),
       Icon: icons.Profit,
       gradient: "from-green-500 to-green-600",
       bgColor: "bg-green-50",
@@ -84,6 +126,8 @@ export function OverviewCardsGroup() {
     {
       label: "Total Products",
       value: compactFormat(data.products.value),
+      percent: getPercentChange(data.products.value, data.products.prev),
+      progress: getProgress(data.products.value, maxValues.products),
       Icon: icons.Product,
       gradient: "from-purple-500 to-purple-600",
       bgColor: "bg-purple-50",
@@ -94,6 +138,8 @@ export function OverviewCardsGroup() {
     {
       label: "Total Users",
       value: compactFormat(data.users.value),
+      percent: getPercentChange(data.users.value, data.users.prev),
+      progress: getProgress(data.users.value, maxValues.users),
       Icon: icons.Users,
       gradient: "from-orange-500 to-orange-600",
       bgColor: "bg-orange-50",
@@ -156,7 +202,7 @@ export function OverviewCardsGroup() {
         >
           {/* Background Gradient Overlay */}
           <div className={`absolute inset-0 bg-gradient-to-br ${config.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
-          
+
           {/* Card Content */}
           <div className="relative z-10">
             {/* Header */}
@@ -181,10 +227,12 @@ export function OverviewCardsGroup() {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17l9.2-9.2M17 17V7H7" />
                   </svg>
-                  <span className="text-sm font-medium">+12%</span>
+                  <span className="text-sm font-medium">
+                    {config.percent >= 0 ? '+' : ''}{config.percent.toFixed(1)}%
+                  </span>
                 </div>
               </div>
-              
+
               <div className="space-y-1">
                 <p className="text-sm font-medium text-gray-700">{config.label}</p>
                 <p className="text-xs text-gray-500">{config.description}</p>
@@ -195,12 +243,12 @@ export function OverviewCardsGroup() {
             <div className="mt-4 pt-4 border-t border-gray-100">
               <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
                 <span>Progress</span>
-                <span>85%</span>
+                <span>{config.progress}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
+                <div
                   className={`h-2 rounded-full bg-gradient-to-r ${config.gradient} transition-all duration-500`}
-                  style={{ width: '85%' }}
+                  style={{ width: `${config.progress}%` }}
                 ></div>
               </div>
             </div>

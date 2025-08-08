@@ -4,24 +4,31 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 
 // 🟢 PROGRESS SECTION COMPONENT
 function ProgressSection({ formData }) {
   const fields = [
     { name: "title", label: "Title" },
     { name: "description", label: "Description" },
+    { name: "categoryId", label: "Category" },
+    { name: "subCategoryId", label: "SubCategory" },
     { name: "price", label: "Price" },
     { name: "quantity", label: "Quantity" },
     { name: "color", label: "Color" },
     { name: "brand", label: "Brand" },
     { name: "variant", label: "Variant" },
-    { name: "unit", label: "Unit" },
-    { name: "subCategoryId", label: "SubCategory" },
-    { name: "image", label: "Thumbnail" }, // special-case image
+    { name: "image", label: "images" },
   ];
 
   const isFilled = (name) => {
     if (name === "image") return formData.imageFilled;
+    if (name === "description") {
+      // Check if description has actual content (not just HTML tags)
+      const textContent = formData.description.replace(/<[^>]*>/g, '').trim();
+      return textContent !== "";
+    }
     return formData[name] && formData[name].toString().trim() !== "";
   };
 
@@ -136,6 +143,13 @@ function ProgressSection({ formData }) {
   );
 }
 
+// 🟢 Toast helper (simple fallback, replace with your preferred toast library if needed)
+function showToast(message, type = "info") {
+  if (typeof window !== "undefined") {
+    alert(`${type === "error" ? "❌" : type === "success" ? "✅" : ""} ${message}`);
+  }
+}
+
 // 🟢 MAIN COMPONENT
 export default function CreateProduct() {
   const router = useRouter();
@@ -143,39 +157,84 @@ export default function CreateProduct() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
+    descriptionText: "",
     price: "",
+    categoryId: "",
     subCategoryId: "",
     quantity: "",
     color: "",
     brand: "",
     variant: "",
     unit: "",
-    imageFilled: false, // ➕ track thumbnail
+    imageFilled: false,
   });
 
-  const [subCategories, setSubCategories] = useState([]);
-  const [imageFile, setImageFile] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [categories, setCategories] = useState([]); // 🆕 Store all categories
+  const [subCategories, setSubCategories] = useState([]); // Store filtered subcategories
+  const [imageFiles, setImageFiles] = useState([]);
+  const [previews, setPreviews] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingSubCategories, setLoadingSubCategories] = useState(false); // 🆕 Loading state for subcategories
   const [Variants, setVariants] = useState([]);
   const [Brands, setBrands] = useState([]);
   const [Units, setUnits] = useState([]);
 
-  // 🟢 Fetch categories & extract subcategories
+  // 🟢 Fetch all categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await fetch("https://e-com-customizer.onrender.com/api/v1/showAllCategory");
         const data = await res.json();
-        const allSubCategories =
-          data.data?.flatMap((cat) => cat.subCategory)?.filter(Boolean);
-        setSubCategories(allSubCategories || []);
+        if (data.success) {
+          setCategories(data.data || []);
+          console.log("Fetched categories:", data.data);
+        }
       } catch (err) {
         console.error("Failed to fetch categories:", err);
+        showToast("Failed to fetch categories", "error");
       }
     };
     fetchCategories();
   }, []);
+
+  // 🟢 Fetch subcategories when category changes
+  useEffect(() => {
+    const fetchSubCategories = async () => {
+      if (!formData.categoryId) {
+        setSubCategories([]);
+        return;
+      }
+
+      setLoadingSubCategories(true);
+      try {
+        const res = await fetch(
+          `https://e-com-customizer.onrender.com/api/v1/fetchAllSubCategoryOfCategory/${formData.categoryId}`
+        );
+        const data = await res.json();
+        console.log("Subcategory API response:", data);
+
+        if (data.success && data.categoryDetails) {
+          setSubCategories(data.categoryDetails.subCategory || []);
+        } else {
+          setSubCategories([]);
+          showToast("No subcategories found", "error");
+        }
+      } catch (err) {
+        console.error("Failed to fetch subcategories:", err);
+        setSubCategories([]);
+        showToast("Failed to fetch subcategories", "error");
+      } finally {
+        setLoadingSubCategories(false);
+      }
+    };
+
+    fetchSubCategories();
+  }, [formData.categoryId]);
+
+  // 🟢 Reset subcategory when category changes
+  useEffect(() => {
+    setFormData(prev => ({ ...prev, subCategoryId: "" }));
+  }, [formData.categoryId]);
 
   // 🟢 Fetch Variants
   useEffect(() => {
@@ -196,7 +255,6 @@ export default function CreateProduct() {
       }
     };
     fetchVariants();
-    return () => setVariants([]);
   }, []);
 
   // 🟢 Fetch Brands
@@ -218,7 +276,6 @@ export default function CreateProduct() {
       }
     };
     fetchBrands();
-    return () => setBrands([]);
   }, []);
 
   // 🟢 Fetch Units
@@ -228,7 +285,6 @@ export default function CreateProduct() {
         const res = await fetch("https://e-com-customizer.onrender.com/api/v1/totalUnit");
         const data = await res.json();
         const activeUnits = (data.data || []).filter((unit) => unit.active);
-        console.log(data.data)
         setUnits(activeUnits);
         if (activeUnits.length > 0) {
           setFormData((prev) => ({
@@ -241,7 +297,6 @@ export default function CreateProduct() {
       }
     };
     fetchUnits();
-    return () => setUnits([]);
   }, []);
 
   // 🟢 Handle Input Change
@@ -252,10 +307,10 @@ export default function CreateProduct() {
 
   // 🟢 Handle Image Upload
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setImageFile(file);
-    setPreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    setImageFiles(files);
+    setPreviews(files.map(file => URL.createObjectURL(file)));
     setFormData((prev) => ({ ...prev, imageFilled: true }));
   };
 
@@ -264,15 +319,34 @@ export default function CreateProduct() {
     e.preventDefault();
     setLoading(true);
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("adminToken");
     if (!token) {
-      showToast("Token missing. Please log in.");
+      showToast("Please login as admin", "error");
       setLoading(false);
       return;
     }
 
-    if (!imageFile) {
-      showToast("Please select an image.");
+    // Validation
+    if (!formData.categoryId) {
+      showToast("Please select a category", "error");
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.subCategoryId) {
+      showToast("Please select a subcategory", "error");
+      setLoading(false);
+      return;
+    }
+
+    if (!imageFiles.length) {
+      showToast("Please select at least one image", "error");
+      setLoading(false);
+      return;
+    }
+    // Validate description content
+    if (!formData.descriptionText) {
+      showToast("Please add a product description", "error");
       setLoading(false);
       return;
     }
@@ -287,7 +361,9 @@ export default function CreateProduct() {
     form.append("brand", formData.brand.trim());
     form.append("variant", formData.variant.trim());
     form.append("unit", formData.unit.trim());
-    form.append("thumbnail", imageFile);
+    imageFiles.forEach((file) => {
+      form.append("images", file);
+    });
 
     try {
       const res = await fetch("https://e-com-customizer.onrender.com/api/v1/createProduct", {
@@ -302,15 +378,15 @@ export default function CreateProduct() {
 
       if (!res.ok) {
         console.error("Create failed:", result);
-        showToast(result.message || "❌ Product creation failed.");
+        showToast(result.message || "Failed to create product", "error");
         return;
       }
 
-      showToast("✅ Product created successfully!");
+      showToast("Product created successfully!", "success");
       router.push("/allproduct");
     } catch (err) {
       console.error("Error:", err);
-      showToast("Something went wrong.");
+      showToast("Something went wrong", "error");
     } finally {
       setLoading(false);
     }
@@ -325,9 +401,19 @@ export default function CreateProduct() {
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
   };
 
-  // =======================
-  // FINAL RETURN (2 columns)
-  // =======================
+  // Quill modules
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ align: [] }],
+      ["link", "image"],
+      ["clean"]
+    ]
+  };
+
   return (
     <div className="flex flex-col md:flex-row mx-auto mt-8 max-w-5xl">
       {/* --- Left: the form --- */}
@@ -357,16 +443,85 @@ export default function CreateProduct() {
             </motion.div>
 
             <motion.div variants={itemVariant}>
-              <label className="mb-1 block font-bold text-gray-800">Description</label>
-              <textarea
-                name="description"
-                placeholder="Product Description"
-                value={formData.description}
-                onChange={handleChange}
-                required
-                rows={3}
-                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 resize-none"
-              />
+              <label className="block">
+                <span className="text-gray-700 font-semibold">Description</span>
+                <ReactQuill
+                  theme="snow"
+                  placeholder="Write detailed product description here..."
+                  value={formData.description}
+                  modules={modules}
+                  onChange={(value) => {
+                    // Remove HTML tags for plain text
+                    const plainText = value.replace(/<[^>]+>/g, '').trim();
+                    setFormData((prev) => ({
+                      ...prev,
+                      description: value,
+                      descriptionText: plainText
+                    }));
+                  }}
+                  className="mt-2 mb-5 rounded-lg focus:ring-2 focus:border-indigo-400 focus:ring-indigo-100 font-medium transition"
+                />
+              </label>
+            </motion.div>
+
+            {/* 🆕 Category & SubCategory Section */}
+            <motion.div variants={itemVariant} className="space-y-6">
+              {/* Category Selection */}
+              <div>
+                <label className="mb-1 block font-bold text-gray-800">
+                  Select Category <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="categoryId"
+                  value={formData.categoryId}
+                  onChange={handleChange}
+                  required
+                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
+                >
+                  <option value="">-- Select Category First --</option>
+                  {categories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* SubCategory Selection */}
+              <div>
+                <label className="mb-1 block font-bold text-gray-800">
+                  Select SubCategory <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="subCategoryId"
+                  value={formData.subCategoryId}
+                  onChange={handleChange}
+                  required
+                  disabled={!formData.categoryId || loadingSubCategories}
+                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <option value="">
+                    {!formData.categoryId
+                      ? "-- Select Category First --"
+                      : loadingSubCategories
+                        ? "-- Loading SubCategories --"
+                        : "-- Select SubCategory --"
+                    }
+                  </option>
+                  {subCategories.map((sub) => (
+                    <option key={sub._id} value={sub._id}>
+                      {sub.title}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Show subcategory count */}
+                {formData.categoryId && !loadingSubCategories && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    {subCategories.length} subcategories available
+                  </p>
+                )}
+              </div>
             </motion.div>
 
             {/* Price + Quantity in a row */}
@@ -380,6 +535,8 @@ export default function CreateProduct() {
                   value={formData.price}
                   onChange={handleChange}
                   required
+                  min="0"
+                  step="0.01"
                   className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
                 />
               </div>
@@ -392,6 +549,7 @@ export default function CreateProduct() {
                   value={formData.quantity}
                   onChange={handleChange}
                   required
+                  min="0"
                   className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
                 />
               </div>
@@ -407,7 +565,7 @@ export default function CreateProduct() {
                   value={formData.color}
                   onChange={handleChange}
                   required
-                  placeholder="e.g. Red, Black"
+                  placeholder="e.g. Red, Black, Blue"
                   className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
                 />
               </div>
@@ -447,85 +605,69 @@ export default function CreateProduct() {
               </div>
             </motion.div>
 
-            {/* Unit */}
-            <motion.div variants={itemVariant} className="flex flex-col md:flex-row gap-6">
-              <div className="flex-1">
-
-                <label className="mb-1 block font-bold text-gray-800">Unit</label>
-                <select
-                  name="unit"
-                  value={formData.unit}
-                  onChange={handleChange}
-
-                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
-                >
-                  <option value="">-- Select unit --</option>
-                  {Units.map((unit) => (
-                    <option className="text-black" key={unit._id} value={unit._id}>
-                      {unit.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-
-            </motion.div>
-
-            {/* Thumbnail */}
+            {/* images Images */}
             <motion.div variants={itemVariant}>
-              <label className="mb-1 block font-bold text-gray-800">Thumbnail Image</label>
+              <label className="mb-1 block font-bold text-gray-800">
+                Product Images <span className="text-red-500">*</span>
+              </label>
               <input
                 type="file"
                 accept="image/*"
+                multiple
                 onChange={handleImageUpload}
-                className="w-full rounded-lg border px-4 py-2 bg-gray-50"
+                required
+                className="w-full rounded-lg border px-4 py-2 bg-gray-50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
-              {preview && (
-                <Image
-                  src={preview}
-                  alt="Preview"
-                  width={128}
-                  height={128}
-                  className="mt-2 h-32 w-32 rounded object-contain"
-                />
+
+              {previews.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-sm font-medium text-gray-700 mb-2">
+                    Preview ({previews.length} image{previews.length !== 1 ? 's' : ''})
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    {previews.map((src, idx) => (
+                      <div key={idx} className="relative group">
+                        <Image
+                          src={src}
+                          alt={`Preview ${idx + 1}`}
+                          width={100}
+                          height={100}
+                          className="h-24 w-24 rounded-lg object-cover border-2 border-gray-200 shadow-sm group-hover:shadow-md transition-shadow"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
+                          <span className="text-white text-xs font-medium">Image {idx + 1}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </motion.div>
 
-            {/* SubCategory */}
-            <motion.div variants={itemVariant}>
-              <label className="mb-1 block font-bold text-gray-800">Select SubCategory</label>
-              <select
-                name="subCategoryId"
-                value={formData.subCategoryId}
-                onChange={handleChange}
-                required
-                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
-              >
-                <option value="">-- Select SubCategory --</option>
-                {subCategories.map((sub) => (
-                  <option key={sub._id} value={sub._id}>
-                    {sub.title}
-                  </option>
-                ))}
-              </select>
-            </motion.div>
-
+            {/* Submit Button */}
             <motion.button
               variants={itemVariant}
               type="submit"
-              disabled={loading}
-              whileHover={{ scale: 1.03, backgroundColor: "#2563eb" }}
-              className="w-full rounded-lg bg-blue-600 py-2 font-semibold text-white text-lg transition hover:bg-blue-700 shadow-sm"
-              style={{ minHeight: 48 }}
+              disabled={loading || !formData.categoryId || !formData.subCategoryId}
+              whileHover={{ scale: loading ? 1 : 1.02 }}
+              whileTap={{ scale: loading ? 1 : 0.98 }}
+              className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white text-lg transition hover:bg-blue-700 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Creating..." : "Create Product"}
+              {loading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Creating Product...
+                </div>
+              ) : (
+                "Create Product"
+              )}
             </motion.button>
           </motion.form>
         </div>
       </div>
+
       {/* --- Right: Progress section --- */}
       <ProgressSection formData={formData} />
     </div>
   );
 }
-

@@ -17,7 +17,7 @@ export default function Page() {
   // 🧠 Load data from API
   useEffect(() => {
     const fetchAdmin = async () => {
-      const token = localStorage.getItem("token");
+  const token = localStorage.getItem("adminToken");
       const user = localStorage.getItem("Admin_ID");
       try {
         const res = await fetch(
@@ -35,7 +35,7 @@ export default function Page() {
           const admin = result.data;
           setData({
             name: admin.firstName || "Admin58",
-            profilePhoto: admin.thumbnail || "/images/user/user-03.png",
+            profilePhoto: admin.images || "/images/user/user-03.png",
             coverPhoto: admin.cover || "/images/cover/cover-01.png",
             email: admin.email || "Ui/Ux Designer",
           });
@@ -55,9 +55,9 @@ export default function Page() {
     if (!file) return;
 
     const formData = new FormData();
-    formData.append("thumbnail", file);
+    formData.append("images", file);
 
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("adminToken");
     const userId = localStorage.getItem("Admin_ID");
 
     try {
@@ -70,10 +70,10 @@ export default function Page() {
       });
 
       const result = await res.json();
-      if (result.success && result.data?.thumbnail) {
+      if (result.success && result.data?.images) {
         setData((prev) => ({
           ...prev,
-          profilePhoto: result.data.thumbnail,
+          profilePhoto: result.data.images,
         }));
       }
     } catch (error) {

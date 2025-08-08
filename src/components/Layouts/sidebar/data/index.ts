@@ -37,10 +37,7 @@ export const NAV_DATA = [
             title: "All Brands",
             url: "/all_Brands",
           },
-          {
-            title: "All Units",
-            url: "/all_units",
-          },
+
           {
             title: "All Taxes",
             url: "/all_Taxes",

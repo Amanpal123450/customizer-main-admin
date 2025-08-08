@@ -58,7 +58,7 @@ export default function CategoryDetailPage() {
 
   // 🎉 Modal form state
   const [title, setTitle] = useState("");
-  const [thumbnail, setThumbnail] = useState(null);
+  const [images, setimages] = useState(null);
   const [preview, setPreview] = useState(null);
   const [categories, setCategories] = useState([]);
   const [easterEggMessage, setEasterEggMessage] = useState("");
@@ -143,7 +143,7 @@ export default function CategoryDetailPage() {
   const closeModal = () => {
     setShowModal(false);
     setTitle("");
-    setThumbnail(null);
+    setimages(null);
     setPreview(null);
     setEasterEggMessage("");
     setIsSubmitting(false);
@@ -152,7 +152,7 @@ export default function CategoryDetailPage() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setThumbnail(file);
+      setimages(file);
       setPreview(URL.createObjectURL(file));
     }
   };
@@ -161,8 +161,8 @@ export default function CategoryDetailPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!thumbnail) {
-      showToast("Please upload a thumbnail image.");
+    if (!images) {
+      showToast("Please upload a images image.");
       setIsSubmitting(false);
       return;
     }
@@ -170,7 +170,7 @@ export default function CategoryDetailPage() {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("categoryId", id); // Use current category ID
-    formData.append("thumbnail", thumbnail);
+    formData.append("images", images);
 
     try {
       // 🎭 Easter Egg: Add some dramatic pause
@@ -179,7 +179,7 @@ export default function CategoryDetailPage() {
       const res = await fetch("https://e-com-customizer.onrender.com/api/v1/createSubCategory", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("adminToken");;}`,
         },
         body: formData,
       });
@@ -298,7 +298,7 @@ export default function CategoryDetailPage() {
                   className="rounded border bg-white p-4 shadow"
                 >
                   <Image
-                    src={product.thumbnail?.[0]}
+                    src={product.images?.[0]}
                     alt={product.title}
                     width={300}
                     height={160}
@@ -341,7 +341,7 @@ export default function CategoryDetailPage() {
               />
 
               <div>
-                <label className="block font-medium mb-1">Thumbnail Image</label>
+                <label className="block font-medium mb-1">images Image</label>
                 <input
                   type="file"
                   accept="image/*"
@@ -353,7 +353,7 @@ export default function CategoryDetailPage() {
                 {preview && (
                   <Image
                     src={preview}
-                    alt="Thumbnail Preview"
+                    alt="images Preview"
                     width={96}
                     height={96}
                     className="mt-2 h-24 w-24 rounded object-cover mx-auto"

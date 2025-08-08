@@ -93,7 +93,7 @@ export default function CategoriesPage1() {
   }, []);
 
   const handleDelete = async (id) => {
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("adminToken");
 
     if (!token) {
       showToast("Authentication required. Please login first.");

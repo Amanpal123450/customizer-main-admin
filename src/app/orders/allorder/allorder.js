@@ -220,7 +220,7 @@ const OrderManagementPage = () => {
   // useEffect(()=>{
 
   //   const GetUser = async () => {
-  //     const token =localStorage.getItem("token");
+  //     const token =localStorage.getItem("tokenn");
   //       try {
   //         const res = await fetch(
   //           ` https://e-com-customizer.onrender.com/api/v1/orders/all-orders`,{
@@ -281,7 +281,7 @@ const OrderManagementPage = () => {
         )
       );
 
-      const token = localStorage.getItem("token");
+  const token = localStorage.getItem("adminToken");
 
       const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/ordersStatus/${orderId}`, {
         method: "PUT",
@@ -292,9 +292,11 @@ const OrderManagementPage = () => {
         body: JSON.stringify({ orderStatus: newStatus }),
       });
 
+      
+      console.log("order data", data);
+
       const data = await res.json();
 
-      console.log("dddd", data);
       if (data.success) {
         console.log("Order updated successfully", data.order);
       } else {
@@ -590,7 +592,7 @@ const OrderManagementPage = () => {
       className="flex items-center gap-4 rounded-lg border p-4"
     >
       <img
-        src={product?.thumbnail?.[0] || "/placeholder.jpg"}
+        src={product?.images?.[0] || "/placeholder.jpg"}
         alt={product?.title || "Product Image"}
         className="h-16 w-16 rounded object-contain"
       />

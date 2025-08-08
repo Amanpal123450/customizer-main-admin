@@ -79,11 +79,16 @@ const Signup = () => {
       const data = await res.json();
 
       if (res.ok) {
-        alert("Signup successful!");
-        
+        setCurrentStep(3);
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
       } else {
-        alert(data.message || "Signup failed.");
+        setErrors({ submit: data.message || "Signup failed. Please try again." });
+        refreshCaptcha(); // 🔁 Refresh Captcha on failure
       }
+
+
     } catch (error) {
       console.error("Error:", error);
       alert("Something went wrong!");

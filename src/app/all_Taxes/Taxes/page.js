@@ -68,17 +68,29 @@ export default function TaxPage() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = filtered.slice(startIndex, startIndex + itemsPerPage);
 
+  // Get token from localStorage
+  const token = typeof window !== "undefined" ? localStorage.getItem("adminToken");; : null;
+
+  // console.log("Using token:", token);
+
+
+
+  // Add Authorization header if token exists
+  // const headers = token
+  //   ? { Authorization: `Bearer ${token}` }
+  //   : {};
+
+
   useEffect(() => {
     async function GetAllvariation() {
-      const res = await fetch(
-        "https://e-com-customizer.onrender.com/api/v1/totalTax",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            // Authorization: `Bearer ${token}`,
-          },
+      const res = await fetch("https://e-com-customizer.onrender.com/api/v1/totalTax", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+
         },
+      },
       );
 
       const result = await res.json();
@@ -91,17 +103,17 @@ export default function TaxPage() {
   }, []);
 
   const handleAddTax = async () => {
-   
+
     try {
-      const res = await fetch(
-        "https://e-com-customizer.onrender.com/api/v1/addTax",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name: form.name, active: form.active }),
+      const res = await fetch("https://e-com-customizer.onrender.com/api/v1/addTax", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+
         },
+        body: JSON.stringify({ name: form.name, active: form.active }),
+      },
       );
       showToast(" Tax added: " + form.name);
     } catch (error) {
@@ -113,22 +125,24 @@ export default function TaxPage() {
     console.log("sdcs");
     try {
       const res = await fetch(
-        `https://e-com-customizer.onrender.com/api/v1/tax/${editId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: form.name,
-            active: form.active,
-          }),
+        `https://e-com-customizer.onrender.com/api/v1/tax/${editId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+
+
         },
+        body: JSON.stringify({
+          name: form.name,
+          active: form.active,
+        }),
+      },
       );
 
-     
-        fetchTax(); // call to refresh the Tax list
-   
+
+      fetchTax(); // call to refresh the Tax list
+
     } catch (error) {
       console.error("Error updating Tax:", error);
       showToast("Something went wrong!");
@@ -161,7 +175,7 @@ export default function TaxPage() {
   };
 
   const openAddModal = () => {
-    setForm({ name: form.name, active:form.active });
+    setForm({ name: form.name, active: form.active });
     setEditing(false);
     setModalOpen(true);
   };
@@ -186,53 +200,57 @@ export default function TaxPage() {
   };
 
   const handleDelete = async (id) => {
-  if (confirm("Are you sure you want to delete this Tax?")) {
-    try {
-      const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/tax/${id}`, {
-        method: "DELETE",
-      });
- const data = await res.json();
+    if (confirm("Are you sure you want to delete this Tax?")) {
+      try {
+        const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/tax/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        const data = await res.json();
 
- console.log(data);
-      if (res.ok) {
-        
-        
-        showToast("Tax deleted successfully!");
+        console.log(data);
+        if (res.ok) {
+
+
+          showToast("Tax deleted successfully!");
+        } else {
+          showToast("Failed to delete Tax. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error deleting Tax:", error);
+        showToast("Something went wrong. Please try again.");
+      }
+    }
+  };
+
+
+  const toggleStatus = async (id) => {
+    try {
+      const response = await fetch(`https://e-com-customizer.onrender.com/api/v1/TaxToggle/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization":`Bearer ${token}`
+        },
+
+      });
+      const data = await response.json();
+      console.log(data)
+      if (response.ok) {
+        setBrands((prevTax) =>
+          prevTax.map((Tax) =>
+            Tax._id === id ? { ...Tax, active: !Tax.active } : Tax
+          )
+        );
       } else {
-        showToast("Failed to delete Tax. Please try again.");
+        console.error("Failed to toggle status");
       }
     } catch (error) {
-      console.error("Error deleting Tax:", error);
-      showToast("Something went wrong. Please try again.");
+      console.error("Error toggling status:", error);
     }
-  }
-};
-
-
-const toggleStatus = async (id) => {
-  try {
-    const response = await fetch(`https://e-com-customizer.onrender.com/api/v1/TaxToggle/${id}`,{
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-     
-    });
-  const data = await response.json();
-  console.log(data)
-    if (response.ok) {
-      setBrands((prevTax) =>
-        prevTax.map((Tax) =>
-          Tax._id === id ? { ...Tax, active: !Tax.active } : Tax
-        )
-      );
-    } else {
-      console.error("Failed to toggle status");
-    }
-  } catch (error) {
-    console.error("Error toggling status:", error);
-  }
-};
+  };
 
 
 
@@ -403,9 +421,8 @@ const toggleStatus = async (id) => {
                           }}
                         >
                           <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              Tax.active ? "translate-x-6" : "translate-x-1"
-                            }`}
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${Tax.active ? "translate-x-6" : "translate-x-1"
+                              }`}
 
 
                           />
@@ -485,11 +502,10 @@ const toggleStatus = async (id) => {
                       <button
                         key={i}
                         onClick={() => setCurrentPage(i + 1)}
-                        className={`rounded-lg px-3 py-2 text-sm font-medium ${
-                          currentPage === i + 1
-                            ? "bg-indigo-600 text-white"
-                            : "border border-gray-300 hover:bg-gray-100"
-                        }`}
+                        className={`rounded-lg px-3 py-2 text-sm font-medium ${currentPage === i + 1
+                          ? "bg-indigo-600 text-white"
+                          : "border border-gray-300 hover:bg-gray-100"
+                          }`}
                       >
                         {i + 1}
                       </button>
@@ -571,14 +587,12 @@ const toggleStatus = async (id) => {
                 <button
                   type="button"
                   onClick={() => setForm({ ...form, active: !form.active })}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                    form.active ? "bg-indigo-600" : "bg-gray-200"
-                  }`}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${form.active ? "bg-indigo-600" : "bg-gray-200"
+                    }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      form.active ? "translate-x-6" : "translate-x-1"
-                    }`}
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${form.active ? "translate-x-6" : "translate-x-1"
+                      }`}
                   />
                 </button>
                 <label className="text-sm font-medium text-gray-700">
@@ -595,7 +609,7 @@ const toggleStatus = async (id) => {
                 Cancel
               </button>
               <button
-                onClick={()=>editing ? handleUpdateTax() : handleAddTax()}
+                onClick={() => editing ? handleUpdateTax() : handleAddTax()}
                 className="rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white transition-colors hover:bg-indigo-700"
               >
                 {editing ? "Update Tax" : "Create Tax"}

@@ -12,7 +12,7 @@ export default function OrderDetailPage() {
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const token = localStorage.getItem("token");
+  const token = localStorage.getItem("adminToken");
 
         const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/orders/${id}`, {
           headers: {
@@ -55,7 +55,7 @@ export default function OrderDetailPage() {
               return (
                 <div key={index} className="border p-4 rounded shadow">
                   <Image
-                    src={item?.thumbnail?.[0] || "/placeholder.jpg"}
+                    src={item?.images?.[0] || "/placeholder.jpg"}
                     alt={item?.title || "Product Image"}
                     width={300}
                     height={160}

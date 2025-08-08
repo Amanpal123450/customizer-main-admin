@@ -23,7 +23,12 @@ const showToast = (text, type = "success") => {
     gravity: "top",
     position: "right",
     close: true,
-    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
+    backgroundColor:
+      type === "success"
+        ? "#4BB543"
+        : type === "info"
+        ? "#3498db"
+        : "#FF3E3E",
   }).showToast();
 };
 
@@ -38,15 +43,19 @@ export default function BrandsPage() {
   const [editId, setEditId] = useState(null);
   const [form, setForm] = useState({
     name: "",
- 
+
     metaTitle: "",
     metaDescription: "",
     keywords: "",
-    thumbnail: "",
+    images: "",
   });
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+
+  const token = typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
+
 
   useEffect(() => {
     const filteredData = brands.filter(
@@ -67,52 +76,69 @@ export default function BrandsPage() {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
-    formData.append("thumbnail", file);
+    formData.append("images", file);
   };
 
- const handleAddUnit = async () => {
-  const formData = new FormData();
-  formData.append("name", form.name);
+  const handleAddUnit = async () => {
+    const formData = new FormData();
+    formData.append("name", form.name);
 
-  formData.append("metaTitle", form.metaTitle);
-  formData.append("metaDescription", form.metaDescription);
-  formData.append("keywords", form.keywords);
-  formData.append("thumbnail", form.thumbnail); // binary file
+    formData.append("metaTitle", form.metaTitle);
+    formData.append("metaDescription", form.metaDescription);
+    formData.append("keywords", form.keywords);
+    formData.append("images", form.images); // binary file
 
-  try {
-    const res = await fetch("https://e-com-customizer.onrender.com/api/v1/createBrand", {
-      method: "POST",
-      body: formData,
-    });
+    // Get token from localStorage
+  const token = localStorage.getItem("adminToken");
 
-    const data = await res.json();
-    if (res.ok) {
-      showToast("✅ Brand added: " + data.name);
+    // Add Authorization header if token exists
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
     }
-  } catch (err) {
-    console.error(err);
-    showToast("❌ Network error");
-  }
-};
+
+    try {
+      const res = await fetch("https://e-com-customizer.onrender.com/api/v1/createBrand", {
+
+        method: "POST",
+        body: formData,
+        headers: {
+          "Authorization": `Bearer ${token}`,
+
+        },
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        showToast("✅ Brand added: " + data.name, "success");
+      }
+    } catch (err) {
+      console.error(err);
+      showToast("❌ Network error", "error");
+    }
+  };
 
 
   const handleUpdateUnit = async (id) => {
     console.log("sdcs");
 
     const formData = new FormData();
-  formData.append("name", form.name);
+    formData.append("name", form.name);
 
-  formData.append("metaTitle", form.metaTitle);
-  formData.append("metaDescription", form.metaDescription);
-  formData.append("keywords", form.keywords);
-  formData.append("thumbnail", form.thumbnail);
+    formData.append("metaTitle", form.metaTitle);
+    formData.append("metaDescription", form.metaDescription);
+    formData.append("keywords", form.keywords);
+    formData.append("images", form.images);
     try {
       const res = await fetch(
         `https://e-com-customizer.onrender.com/api/v1/brand/${editId}`,
         {
           method: "PUT",
 
-          body:formData,
+          body: formData,
+          headers: {
+            "Authorization": `Bearer ${token}`,
+
+          }
         },
       );
 
@@ -148,7 +174,7 @@ export default function BrandsPage() {
       const result = await res.json();
       console.log(result)
       console.log(result);
-      setBrands(result); 
+      setBrands(result);
       setFiltered(result);
     }
 
@@ -213,51 +239,58 @@ export default function BrandsPage() {
 
   const handleDelete = async (id) => {
     console.log(id)
-  if (!confirm("Are you sure you want to delete this brand?")) return;
+    if (!confirm("Are you sure you want to delete this brand?")) return;
 
-  try {
-    const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/brand/${id}`, {
-      method: 'DELETE',
-    });
+    try {
+      const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/brand/${id}`, {
+        method: 'DELETE',
+        headers: {
+          "Authorization": `Bearer ${token}`,
 
-    const data = await res.json();
+        },
+      });
 
-    if (res.ok) {
-      showToast("✅ Brand deleted successfully!");
-      setBrands(brands.filter((b) => b._id !== id)); // Make sure you're using _id not id
-    } else {
-      showToast("❌ Failed to delete brand: " + (data.message || "Unknown error"));
+      const data = await res.json();
+
+      if (res.ok) {
+        showToast("✅ Brand deleted successfully!");
+        setBrands(brands.filter((b) => b._id !== id)); // Make sure you're using _id not id
+      } else {
+        showToast("❌ Failed to delete brand: " + (data.message || "Unknown error"));
+      }
+    } catch (error) {
+      showToast("❌ Network error: " + error.message);
     }
-  } catch (error) {
-    showToast("❌ Network error: " + error.message);
-  }
-};
+  };
 
 
-const toggleStatus = async (id) => {
-  try {
-    const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/brand/toggle/${id}`, {
-      method: "PUT",
-    });
+  const toggleStatus = async (id) => {
+    try {
+      const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/brand/toggle/${id}`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
 
-    const data = await res.json();
-    console.log("Toggle response:", data);
+      const data = await res.json();
+      console.log("Toggle response:", data);
 
-    if (res.ok) {
-      // Update frontend state after successful toggle
-      setBrands(
-        brands.map((b) =>
-          b._id === id ? { ...b, active: !b.active } : b
-        )
-      );
-    } else {
-      showToast(data.message || "Failed to toggle status.");
+      if (res.ok) {
+        // Update frontend state after successful toggle
+        setBrands(
+          brands.map((b) =>
+            b._id === id ? { ...b, active: !b.active } : b
+          )
+        );
+      } else {
+        showToast(data.message || "Failed to toggle status.");
+      }
+    } catch (error) {
+      console.error("Error toggling status:", error);
+      showToast("Something went wrong!");
     }
-  } catch (error) {
-    console.error("Error toggling status:", error);
-    showToast("Something went wrong!");
-  }
-};
+  };
 
 
   return (
@@ -383,9 +416,9 @@ const toggleStatus = async (id) => {
                   <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  {/* <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                     Sort Order
-                  </th>
+                  </th> */}
                   <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
                     Actions
                   </th>
@@ -405,7 +438,7 @@ const toggleStatus = async (id) => {
                         <div className="flex items-center">
                           <div className="h-12 w-12 overflow-hidden rounded-lg bg-gray-100">
                             <Image
-                              
+
                               src={
                                 brand.logoUrl ||
                                 `https://ui-avatars.com/api/?name=${brand.name}&background=6366f1&color=fff`
@@ -437,9 +470,8 @@ const toggleStatus = async (id) => {
                           }}
                         >
                           <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              brand.active ? "translate-x-6" : "translate-x-1"
-                            }`}
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${brand.active ? "translate-x-6" : "translate-x-1"
+                              }`}
                           />
                         </button>
                         <span
@@ -448,20 +480,20 @@ const toggleStatus = async (id) => {
                           {brand.active ? "Active" : "Inactive"}
                         </span>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                      {/* <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                         {brand.sortOrder || 0}
-                      </td>
+                      </td> */}
                       <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                         <div className="flex justify-end gap-2">
                           <button
-                            onClick={() => openEditModal(brand._id) }
+                            onClick={() => openEditModal(brand._id)}
                             className="rounded-lg p-2 text-indigo-600 transition-colors hover:bg-indigo-50 hover:text-indigo-900"
                             title="Edit Brand"
                           >
                             <Edit size={16} />
                           </button>
                           <button
-                            onClick={() => handleDelete(brand._id) }
+                            onClick={() => handleDelete(brand._id)}
                             className="rounded-lg p-2 text-red-600 transition-colors hover:bg-red-50 hover:text-red-900"
                             title="Delete Brand"
                           >
@@ -517,11 +549,10 @@ const toggleStatus = async (id) => {
                       <button
                         key={i}
                         onClick={() => setCurrentPage(i + 1)}
-                        className={`rounded-lg px-3 py-2 text-sm font-medium ${
-                          currentPage === i + 1
-                            ? "bg-indigo-600 text-white"
-                            : "border border-gray-300 hover:bg-gray-100"
-                        }`}
+                        className={`rounded-lg px-3 py-2 text-sm font-medium ${currentPage === i + 1
+                          ? "bg-indigo-600 text-white"
+                          : "border border-gray-300 hover:bg-gray-100"
+                          }`}
                       >
                         {i + 1}
                       </button>
@@ -660,12 +691,12 @@ const toggleStatus = async (id) => {
                 </p>
               </div>
 
-              {/* Thumbnail Upload */}
+              {/* images Upload */}
               <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => {
-                  setForm({ ...form, thumbnail: e.target.files[0] });
+                  setForm({ ...form, images: e.target.files[0] });
                 }}
               />
 

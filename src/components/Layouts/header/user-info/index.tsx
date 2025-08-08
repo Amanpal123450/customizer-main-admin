@@ -12,6 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOutIcon, SettingsIcon, UserIcon } from "./icons";
+import { AuthProvider } from "@/app/context/AuthContext";
 
 export function UserInfo() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,10 +25,15 @@ export function UserInfo() {
   });
   const router = useRouter();
 
+  const token = typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
+
+  const userId = typeof window !== "undefined" ? localStorage.getItem("adminUser") : null;
+
+
   useEffect(() => {
-    const checkAuthAndFetchData = async () => {
-      const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("Admin_ID");
+    const fetchUserData = async () => {
+      const token = localStorage.getItem("adminToken");
+      const userId = localStorage.getItem("adminUser");
 
       if (!token || !userId) {
         setIsLoggedIn(false);
@@ -35,30 +41,30 @@ export function UserInfo() {
         return;
       }
 
-      setIsLoggedIn(true);
-
       try {
+        setIsLoggedIn(true);
+        setIsLoading(true);
+
         const res = await fetch(
           `https://e-com-customizer.onrender.com/api/v1/getAdminById/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          },
+          }
         );
 
         const result = await res.json();
-        console.log(result);
+
         if (res.ok && result.data) {
           const admin = result.data;
           setUserData({
             name: `${admin.firstName || "Admin"} ${admin.lastName || ""}`.trim(),
             email: admin.email || "admin@example.com",
-            profilePhoto: admin.thumbnail || "/images/user/user-03.png",
+            profilePhoto: admin.images || "/images/user/user-03.png",
           });
         } else {
           console.error("Failed to load admin:", result.message);
-          // If token is invalid, clear storage and set as logged out
           if (res.status === 401) {
             localStorage.clear();
             setIsLoggedIn(false);
@@ -66,13 +72,23 @@ export function UserInfo() {
         }
       } catch (err) {
         console.error("Error fetching admin:", err);
-        // Network error, but keep user as logged in if token exists
       } finally {
         setIsLoading(false);
       }
     };
 
-    checkAuthAndFetchData();
+    // Fetch on load
+    fetchUserData();
+
+    // Re-fetch when login info changes
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "token" || event.key === "Admin_ID") {
+        fetchUserData();
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   const handleLogout = () => {
@@ -114,7 +130,7 @@ export function UserInfo() {
         <figure className="flex items-center gap-3">
           <div className="relative">
             {userData.profilePhoto &&
-            userData.profilePhoto !== "/images/user/user-03.png" ? (
+              userData.profilePhoto !== "/images/user/user-03.png" ? (
               <Image
                 src={userData.profilePhoto}
                 className="size-10 rounded-full border-2 border-gray-200 object-cover dark:border-gray-700"
@@ -128,6 +144,7 @@ export function UserInfo() {
                     img.nextSibling.style.display = "flex";
                   }
                 }}
+
               />
             ) : null}
             <div
@@ -135,7 +152,7 @@ export function UserInfo() {
               style={{
                 display:
                   userData.profilePhoto &&
-                  userData.profilePhoto !== "/images/user/user-03.png"
+                    userData.profilePhoto !== "/images/user/user-03.png"
                     ? "none"
                     : "flex",
               }}
@@ -176,7 +193,7 @@ export function UserInfo() {
               <figure className="flex items-center gap-3">
                 <div className="relative">
                   {userData.profilePhoto &&
-                  userData.profilePhoto !== "/images/user/user-03.png" ? (
+                    userData.profilePhoto !== "/images/user/user-03.png" ? (
                     <Image
                       src={userData.profilePhoto}
                       className="size-12 rounded-full border-2 border-white object-cover shadow-sm dark:border-gray-700"
@@ -198,7 +215,7 @@ export function UserInfo() {
                     style={{
                       display:
                         userData.profilePhoto &&
-                        userData.profilePhoto !== "/images/user/user-03.png"
+                          userData.profilePhoto !== "/images/user/user-03.png"
                           ? "none"
                           : "flex",
                     }}

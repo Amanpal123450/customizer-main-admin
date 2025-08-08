@@ -51,14 +51,14 @@ export function Header() {
       {/* Right Actions */}
       <div className="flex items-center gap-3 sm:gap-5">
         {/* Optional Search Input */}
-        {/* <div className="relative hidden md:block">
+        <div className="relative hidden md:block">
           <input
             type="search"
             placeholder="Search..."
             className="pl-10 pr-4 py-2 rounded-full border bg-gray-100 dark:bg-dark-2 dark:text-white dark:border-dark-3 outline-none focus:ring-1 focus:ring-primary"
           />
           <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-        </div> */}
+        </div>
 
         <ThemeToggleSwitch />
         <Notification />

@@ -21,14 +21,14 @@ const showToast = (text, type = "success") => {
 
 export default function CreateCategory() {
   const [title, setTitle] = useState("");
-  const [thumbnail, setThumbnail] = useState(null);
+  const [images, setimages] = useState(null);
   const [preview, setPreview] = useState(null);
   
   const router = useRouter();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setThumbnail(file);
+    setimages(file);
     if (file) {
       setPreview(URL.createObjectURL(file));
     }
@@ -39,11 +39,11 @@ export default function CreateCategory() {
 
     const formData = new FormData();
     formData.append("title", title);
-    if (thumbnail) {
-      formData.append("thumbnail", thumbnail); // Must match backend key
+    if (images) {
+      formData.append("images", images); // Must match backend key
     }
 
-    const token = localStorage.getItem("token"); // make sure token is stored on login
+  const token = localStorage.getItem("adminToken"); // make sure token is stored on login
 
     try {
       const res = await fetch(
@@ -90,7 +90,7 @@ export default function CreateCategory() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Thumbnail Image</label>
+          <label className="block text-sm font-medium mb-1">images Image</label>
           <input
             type="file"
             accept="image/*"

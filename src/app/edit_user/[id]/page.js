@@ -21,7 +21,7 @@ export default function EditUserPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("adminToken");
 
     try {
       const res = await fetch(

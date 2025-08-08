@@ -24,7 +24,7 @@ export default function AdminPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const token = localStorage.getItem("token");
+  const token = localStorage.getItem("adminToken");
 
         const res = await fetch("https://e-com-customizer.onrender.com/api/v1/getAllUsers", {
           headers: {
@@ -51,7 +51,7 @@ export default function AdminPage() {
     if (!confirm("Are you sure you want to delete this user?")) return;
 
     try {
-      const token = localStorage.getItem("token");
+  const token = localStorage.getItem("adminToken");
 
       const res = await fetch(` https://e-com-customizer.onrender.com/api/v1/deleteUser/${id}`, {
         method: "DELETE",

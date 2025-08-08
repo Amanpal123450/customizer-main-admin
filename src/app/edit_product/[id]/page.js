@@ -27,7 +27,7 @@ function ProgressSection({ formData }) {
     { name: "price", label: "Price" },
     { name: "quantity", label: "Quantity" },
     { name: "color", label: "Color" },
-    { name: "image", label: "Thumbnail" },
+    { name: "image", label: "images" },
   ];
 
   const isFilled = (name) => {
@@ -135,7 +135,7 @@ export default function EditProductPage() {
     quantity: "",
     color: "",
   });
-  const [thumbnail, setThumbnail] = useState(null);
+  const [images, setimages] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -156,8 +156,8 @@ export default function EditProductPage() {
   //         quantity: data.data.quantity || "",
   //         color: data.data.color || "",
   //       });
-  //       setPreview(data.data.thumbnail);
-  //       setImageFilled(!!data.data.thumbnail);
+  //       setPreview(data.data.images);
+  //       setImageFilled(!!data.data.images);
   //     } catch (err) {
   //       showToast(" Failed to load product");
   //     }
@@ -173,7 +173,7 @@ export default function EditProductPage() {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setThumbnail(file);
+      setimages(file);
       setPreview(URL.createObjectURL(file));
       setImageFilled(true);
     }
@@ -188,11 +188,11 @@ export default function EditProductPage() {
     formData.append("price", form.price);
     formData.append("quantity", form.quantity);
     formData.append("color", form.color);
-    if (thumbnail) {
-      formData.append("thumbnail", thumbnail);
+    if (images) {
+      formData.append("images", images);
     }
     try {
-      const token = localStorage.getItem("token");
+  const token = localStorage.getItem("adminToken");
       const res = await fetch(
         `/api/v1/updateProduct/${id}`,
         {
@@ -298,9 +298,9 @@ export default function EditProductPage() {
                 className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
               />
             </div>
-            {/* Thumbnail */}
+            {/* images */}
             <div>
-              <label className="mb-1 block font-bold text-gray-800">Thumbnail Image</label>
+              <label className="mb-1 block font-bold text-gray-800">images Image</label>
               <input
                 type="file"
                 accept="image/*"
