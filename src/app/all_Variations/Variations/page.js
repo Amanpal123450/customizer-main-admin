@@ -72,7 +72,7 @@ export default function VariationPage() {
   const paginatedData = filtered.slice(startIndex, startIndex + itemsPerPage);
   // Get token from localStorage
 
-  const token = typeof window !== "undefined" ? localStorage.getItem("adminToken");; : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
 
   // Add Authorization header if token exists
 

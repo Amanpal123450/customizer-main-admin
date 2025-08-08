@@ -69,7 +69,7 @@ export default function TaxPage() {
   const paginatedData = filtered.slice(startIndex, startIndex + itemsPerPage);
 
   // Get token from localStorage
-  const token = typeof window !== "undefined" ? localStorage.getItem("adminToken");; : null;
+  const token = typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
 
   // console.log("Using token:", token);
 

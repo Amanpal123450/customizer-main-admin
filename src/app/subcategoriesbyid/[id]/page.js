@@ -179,7 +179,7 @@ export default function CategoryDetailPage() {
       const res = await fetch("https://e-com-customizer.onrender.com/api/v1/createSubCategory", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("adminToken");;}`,
+          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
         },
         body: formData,
       });
