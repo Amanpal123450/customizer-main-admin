@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "@/components/ui/toast";
 // import { title } from "process";
 
 export default function EditSubcategoryPage() {
@@ -25,7 +26,7 @@ export default function EditSubcategoryPage() {
      if(res.ok){
        router.push("/categories");
 
-       alert("successfuly updated the sub category")
+  toast.success("Successfully updated the sub category")
      }
   };
 

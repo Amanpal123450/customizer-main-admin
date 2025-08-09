@@ -33,16 +33,14 @@ import autoTable from "jspdf-autotable";
 import "toastify-js/src/toastify.css";
 import Toastify from "toastify-js";
 
+  import { toast } from "@/components/ui/toast";
 
 const showToast = (text, type = "success") => {
-  Toastify({
+  toast({
     text,
     duration: 3000,
-    gravity: "top",
-    position: "right",
-    close: true,
-    backgroundColor: type === "success" ? "#4BB543" : "#FF3E3E", // green or red
-  }).showToast();
+    type,
+  });
 };
 
 const OrderManagementPage = () => {
@@ -311,7 +309,7 @@ const OrderManagementPage = () => {
 
   const handleRefund = (orderId) => {
     // Handle refund logic
-    alert(`Refund initiated for order ${orderId}`);
+  toast.alert(`Refund initiated for order ${orderId}`);
   };
 
   const handlePrintInvoice = (order) => {

@@ -1,12 +1,75 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import { compactFormat } from "@/lib/format-number";
 import { OverviewCard } from "./card";
 import * as icons from "./icons";
 
 
 export function OverviewCardsGroup() {
+  // PDF generation handler
+  const handleGeneratePDF = () => {
+    const doc = new jsPDF();
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(20);
+    doc.text('Dashboard Brief Report', 14, 18);
+    doc.setFontSize(12);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 26);
+
+    // Section: Today
+    doc.setFontSize(14);
+    doc.text('Today', 14, 38);
+    doc.setFontSize(11);
+    doc.text("Today's Orders: N/A", 18, 46); // Placeholder
+    doc.text("Current Stock: N/A", 18, 54); // Placeholder
+
+    // Section: Totals
+    doc.setFontSize(14);
+    doc.text('Totals', 14, 66);
+    doc.setFontSize(11);
+    const tableColumn = ["Report Type", "Current Value", "Previous Value", "Change (%)"];
+    const tableRows = [
+      [
+        "Total Orders",
+        data.views.value,
+        data.views.prev,
+        ((data.views.prev === 0 ? 100 : ((data.views.value - data.views.prev) / Math.abs(data.views.prev)) * 100)).toFixed(1) + "%"
+      ],
+      [
+        "Total Revenue",
+        `₹${data.profit.value}`,
+        `₹${data.profit.prev}`,
+        ((data.profit.prev === 0 ? 100 : ((data.profit.value - data.profit.prev) / Math.abs(data.profit.prev)) * 100)).toFixed(1) + "%"
+      ],
+      [
+        "Total Products",
+        data.products.value,
+        data.products.prev,
+        ((data.products.prev === 0 ? 100 : ((data.products.value - data.products.prev) / Math.abs(data.products.prev)) * 100)).toFixed(1) + "%"
+      ],
+      [
+        "Total Users",
+        data.users.value,
+        data.users.prev,
+        ((data.users.prev === 0 ? 100 : ((data.users.value - data.users.prev) / Math.abs(data.users.prev)) * 100)).toFixed(1) + "%"
+      ],
+    ];
+
+    // Table below the 'Totals' section
+    // StartY: 70 for spacing
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 70,
+      theme: 'striped',
+      headStyles: { fillColor: [41, 128, 185] },
+      styles: { font: 'helvetica', fontSize: 11 },
+    });
+
+    doc.save(`dashboard-brief-report-${Date.now()}.pdf`);
+  };
   // Store both current and previous values for percentage calculation
   const [data, setData] = useState({
     views: { value: 0, prev: 0 },
@@ -194,71 +257,69 @@ export function OverviewCardsGroup() {
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-8 mt-6">
-      {cardConfigs.map((config, index) => (
-        <div
-          key={index}
-          className="group relative bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 transition-all duration-300 overflow-hidden"
+    <>
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={handleGeneratePDF}
+          className="px-5 py-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white rounded-lg font-semibold shadow hover:scale-105 transition-transform duration-200"
         >
-          {/* Background Gradient Overlay */}
-          <div className={`absolute inset-0 bg-gradient-to-br ${config.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+          Generate PDF Report
+        </button>
+      </div>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-8 mt-6">
+        {cardConfigs.map((config, index) => (
+          <div
+            key={index}
+            className="group relative bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 transition-all duration-300 overflow-hidden"
+          >
+            {/* Background Gradient Overlay */}
+            <div className={`absolute inset-0 bg-gradient-to-br ${config.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
 
-          {/* Card Content */}
-          <div className="relative z-10">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-              <div className={`p-3 rounded-xl ${config.bgColor} group-hover:scale-110 transition-transform duration-300`}>
-                <config.Icon className={`w-6 h-6 ${config.iconColor}`} />
-              </div>
-              <div className="flex items-center gap-1">
-                <span className={`text-xs font-medium ${config.changeColor} bg-white px-2 py-1 rounded-full border`}>
-                  Live
-                </span>
-              </div>
-            </div>
-
-            {/* Main Content */}
-            <div className="space-y-2">
-              <div className="flex items-baseline gap-2">
-                <h3 className="text-2xl font-bold text-gray-900 group-hover:text-gray-800 transition-colors duration-300">
-                  {config.value}
-                </h3>
-                <div className={`flex items-center gap-1 ${config.changeColor}`}>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17l9.2-9.2M17 17V7H7" />
-                  </svg>
-                  <span className="text-sm font-medium">
-                    {config.percent >= 0 ? '+' : ''}{config.percent.toFixed(1)}%
+            {/* Card Content */}
+            <div className="relative z-10">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className={`p-3 rounded-xl ${config.bgColor} group-hover:scale-110 transition-transform duration-300`}>
+                  <config.Icon className={`w-6 h-6 ${config.iconColor}`} />
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className={`text-xs font-medium ${config.changeColor} bg-white px-2 py-1 rounded-full border`}>
+                    Live
                   </span>
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-gray-700">{config.label}</p>
-                <p className="text-xs text-gray-500">{config.description}</p>
+              {/* Main Content */}
+              <div className="space-y-2">
+                <div className="flex items-baseline gap-2">
+                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-gray-800 transition-colors duration-300">
+                    {config.value}
+                  </h3>
+                  <div className={`flex items-center gap-1 ${config.changeColor}`}>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17l9.2-9.2M17 17V7H7" />
+                    </svg>
+                    <span className="text-sm font-medium">
+                      {config.percent >= 0 ? '+' : ''}{config.percent.toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-gray-700">{config.label}</p>
+                  <p className="text-xs text-gray-500">{config.description}</p>
+                </div>
               </div>
+
+              {/* Progress Bar removed as requested */}
             </div>
 
-            {/* Progress Bar */}
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-                <span>Progress</span>
-                <span>{config.progress}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className={`h-2 rounded-full bg-gradient-to-r ${config.gradient} transition-all duration-500`}
-                  style={{ width: `${config.progress}%` }}
-                ></div>
-              </div>
-            </div>
+            {/* Decorative Elements */}
+            <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+            <div className="absolute -bottom-2 -left-2 w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
           </div>
-
-          {/* Decorative Elements */}
-          <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
-          <div className="absolute -bottom-2 -left-2 w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </>
   );
 }

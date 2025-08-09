@@ -14,6 +14,7 @@ import {
 import { useRouter } from "next/navigation";
 import "toastify-js/src/toastify.css";
 import Toastify from "toastify-js";
+    import { confirmDialog } from "@/components/ui/confirm";
 
 
 const showToast = (text, type = "success") => {
@@ -95,7 +96,7 @@ export default function VariationPage() {
       setBrands(result.data); // ✅ Fix: extract the array from result.data
       setFiltered(result.data);
     }
-
+      
     GetAllvariation();
   }, []);
 

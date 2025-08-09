@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
+const { useRouter } = require("next/navigation");
 
 import {
   faEllipsisVertical,
@@ -37,7 +38,7 @@ export default function CategoriesPage1() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-
+const  router = useRouter();
   const toggleDropdown = (id) => {
     setOpenDropdownId((prev) => (prev === id ? null : id));
   };
@@ -71,6 +72,7 @@ export default function CategoriesPage1() {
         setCategories(categoryData);
         setFilteredCategories(categoryData);
         setError(null);
+        console.log(data)
       } catch (err) {
         console.error("Failed to fetch categories:", err);
         setError("Failed to load categories. Please try again.");
@@ -97,6 +99,7 @@ export default function CategoriesPage1() {
 
     if (!token) {
       showToast("Authentication required. Please login first.");
+      router.push('/login')
       return;
     }
 

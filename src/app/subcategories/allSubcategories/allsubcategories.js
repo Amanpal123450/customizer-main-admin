@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { confirmDialog } from "@/components/ui/confirm";
 
 export default function SubcategoriesPage() {
   const [subcategories, setSubcategories] = useState([]);
@@ -12,7 +13,8 @@ export default function SubcategoriesPage() {
   }, []);
 
   const handleDelete = async (id) => {
-    if (confirm("Are you sure?")) {
+  const confirmed = await confirmDialog("Are you sure?");
+  if (confirmed) {
       await fetch(`/api/subcategories/${id}`, { method: "DELETE" });
       setSubcategories(subcategories.filter((s) => s._id !== id));
     }

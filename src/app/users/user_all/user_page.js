@@ -1,9 +1,10 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "@/components/ui/toast";
+import { confirmDialog } from "@/components/ui/confirm";
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
@@ -58,11 +59,12 @@ export default function UsersPage() {
   }, []);
 
   // Delete user
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
 
+  const handleDelete = async (id) => {
+    const confirmed = await confirmDialog("Are you sure you want to delete this user?");
+    if (!confirmed) return;
     try {
-  const token = localStorage.getItem("adminToken");
+      const token = localStorage.getItem("adminToken");
 
       const res = await fetch(
         `https://e-com-customizer.onrender.com/api/v1/deleteUser/${id}`,
@@ -77,11 +79,11 @@ export default function UsersPage() {
       const result = await res.json();
       if (!res.ok) throw new Error(result.message || "Failed to delete user");
 
-      alert("✅ User deleted successfully!");
+  toast.success("User deleted successfully!");
       setUsers((prev) => prev.filter((u) => u._id !== id));
     } catch (err) {
       console.error("Delete error:", err);
-      alert("❌ Failed to delete user.");
+  toast.error("Failed to delete user.");
     }
   };
 

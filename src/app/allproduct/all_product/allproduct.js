@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { confirmDialog } from "@/components/ui/confirm";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -186,29 +187,28 @@ export default function ProductsPage() {
   };
 
   const handleDelete = async (id) => {
-  const token = localStorage.getItem("adminToken");
-    if (confirm("Are you sure you want to delete this product?")) {
-      try {
-        const response = await fetch(
-          `https://e-com-customizer.onrender.com/api/v1/deleteProduct/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+    const token = localStorage.getItem("adminToken");
+    const confirmed = await confirmDialog("Are you sure you want to delete this product?");
+    if (!confirmed) return;
+    try {
+      const response = await fetch(
+        `https://e-com-customizer.onrender.com/api/v1/deleteProduct/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
-
-        if (response.ok) {
-          setProducts((prev) => prev.filter((p) => p._id !== id));
-          setOpenDropdownId(null);
-        } else {
-          showToast("Failed to delete product", "error");
-        }
-      } catch (err) {
-        console.error("Delete failed:", err);
-        showToast("Error deleting product", "error");
+        },
+      );
+      if (response.ok) {
+        setProducts((prev) => prev.filter((p) => p._id !== id));
+        setOpenDropdownId(null);
+      } else {
+        showToast("Failed to delete product", "error");
       }
+    } catch (err) {
+      console.error("Delete failed:", err);
+      showToast("Error deleting product", "error");
     }
   };
 

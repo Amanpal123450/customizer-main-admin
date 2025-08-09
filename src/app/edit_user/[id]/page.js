@@ -1,6 +1,8 @@
+
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "@/components/ui/toast";
 
 export default function EditUserPage() {
   const { id } = useParams();
@@ -39,11 +41,11 @@ export default function EditUserPage() {
       const result = await res.json();
       if (!res.ok) throw new Error(result.message || "Update failed");
 
-      alert("✅ User updated successfully!");
+  toast.success("User updated successfully!");
       router.push("/");
     } catch (err) {
       console.error("Update failed:", err);
-      alert("❌ Failed to update user");
+  toast.error("Failed to update user");
     }
   };
 

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+  import { toast } from "@/components/ui/toast";
 
 // 🟢 PROGRESS SECTION COMPONENT
 function ProgressSection({ formData }) {
@@ -146,7 +147,10 @@ function ProgressSection({ formData }) {
 // 🟢 Toast helper (simple fallback, replace with your preferred toast library if needed)
 function showToast(message, type = "info") {
   if (typeof window !== "undefined") {
-    alert(`${type === "error" ? "❌" : type === "success" ? "✅" : ""} ${message}`);
+
+  if(type === "success") toast.success(message);
+  else if(type === "error") toast.error(message);
+  else toast.alert(message);
   }
 }
 

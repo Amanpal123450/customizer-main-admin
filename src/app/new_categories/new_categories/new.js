@@ -23,7 +23,7 @@ export default function CreateCategory() {
   const [title, setTitle] = useState("");
   const [images, setimages] = useState(null);
   const [preview, setPreview] = useState(null);
-  
+
   const router = useRouter();
 
   const handleImageChange = (e) => {
@@ -43,33 +43,35 @@ export default function CreateCategory() {
       formData.append("images", images); // Must match backend key
     }
 
-  const token = localStorage.getItem("adminToken"); // make sure token is stored on login
-
-    try {
-      const res = await fetch(
-        "https://e-com-customizer.onrender.com/api/v1/createCategory",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }
-      );
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        showToast(result.message || "❌ Failed to create category");
-        return;
-      }
-
-      showToast("✅ Category created successfully");
-      router.push("/admin/categories");
-    } catch (err) {
-      console.error("Error submitting form:", err);
-      showToast("Something went wrong.");
+    const token = localStorage.getItem("adminToken"); // make sure token is stored on login
+    if (!token){
+      router.push('/login')
     }
+      try {
+        const res = await fetch(
+          "https://e-com-customizer.onrender.com/api/v1/createCategory",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
+        );
+
+        const result = await res.json();
+
+        if (!res.ok) {
+          showToast(result.message || "❌ Failed to create category");
+          return;
+        }
+
+        showToast("✅ Category created successfully");
+        router.push("/categories");
+      } catch (err) {
+        console.error("Error submitting form:", err);
+        showToast("Something went wrong.");
+      }
   };
 
   return (

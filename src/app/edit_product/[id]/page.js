@@ -142,28 +142,32 @@ export default function EditProductPage() {
   // See your provided logic; just add imageFilled for the progress section
   const [imageFilled, setImageFilled] = useState(false);
 
-  // Uncomment when ready to prefill
-  // useEffect(() => {
-  //   const fetchProduct = async () => {
-  //     try {
-  //       const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/getProduct/${id}`);
-  //       const data = await res.json();
-  //       if (!res.ok) throw new Error(data.message || "Failed to fetch product");
-  //       setForm({
-  //         title: data.data.title || "",
-  //         description: data.data.description || "",
-  //         price: data.data.price || "",
-  //         quantity: data.data.quantity || "",
-  //         color: data.data.color || "",
-  //       });
-  //       setPreview(data.data.images);
-  //       setImageFilled(!!data.data.images);
-  //     } catch (err) {
-  //       showToast(" Failed to load product");
-  //     }
-  //   };
-  //   if (id) fetchProduct();
-  // }, [id]);
+  // Prefill form with existing product data for editing
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        console.log('Fetching product for id:', id);
+        const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/getProduct/${id}`);
+        console.log('Response status:', res.status);
+        const data = await res.json();
+        console.log('Fetched data:', data);
+        if (!res.ok) throw new Error(data.message || "Failed to fetch product");
+        setForm({
+          title: data.data.title || "",
+          description: data.data.description || "",
+          price: data.data.price || "",
+          quantity: data.data.quantity || "",
+          color: data.data.color || "",
+        });
+        setPreview(data.data.images);
+        setImageFilled(!!data.data.images);
+      } catch (err) {
+        console.error('Failed to load product:', err);
+        showToast(" Failed to load product");
+      }
+    };
+    if (id) fetchProduct();
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

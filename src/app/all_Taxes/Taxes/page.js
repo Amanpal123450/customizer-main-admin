@@ -200,7 +200,8 @@ export default function TaxPage() {
   };
 
   const handleDelete = async (id) => {
-    if (confirm("Are you sure you want to delete this Tax?")) {
+  const confirmed = await confirmDialog("Are you sure you want to delete this Tax?");
+  if (confirmed) {
       try {
         const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/tax/${id}`, {
           method: "DELETE",

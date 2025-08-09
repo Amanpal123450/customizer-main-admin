@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { confirmDialog } from "@/components/ui/confirm";
 
 import "toastify-js/src/toastify.css";
 import Toastify from "toastify-js";
@@ -48,7 +49,8 @@ export default function AdminPage() {
   }, []);
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
+  const confirmed = await confirmDialog("Are you sure you want to delete this user?");
+  if (!confirmed) return;
 
     try {
   const token = localStorage.getItem("adminToken");

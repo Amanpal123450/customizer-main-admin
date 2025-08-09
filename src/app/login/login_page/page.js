@@ -27,7 +27,9 @@ const AdminLoginPage = () => {
 
     React.useEffect(() => {
         const token = localStorage.getItem('adminToken');
-        if (token) {
+        if (!token) {
+            router.push('/login');
+        } else {
             router.push('/dashboard');
         }
     }, [router]);
@@ -120,7 +122,7 @@ const AdminLoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex">
+        <div className="min-h-screen flex" style={{ fontFamily: 'Poppins, Satoshi, sans-serif' }}>
          {   /* Left side - Background Image */}
             <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center">
                 <div
@@ -131,10 +133,10 @@ const AdminLoginPage = () => {
                     }}  
                 ></div>
                 <div className="relative z-10 flex flex-col backdrop-blur-xl justify-center items-center text-black p-12 bg-transparent bg-opacity-40 h-full w-full">
-                    <div className="text-6xl font-bold mb-4">DesignTailor</div>
-                    <div className="text-xl opacity-90 text-center">
+                    <div className="text-6xl font-extrabold mb-4 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-lg">DesignTailor</div>
+                    <div className="text-2xl font-semibold opacity-90 text-center">
                         Welcome to the Admin Panel<br />
-                        Please login to manage your store
+                        <span className="text-lg font-medium">Please login to manage your store</span>
                     </div>
                 </div>
             </div>
@@ -148,10 +150,10 @@ const AdminLoginPage = () => {
                             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
                                 <div className="w-4 h-4 bg-white rounded-sm transform rotate-45"></div>
                             </div>
-                            <span className="text-2xl font-bold text-black">DesignTailor</span>
+                            <span className="text-2xl font-bold text-black bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-lg">DesignTailor</span>
                         </div>
 
-                        <h2 className="text-3xl font-bold text-black mb-2">Login</h2>
+                        <h2 className="text-3xl font-extrabold text-black mb-2">Login</h2>
                         <div className="flex items-center text-sm">
                             <span className="text-black mr-1">Don't have an account?</span>
                             <button className="text-blue-600  cursor-pointer hover:text-blue-700 font-medium">
