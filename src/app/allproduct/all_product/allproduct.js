@@ -259,15 +259,15 @@ export default function ProductsPage() {
 
   if (loading) {
     return (
-      <div className="rounded-xl bg-white p-6 shadow-lg">
+  <div className="rounded-xl bg-white dark:bg-gray-900 p-6 shadow-lg">
         <div className="animate-pulse">
           <div className="mb-6 flex items-center justify-between">
-            <div className="h-8 w-48 rounded bg-gray-200"></div>
-            <div className="h-10 w-32 rounded bg-gray-200"></div>
+            <div className="h-8 w-48 rounded bg-gray-200 dark:bg-gray-800"></div>
+            <div className="h-10 w-32 rounded bg-gray-200 dark:bg-gray-800"></div>
           </div>
           <div className="space-y-4">
             {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="h-16 rounded bg-gray-200"></div>
+              <div key={i} className="h-16 rounded bg-gray-200 dark:bg-gray-800"></div>
             ))}
           </div>
         </div>
@@ -291,14 +291,14 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="overflow-hidden rounded-xl bg-gray-50 shadow-lg">
+  <div className="overflow-hidden rounded-xl bg-gray-50 dark:bg-gray-800 shadow-lg">
       {/* Header */}
       <div className="p-6 text-white">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold text-black">All Products</h1>
           <Link
             href="/product"
-            className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 font-medium text-blue-600 shadow-md transition-colors duration-200 hover:bg-gray-100"
+            className="inline-flex items-center gap-2 rounded-lg bg-white dark:bg-gray-900 px-4 py-2 font-medium text-blue-600 shadow-md transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800"
           >
             <motion.span
               whileHover={{ scale: 1.1 }}
@@ -313,7 +313,7 @@ export default function ProductsPage() {
       </div>
 
       {/* Search Bar */}
-      <div className="flex justify-between border-b bg-gray-50 p-6">
+  <div className="flex justify-between border-b bg-gray-50 dark:bg-gray-800 p-6">
         <div className="relative max-w-md">
           <FontAwesomeIcon
             icon={faSearch}
@@ -352,7 +352,7 @@ export default function ProductsPage() {
       </div>
 
       {/* Products Count */}
-      <div className="border-b bg-gray-50 px-6 py-3">
+  <div className="border-b bg-gray-50 dark:bg-gray-800 px-6 py-3">
         <p className="text-sm text-gray-600">
           Showing {indexOfFirstItem + 1}-
           {Math.min(indexOfLastItem, filteredProducts.length)} of{" "}
@@ -365,7 +365,7 @@ export default function ProductsPage() {
       {/* Table Container */}
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="border-b bg-gray-100">
+          <thead className="border-b bg-gray-100 dark:bg-gray-800">
             <tr>
               <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">
                 Image
@@ -404,11 +404,11 @@ export default function ProductsPage() {
                     initial="hidden"
                     animate="visible"
                     variants={productRowVariants}
-                    className="transition-colors duration-150 hover:bg-gray-50"
+                    className="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     {/* Image */}
                     <td className="px-4 py-4">
-                      <div className="flex h-16 w-16 items-center justify-center overflow-hidden border border-gray-200 bg-gray-50 rounded-md">
+                      <div className="flex h-16 w-16 items-center justify-center overflow-hidden border border-gray-200 bg-gray-50 dark:bg-gray-800 rounded-md">
                         {product.images?.[0] ? (
                           <Image
                             src={product.images[0]}
@@ -509,7 +509,7 @@ export default function ProductsPage() {
                       <button
                         onClick={() => toggleDropdown(product._id)}
                         data-dropdown-toggle
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-150 hover:bg-gray-100"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-150 hover:bg-gray-100 dark:hover:bg-gray-800"
                         aria-label="Toggle actions menu"
                       >
                         <FontAwesomeIcon
@@ -525,7 +525,7 @@ export default function ProductsPage() {
                             animate="visible"
                             exit="hidden"
                             variants={dropdownVariants}
-                            className="absolute right-0 top-12 z-30 w-32 rounded-lg border bg-white shadow-lg"
+                            className="absolute right-0 top-12 z-30 w-32 rounded-lg border bg-white dark:bg-gray-900 shadow-lg"
                             data-dropdown
                           >
                             <Link
@@ -588,7 +588,7 @@ export default function ProductsPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="border-t bg-gray-50 px-6 py-4">
+  <div className="border-t bg-gray-50 dark:bg-gray-800 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-600">
@@ -603,8 +603,8 @@ export default function ProductsPage() {
                 whileHover={currentPage !== 1 ? { scale: 1.05 } : {}}
                 whileTap={currentPage !== 1 ? { scale: 0.95 } : {}}
                 className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${currentPage === 1
-                    ? "cursor-not-allowed bg-gray-100 text-gray-400"
-                    : "border border-gray-300 bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                    ? "cursor-not-allowed bg-gray-100 dark:bg-gray-800 text-gray-400"
+                    : "border border-gray-300 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-600"
                   }`}
               >
                 Previous
@@ -622,7 +622,7 @@ export default function ProductsPage() {
                       whileTap={{ scale: 0.95 }}
                       className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${currentPage === pageNumber
                           ? "bg-blue-600 text-white"
-                          : "border border-gray-300 bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                          : "border border-gray-300 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-600"
                         }`}
                     >
                       {pageNumber}
@@ -638,8 +638,8 @@ export default function ProductsPage() {
                 whileHover={currentPage !== totalPages ? { scale: 1.05 } : {}}
                 whileTap={currentPage !== totalPages ? { scale: 0.95 } : {}}
                 className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${currentPage === totalPages
-                    ? "cursor-not-allowed bg-gray-100 text-gray-400"
-                    : "border border-gray-300 bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                    ? "cursor-not-allowed bg-gray-100 dark:bg-gray-800 text-gray-400"
+                    : "border border-gray-300 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-600"
                   }`}
               >
                 Next

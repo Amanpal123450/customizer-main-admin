@@ -7,9 +7,12 @@ import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "@/components/ui/toast";
 import { confirmDialog } from "@/components/ui/confirm";
 
+
+
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
   const [openDropdownId, setOpenDropdownId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Toggle dropdown
   const toggleDropdown = (id) => {
@@ -32,12 +35,12 @@ export default function UsersPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-  const router = useRouter();
-  const token = localStorage.getItem("adminToken");
-  if (!token) {
-    router.push('/login');
-    return null;
-  }
+        const router = useRouter();
+        const token = localStorage.getItem("adminToken");
+        if (!token) {
+          router.push('/login');
+          return null;
+        }
 
         const res = await fetch(
           "http://localhost:4000/api/v1/getAllUsers",
@@ -49,7 +52,6 @@ export default function UsersPage() {
         );
 
         const data = await res.json();
-        console.log(data)
         if (!res.ok) throw new Error(data.message || "Failed to fetch users");
 
         const filteredUsers = (data.data || []).filter(
@@ -93,17 +95,42 @@ export default function UsersPage() {
     }
   };
 
+  // Helper to normalize strings: trim, collapse spaces, lowercase
+  function normalize(str) {
+    return (str || "").replace(/\s+/g, " ").trim().toLowerCase();
+  }
+
+  // Filter users based on normalized search term
+  const filteredUsers = users.filter((user) => {
+    const search = normalize(searchTerm);
+    if (!search) return true;
+    const name = normalize(`${user.firstName || ""} ${user.lastName || ""}`);
+    const email = normalize(user.email);
+    return name.includes(search) || email.includes(search);
+  });
+
   return (
-    <div className="rounded-xl bg-white p-6 shadow-lg sm:p-8">
+  <div className="rounded-xl bg-white dark:bg-gray-900 p-6 shadow-lg sm:p-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-800 sm:text-3xl">
           Manage Users
         </h1>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
+      {/* Search input */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search by name or email..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full max-w-xs border border-gray-300 rounded px-3 py-2 mb-2"
+        />
+      </div>
+
+      <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full text-sm">
-          <thead className="bg-gray-100 text-left font-semibold text-gray-700">
+          <thead className="bg-gray-100 dark:bg-gray-800 text-left font-semibold text-gray-700 dark:text-gray-200">
             <tr>
               <th className="border-b px-6 py-3">Name</th>
               <th className="border-b px-6 py-3">Email</th>
@@ -111,13 +138,13 @@ export default function UsersPage() {
             </tr>
           </thead>
           <tbody>
-            {users.length > 0 ? (
-              users.map((user) => (
-                <tr key={user._id} className="transition hover:bg-gray-50">
-                  <td className="border-b px-6 py-4 text-gray-800">
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((user) => (
+                <tr key={user._id} className="transition hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <td className="border-b px-6 py-4 text-gray-800 dark:text-gray-100">
                     {`${user.firstName || ""} ${user.lastName || ""}`}
                   </td>
-                  <td className="border-b px-6 py-4 text-gray-800">
+                  <td className="border-b px-6 py-4 text-gray-800 dark:text-gray-100">
                     {user.email}
                   </td>
                   <td className="relative border-b px-6 py-4 text-center dropdown-container">
@@ -129,16 +156,16 @@ export default function UsersPage() {
                     </button>
 
                     {openDropdownId === user._id && (
-                      <div className="absolute right-4 top-0 z-20 w-28 rounded border bg-white shadow-md">
+                      <div className="absolute right-4 top-0 z-20 w-28 rounded border bg-white dark:bg-gray-900 shadow-md dark:border-gray-700">
                         <Link
                           href={`/edit_user/${user._id}`}
-                          className="block px-4 py-2 text-sm text-blue-600 hover:bg-gray-100"
+                          className="block px-4 py-2 text-sm text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-800"
                         >
                           Edit
                         </Link>
                         <button
                           onClick={() => handleDelete(user._id)}
-                          className="block w-full border-t px-4 py-2 text-center text-sm text-red-600 hover:bg-gray-100"
+                          className="block w-full border-t px-4 py-2 text-center text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800"
                         >
                           Delete
                         </button>
@@ -149,7 +176,7 @@ export default function UsersPage() {
               ))
             ) : (
               <tr>
-                <td colSpan="3" className="px-6 py-6 text-center text-gray-500">
+                <td colSpan="3" className="px-6 py-6 text-center text-gray-500 dark:text-gray-400">
                   No users found.
                 </td>
               </tr>

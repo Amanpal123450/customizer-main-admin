@@ -153,7 +153,7 @@ const AdminLoginPage = () => {
                     <div className="mb-8">
                         <div className="flex items-center mb-6 lg:hidden">
                             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
-                                <div className="w-4 h-4 bg-white rounded-sm transform rotate-45"></div>
+                                <div className="w-4 h-4 bg-white dark:bg-gray-900 rounded-sm transform rotate-45"></div>
                             </div>
                             <span className="text-2xl font-bold text-black bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-lg">DesignTailor</span>
                         </div>

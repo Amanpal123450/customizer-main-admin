@@ -111,7 +111,7 @@ export default function EditCategoryPage() {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-6 bg-white p-6 shadow-md rounded">
+  <div className="max-w-xl mx-auto mt-6 bg-white dark:bg-gray-900 p-6 shadow-md rounded">
       <h1 className="text-2xl font-semibold mb-6">Edit SubCategory</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

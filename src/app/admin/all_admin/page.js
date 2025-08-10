@@ -74,7 +74,7 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="p-6 sm:p-8 bg-white shadow-lg rounded-xl">
+  <div className="p-6 sm:p-8 bg-white dark:bg-gray-900 shadow-lg rounded-xl">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Manage Admin</h1>
         
@@ -82,7 +82,7 @@ export default function AdminPage() {
 
       <div className="overflow-x-auto rounded-lg border border-gray-200">
         <table className="min-w-full text-sm">
-          <thead className="bg-gray-100 text-gray-700 font-semibold text-left">
+          <thead className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-semibold text-left">
             <tr>
               <th className="px-6 py-3 border-b">Name</th>
               <th className="px-6 py-3 border-b">Email</th>
@@ -92,7 +92,7 @@ export default function AdminPage() {
           <tbody>
             {users.length > 0 ? (
               users.map((user) => (
-                <tr key={user._id} className="hover:bg-gray-50 transition">
+                <tr key={user._id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition">
                   <td className="px-6 py-4 border-b text-gray-800">
                     {`${user.firstName || ""} ${user.lastName || ""}`}
                   </td>

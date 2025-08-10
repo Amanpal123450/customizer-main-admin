@@ -31,8 +31,8 @@ export default function EditSubcategoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white p-8 rounded shadow">
+  <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
+  <div className="w-full max-w-md bg-white dark:bg-gray-900 p-8 rounded shadow">
         <h1 className="text-2xl font-bold mb-6 text-center">Edit Subcategory</h1>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>

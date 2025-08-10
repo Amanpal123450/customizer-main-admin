@@ -56,8 +56,8 @@ export default function EditUserPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4">
-      <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+  <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-10 px-4">
+  <div className="max-w-2xl mx-auto bg-white dark:bg-gray-900 p-8 rounded-lg shadow-md">
         <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">
           Edit User Details
         </h1>

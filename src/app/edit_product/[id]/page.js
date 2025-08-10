@@ -36,7 +36,7 @@ function ProgressSection({ formData }) {
   };
 
   return (
-    <div className="w-full md:w-72 ml-0 md:ml-8 mt-8 md:mt-0 bg-gray-50 rounded shadow p-6 flex flex-col items-center">
+  <div className="w-full md:w-72 ml-0 md:ml-8 mt-8 md:mt-0 bg-gray-50 dark:bg-gray-800 rounded shadow p-6 flex flex-col items-center">
       <h2 className="text-lg font-semibold mb-6">Progress</h2>
       <div className="relative flex flex-col items-center pt-2" style={{ minHeight: `${fields.length * 46}px` }}>
         {fields.map((field, idx) => {
@@ -232,7 +232,7 @@ export default function EditProductPage() {
     <div className="flex flex-col md:flex-row mx-auto mt-8 max-w-5xl">
       {/* --- Left: the form --- */}
       <div className="flex-1">
-        <div className="mx-auto max-w-full rounded bg-white p-6 shadow-md">
+  <div className="mx-auto max-w-full rounded bg-white dark:bg-gray-900 p-6 shadow-md">
           <h1 className="mb-6 text-center text-2xl font-bold text-gray-800">
             Edit Product
           </h1>
@@ -249,7 +249,7 @@ export default function EditProductPage() {
                 value={form.title}
                 onChange={handleChange}
                 required
-                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
+                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 dark:bg-gray-800"
               />
             </div>
             <div>
@@ -261,7 +261,7 @@ export default function EditProductPage() {
                 onChange={handleChange}
                 required
                 rows={3}
-                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 resize-none"
+                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 dark:bg-gray-800 resize-none"
               />
             </div>
             <div className="flex flex-col md:flex-row gap-6">
@@ -274,7 +274,7 @@ export default function EditProductPage() {
                   value={form.price}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
+                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 dark:bg-gray-800"
                 />
               </div>
               <div className="flex-1">
@@ -286,7 +286,7 @@ export default function EditProductPage() {
                   value={form.quantity}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
+                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 dark:bg-gray-800"
                 />
               </div>
             </div>
@@ -299,7 +299,7 @@ export default function EditProductPage() {
                 onChange={handleChange}
                 required
                 placeholder="e.g. Red, Black"
-                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
+                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 dark:bg-gray-800"
               />
             </div>
             {/* images */}
@@ -309,7 +309,7 @@ export default function EditProductPage() {
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                className="w-full rounded-lg border px-4 py-2 bg-gray-50"
+                className="w-full rounded-lg border px-4 py-2 bg-gray-50 dark:bg-gray-800"
               />
               {preview && (
                 <Image

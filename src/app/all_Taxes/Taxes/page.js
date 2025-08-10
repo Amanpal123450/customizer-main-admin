@@ -422,10 +422,8 @@ export default function TaxPage() {
                           }}
                         >
                           <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${Tax.active ? "translate-x-6" : "translate-x-1"
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-gray-900 transition-transform ${Tax.active ? "translate-x-6" : "translate-x-1"
                               }`}
-
-
                           />
                         </button>
                         <span
@@ -592,7 +590,7 @@ export default function TaxPage() {
                     }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${form.active ? "translate-x-6" : "translate-x-1"
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-gray-900 transition-transform ${form.active ? "translate-x-6" : "translate-x-1"
                       }`}
                   />
                 </button>

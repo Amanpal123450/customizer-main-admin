@@ -161,7 +161,7 @@ const Signup = () => {
           <div className="mb-8">
             <div className="flex items-center mb-6 lg:hidden">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
-                <div className="w-4 h-4 bg-white rounded-sm transform rotate-45"></div>
+                <div className="w-4 h-4 bg-white dark:bg-gray-900 rounded-sm transform rotate-45"></div>
               </div>
               <span className="text-2xl font-bold text-black">DesignTailor</span>
             </div>
@@ -249,7 +249,7 @@ const Signup = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Captcha</label>
               <div className="flex items-center space-x-2">
-                <div className="text-lg font-bold bg-gray-200 px-4 py-2 rounded">{captchaCode}</div>
+                <div className="text-lg font-bold bg-gray-200 dark:bg-gray-800 px-4 py-2 rounded">{captchaCode}</div>
                 <input name="captchaInput" placeholder="Enter Captcha" value={formData.captchaInput} onChange={handleChange} className={inputClass + " flex-1"} />
                 <button type="button" onClick={refreshCaptcha} className="text-sm text-blue-600 hover:underline">Refresh</button>
               </div>
