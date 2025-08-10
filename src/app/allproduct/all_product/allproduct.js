@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { confirmDialog } from "@/components/ui/confirm";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -51,7 +52,12 @@ export default function ProductsPage() {
     setOpenDropdownId((prev) => (prev === id ? null : id));
   };
 
+  const router = useRouter();
   const token = localStorage.getItem("adminToken");
+  if (!token) {
+    router.push('/login');
+    return null;
+  }
 
   useEffect(() => {
 

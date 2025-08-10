@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { compactFormat } from "@/lib/format-number";
@@ -87,11 +88,12 @@ export function OverviewCardsGroup() {
         setLoading(true);
         setError(null);
         let token: string | null = null;
+        const router = useRouter();
         if (typeof window !== "undefined") {
           token = localStorage.getItem("adminToken");
         }
         if (!token) {
-          setError("Token missing. Please log in.");
+          router.push('/login');
           return;
         }
         const res = await fetch("http://localhost:4000/api/v1/admin/dashboard", {

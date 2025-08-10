@@ -1,6 +1,7 @@
 
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "@/components/ui/toast";
 
@@ -23,7 +24,12 @@ export default function EditUserPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  const router = useRouter();
   const token = localStorage.getItem("adminToken");
+  if (!token) {
+    router.push('/login');
+    return null;
+  }
 
     try {
       const res = await fetch(

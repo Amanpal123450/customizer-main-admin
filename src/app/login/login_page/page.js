@@ -1,4 +1,5 @@
 "use client"
+
 import React, { useState } from 'react';
 import {
     Eye,
@@ -25,13 +26,17 @@ const AdminLoginPage = () => {
     const router = useRouter();
 
 
+
     React.useEffect(() => {
         const token = localStorage.getItem('adminToken');
         if (!token) {
             router.push('/login');
-        } else {
-            router.push('/dashboard');
+            return;
         }
+        // If you want to redirect to dashboard if already logged in, uncomment below:
+        // else {
+        //     router.push('/dashboard');
+        // }
     }, [router]);
 
     const handleInputChange = (e) => {

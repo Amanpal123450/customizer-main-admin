@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
@@ -31,7 +32,12 @@ export default function UsersPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+  const router = useRouter();
   const token = localStorage.getItem("adminToken");
+  if (!token) {
+    router.push('/login');
+    return null;
+  }
 
         const res = await fetch(
           "http://localhost:4000/api/v1/getAllUsers",
