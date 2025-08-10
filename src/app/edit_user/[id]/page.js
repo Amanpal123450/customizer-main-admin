@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "@/components/ui/toast";
-
 export default function EditUserPage() {
   const { id } = useParams();
   const router = useRouter();

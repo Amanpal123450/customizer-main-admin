@@ -10,6 +10,7 @@ import * as icons from "./icons";
 
 
 export function OverviewCardsGroup() {
+  const router = useRouter();
   // PDF generation handler
   const handleGeneratePDF = () => {
     const doc = new jsPDF();
@@ -88,7 +89,6 @@ export function OverviewCardsGroup() {
         setLoading(true);
         setError(null);
         let token: string | null = null;
-        const router = useRouter();
         if (typeof window !== "undefined") {
           token = localStorage.getItem("adminToken");
         }
@@ -138,9 +138,8 @@ export function OverviewCardsGroup() {
         setLoading(false);
       }
     };
-
     fetchDashboardData();
-  }, []);
+  }, [router]);
 
   // Enhanced card data with colors and trends
   // Helper to calculate percentage change
