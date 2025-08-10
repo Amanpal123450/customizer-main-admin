@@ -38,6 +38,7 @@ const showToast = (text, type = "success") => {
   }).showToast();
 };
 
+
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [openDropdownId, setOpenDropdownId] = useState(null);
@@ -47,23 +48,29 @@ export default function ProductsPage() {
   const [itemsPerPage] = useState(8);
   const [discounts, setDiscounts] = useState([]);
   const [discountLookup, setDiscountLookup] = useState({});
-
-  const toggleDropdown = (id) => {
-    setOpenDropdownId((prev) => (prev === id ? null : id));
-  };
-
-  const router = useRouter();
   const [token, setToken] = useState(null);
+  const router = useRouter();
 
-  // Ensure token is set and redirect if not present
+  // Always call hooks at the top level
   useEffect(() => {
     const t = localStorage.getItem("adminToken");
     setToken(t);
-    if (!t) {
+  }, []);
+
+  useEffect(() => {
+    if (token === null) return; // Wait for token to be set
+    if (!token) {
       router.push('/login');
     }
-  }, [router]);
+  }, [token, router]);
 
+  // ...existing code...
+
+  // If token is not set yet, don't render (prevents flicker)
+  if (token === null) {
+    return null;
+  }
+  // If token is empty (not logged in), don't render (redirect will happen)
   if (!token) {
     return null;
   }
