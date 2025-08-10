@@ -51,6 +51,7 @@ export default function ProductsPage() {
   const [token, setToken] = useState(null);
   const router = useRouter();
 
+
   // Always call hooks at the top level
   useEffect(() => {
     const t = localStorage.getItem("adminToken");
@@ -64,7 +65,74 @@ export default function ProductsPage() {
     }
   }, [token, router]);
 
-  // ...existing code...
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const isInsideDropdown = event.target.closest("[data-dropdown]");
+      const isToggleButton = event.target.closest("[data-dropdown-toggle]");
+      if (!isInsideDropdown && !isToggleButton) {
+        setOpenDropdownId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Fetch products
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("http://localhost:4000/api/v1/totalProduct");
+        const data = await res.json();
+        setProducts(data.AllProduct.reverse() || []);
+        console.log("Products:", data);
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Fetch discounts
+  useEffect(() => {
+    async function fetchDiscounts() {
+      try {
+        const res = await fetch("http://localhost:4000/api/v1/discounts");
+        const data = await res.json();
+
+        // Extract discount array properly
+        const discountArray = Array.isArray(data?.data) ? data.data : [];
+        setDiscounts(discountArray);
+        console.log("Discounts:", data);
+
+        // Build discount lookup object
+        const lookup = {};
+        discountArray.forEach(discount => {
+          // Using the correct field names from your API response
+          if (discount.product && discount.discountValue) {
+            lookup[discount.product] = discount.discountValue;
+          }
+        });
+
+        setDiscountLookup(lookup);
+        console.log("Discount Lookup:", lookup);
+
+      } catch (e) {
+        console.error("Failed to fetch discounts", e);
+        setDiscounts([]);
+        setDiscountLookup({});
+      }
+    }
+    fetchDiscounts();
+  }, []);
 
   // If token is not set yet, don't render (prevents flicker)
   if (token === null) {
