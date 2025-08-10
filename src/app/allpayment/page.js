@@ -20,7 +20,7 @@ export default function PaymentHistoryPage() {
   const fetchPayments = async () => {
   const token= localStorage.getItem("adminToken");
     try {
-      const res= await fetch("https://e-com-customizer.onrender.com/api/v1/payment/fetchAllPayments",{
+      const res= await fetch("http://localhost:4000/api/v1/payment/fetchAllPayments",{
 
         method:"GET",
         headers:{

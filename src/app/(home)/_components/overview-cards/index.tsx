@@ -79,7 +79,7 @@ export function OverviewCardsGroup() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-// https://e-com-customizer.onrender.com/api/v1/admin/dashboard
+// http://localhost:4000/api/v1/admin/dashboard
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -94,7 +94,7 @@ export function OverviewCardsGroup() {
           setError("Token missing. Please log in.");
           return;
         }
-        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/admin/dashboard", {
+        const res = await fetch("http://localhost:4000/api/v1/admin/dashboard", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

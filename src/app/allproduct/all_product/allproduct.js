@@ -129,7 +129,7 @@ export default function ProductsPage() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/totalProduct");
+        const res = await fetch("http://localhost:4000/api/v1/totalProduct");
         const data = await res.json();
         setProducts(data.AllProduct.reverse() || []);
         console.log("Products:", data);
@@ -147,7 +147,7 @@ export default function ProductsPage() {
   useEffect(() => {
     async function fetchDiscounts() {
       try {
-        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/discounts");
+        const res = await fetch("http://localhost:4000/api/v1/discounts");
         const data = await res.json();
 
         // Extract discount array properly
@@ -192,7 +192,7 @@ export default function ProductsPage() {
     if (!confirmed) return;
     try {
       const response = await fetch(
-        `https://e-com-customizer.onrender.com/api/v1/deleteProduct/${id}`,
+        `http://localhost:4000/api/v1/deleteProduct/${id}`,
         {
           method: "DELETE",
           headers: {

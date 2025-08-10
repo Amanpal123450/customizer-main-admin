@@ -172,7 +172,7 @@ export default function CreateDiscount() {
     }
 
     try {
-      const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/discounts`, {
+      const res = await fetch(`http://localhost:4000/api/v1/discounts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -200,7 +200,7 @@ export default function CreateDiscount() {
   useEffect(() => {
     const fetchDiscounts = async () => {
       try {
-        const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/discounts`);
+        const res = await fetch(`http://localhost:4000/api/v1/discounts`);
         console.log("Fetching Discounts...");
 
         if (!res.ok) {
@@ -248,7 +248,7 @@ export default function CreateDiscount() {
     }
 
     try {
-      const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/discounts/${filteredDiscounts[0]._id}`, {
+      const res = await fetch(`http://localhost:4000/api/v1/discounts/${filteredDiscounts[0]._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -286,7 +286,7 @@ export default function CreateDiscount() {
     setError("");
 
     try {
-      const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/discounts/${filteredDiscounts[0]._id}`, {
+      const res = await fetch(`http://localhost:4000/api/v1/discounts/${filteredDiscounts[0]._id}`, {
         method: "DELETE",
       });
 

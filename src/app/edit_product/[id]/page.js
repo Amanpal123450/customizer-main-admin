@@ -147,7 +147,7 @@ export default function EditProductPage() {
     const fetchProduct = async () => {
       try {
         console.log('Fetching product for id:', id);
-        const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/getProduct/${id}`);
+        const res = await fetch(`http://localhost:4000/api/v1/getProduct/${id}`);
         console.log('Response status:', res.status);
         const data = await res.json();
         console.log('Fetched data:', data);

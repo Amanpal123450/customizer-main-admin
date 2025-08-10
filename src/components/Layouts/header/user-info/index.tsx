@@ -46,7 +46,7 @@ export function UserInfo() {
         setIsLoading(true);
 
         const res = await fetch(
-          `https://e-com-customizer.onrender.com/api/v1/getAdminById/${userId}`,
+          `http://localhost:4000/api/v1/getAdminById/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

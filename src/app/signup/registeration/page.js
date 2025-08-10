@@ -95,7 +95,7 @@ const Signup = () => {
     }
     try {
       setLoading(true);
-      const res = await fetch("https://e-com-customizer.onrender.com/api/v1/signup", {
+      const res = await fetch("http://localhost:4000/api/v1/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
