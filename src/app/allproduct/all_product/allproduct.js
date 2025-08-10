@@ -1,45 +1,6 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { confirmDialog } from "@/components/ui/confirm";
-import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEllipsisVertical,
-  faEdit,
-  faTrash,
-  faPlus,
-  faImage,
-  faSearch,
-  faTag,
-} from "@fortawesome/free-solid-svg-icons";
-import { Download, Printer } from "lucide-react";
-import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-
-import "toastify-js/src/toastify.css";
-import Toastify from "toastify-js";
-
-
-const showToast = (text, type = "success") => {
-  Toastify({
-          text,
-          duration: 3000,
-          gravity: "top",
-          position: "right",
-          close: true,
-          backgroundColor:
-            type === "success"
-              ? "#4BB543"
-              : type === "info"
-              ? "#3498db"
-              : "#FF3E3E",
-  }).showToast();
-};
-
-
+"use client"
 export default function ProductsPage() {
+  // All hooks at the top
   const [products, setProducts] = useState([]);
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -51,13 +12,13 @@ export default function ProductsPage() {
   const [token, setToken] = useState(null);
   const router = useRouter();
 
-
-  // Always call hooks at the top level
+  // Get token from localStorage
   useEffect(() => {
     const t = localStorage.getItem("adminToken");
     setToken(t);
   }, []);
 
+  // Redirect if no token
   useEffect(() => {
     if (token === null) return; // Wait for token to be set
     if (!token) {
@@ -65,41 +26,71 @@ export default function ProductsPage() {
     }
   }, [token, router]);
 
-
-  // Remove duplicate/misplaced useEffect calls. All hooks are now at the top level above any return.
-
-  // If token is not set yet, don't render (prevents flicker)
-  if (token === null) {
-    return null;
-  }
-  // If token is empty (not logged in), don't render (redirect will happen)
-  if (!token) {
-    return null;
-  }
-  
-
-
-  const filteredProducts = products.filter(
-    (product) =>
-      product.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.subCategory.title?.toLowerCase().includes(searchTerm.toLowerCase())
-    // console.log(product.subCategory)
-
-  );
-
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
-
+  // Set current page to 1 on search
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+  // Handle click outside dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const isInsideDropdown = event.target.closest("[data-dropdown]");
+      const isToggleButton = event.target.closest("[data-dropdown-toggle]");
+      if (!isInsideDropdown && !isToggleButton) {
+        setOpenDropdownId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Fetch products
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("http://localhost:4000/api/v1/totalProduct");
+        const data = await res.json();
+        setProducts(data.AllProduct.reverse() || []);
+        console.log("Products:", data);
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  // Fetch discounts
+  useEffect(() => {
+    async function fetchDiscounts() {
+      try {
+        const res = await fetch("http://localhost:4000/api/v1/discounts");
+        const data = await res.json();
+        const discountArray = Array.isArray(data?.data) ? data.data : [];
+        setDiscounts(discountArray);
+        console.log("Discounts:", data);
+        const lookup = {};
+        discountArray.forEach(discount => {
+          if (discount.product && discount.discountValue) {
+            lookup[discount.product] = discount.discountValue;
+          }
+        });
+        setDiscountLookup(lookup);
+        console.log("Discount Lookup:", lookup);
+      } catch (e) {
+        console.error("Failed to fetch discounts", e);
+        setDiscounts([]);
+        setDiscountLookup({});
+      }
+    }
+    fetchDiscounts();
+  }, []);
+
+  // Early returns only after all hooks
+  if (token === null) return null;
+  if (!token) return null;
 
   const getPaginationNumbers = () => {
     const delta = 2;
