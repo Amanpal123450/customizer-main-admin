@@ -1,4 +1,22 @@
-"use client"
+
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faEllipsisVertical,
+  faEdit,
+  faTrash,
+  faPlus,
+  faImage,
+  faSearch,
+  faTag,
+} from "@fortawesome/free-solid-svg-icons";
+import { Download, Printer } from "lucide-react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+
 export default function ProductsPage() {
   // All hooks at the top
   const [products, setProducts] = useState([]);
