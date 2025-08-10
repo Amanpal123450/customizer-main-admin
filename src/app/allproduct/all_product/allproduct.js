@@ -1,4 +1,3 @@
-
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -30,10 +29,15 @@ export default function ProductsPage() {
   const [token, setToken] = useState(null);
   const router = useRouter();
 
-  // Get token from localStorage
+  // Get token from localStorage (with error handling)
   useEffect(() => {
-    const t = localStorage.getItem("adminToken");
-    setToken(t);
+    try {
+      const t = localStorage.getItem("adminToken");
+      setToken(t);
+    } catch (error) {
+      console.error("Error accessing localStorage:", error);
+      setToken("");
+    }
   }, []);
 
   // Redirect if no token
@@ -65,30 +69,42 @@ export default function ProductsPage() {
   // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
+      if (!token) return;
+      
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:4000/api/v1/totalProduct");
+        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/totalProduct");
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
         const data = await res.json();
-        setProducts(data.AllProduct.reverse() || []);
-        console.log("Products:", data);
+        const productsList = data.AllProduct || data.products || [];
+        setProducts(Array.isArray(productsList) ? productsList.reverse() : []);
       } catch (err) {
         console.error("Failed to fetch products:", err);
+        showToast("Failed to fetch products", "error");
+        setProducts([]);
       } finally {
         setLoading(false);
       }
     };
     fetchProducts();
-  }, []);
+  }, [token]);
 
   // Fetch discounts
   useEffect(() => {
     async function fetchDiscounts() {
+      if (!token) return;
+
       try {
-        const res = await fetch("http://localhost:4000/api/v1/discounts");
+        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/discounts");
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
         const data = await res.json();
         const discountArray = Array.isArray(data?.data) ? data.data : [];
         setDiscounts(discountArray);
-        console.log("Discounts:", data);
+        
         const lookup = {};
         discountArray.forEach(discount => {
           if (discount.product && discount.discountValue) {
@@ -96,15 +112,60 @@ export default function ProductsPage() {
           }
         });
         setDiscountLookup(lookup);
-        console.log("Discount Lookup:", lookup);
       } catch (e) {
         console.error("Failed to fetch discounts", e);
+        showToast("Failed to fetch discounts", "error");
         setDiscounts([]);
         setDiscountLookup({});
       }
     }
     fetchDiscounts();
-  }, []);
+  }, [token]);
+
+  // Toast notification function
+  const showToast = (message, type = "info") => {
+    // Simple console log for now - can be replaced with actual toast library
+    console.log(`[${type.toUpperCase()}] ${message}`);
+    // In a real app, you'd use react-hot-toast or similar
+    alert(`${type.toUpperCase()}: ${message}`);
+  };
+
+  // Confirmation dialog
+  const confirmDialog = (message) => {
+    return new Promise((resolve) => {
+      const result = window.confirm(message);
+      resolve(result);
+    });
+  };
+
+  // Toggle dropdown
+  const toggleDropdown = (id) => {
+    setOpenDropdownId(openDropdownId === id ? null : id);
+  };
+
+  // Page change handler
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  // Filter products based on search term
+  const filteredProducts = products.filter((product) => {
+    if (!searchTerm) return true;
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      (product.title || "").toLowerCase().includes(searchLower) ||
+      (product.description || "").toLowerCase().includes(searchLower) ||
+      (product.subCategory?.title || "").toLowerCase().includes(searchLower)
+    );
+  });
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
 
   // Early returns only after all hooks
   if (token === null) return null;
@@ -114,6 +175,9 @@ export default function ProductsPage() {
     const delta = 2;
     const range = [];
     const rangeWithDots = [];
+
+    // Handle edge case where totalPages is 1 or 0
+    if (totalPages <= 1) return [1];
 
     for (
       let i = Math.max(2, currentPage - delta);
@@ -133,107 +197,53 @@ export default function ProductsPage() {
 
     if (currentPage + delta < totalPages - 1) {
       rangeWithDots.push("...", totalPages);
-    } else {
+    } else if (totalPages > 1) {
       rangeWithDots.push(totalPages);
     }
 
-    return rangeWithDots;
+    // Remove duplicates and ensure proper order
+    return [...new Set(rangeWithDots)];
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      const isInsideDropdown = event.target.closest("[data-dropdown]");
-      const isToggleButton = event.target.closest("[data-dropdown-toggle]");
-      if (!isInsideDropdown && !isToggleButton) {
-        setOpenDropdownId(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  // Fetch products
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch("http://localhost:4000/api/v1/totalProduct");
-        const data = await res.json();
-        setProducts(data.AllProduct.reverse() || []);
-        console.log("Products:", data);
-      } catch (err) {
-        console.error("Failed to fetch products:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  // Fetch discounts
-  useEffect(() => {
-    async function fetchDiscounts() {
-      try {
-        const res = await fetch("http://localhost:4000/api/v1/discounts");
-        const data = await res.json();
-
-        // Extract discount array properly
-        const discountArray = Array.isArray(data?.data) ? data.data : [];
-        setDiscounts(discountArray);
-        console.log("Discounts:", data);
-
-        // Build discount lookup object
-        const lookup = {};
-        discountArray.forEach(discount => {
-          // Using the correct field names from your API response
-          if (discount.product && discount.discountValue) {
-            lookup[discount.product] = discount.discountValue;
-          }
-        });
-
-        setDiscountLookup(lookup);
-        console.log("Discount Lookup:", lookup);
-
-      } catch (e) {
-        console.error("Failed to fetch discounts", e);
-        setDiscounts([]);
-        setDiscountLookup({});
-      }
-    }
-    fetchDiscounts();
-  }, []);
 
   // Calculate discounted price
   const getDiscountedPrice = (originalPrice, productId) => {
     const discountPercentage = discountLookup[productId] || 0;
-    if (discountPercentage > 0) {
+    if (discountPercentage > 0 && originalPrice) {
       const discountedPrice = originalPrice - (originalPrice * discountPercentage / 100);
-      return discountedPrice;
+      return Math.max(0, discountedPrice); // Ensure price doesn't go negative
     }
-    return originalPrice;
+    return originalPrice || 0;
   };
 
   const handleDelete = async (id) => {
-    const token = localStorage.getItem("adminToken");
-    const confirmed = await confirmDialog("Are you sure you want to delete this product?");
-    if (!confirmed) return;
     try {
+      const token = localStorage.getItem("adminToken");
+      if (!token) {
+        showToast("Authentication token not found", "error");
+        return;
+      }
+
+      const confirmed = await confirmDialog("Are you sure you want to delete this product?");
+      if (!confirmed) return;
+
       const response = await fetch(
-        `http://localhost:4000/api/v1/deleteProduct/${id}`,
+        `https://e-com-customizer.onrender.com/api/v1/deleteProduct/${id}`,
         {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
-        },
+        }
       );
+
       if (response.ok) {
         setProducts((prev) => prev.filter((p) => p._id !== id));
         setOpenDropdownId(null);
+        showToast("Product deleted successfully", "success");
       } else {
-        showToast("Failed to delete product", "error");
+        const errorData = await response.json().catch(() => ({}));
+        showToast(errorData.message || "Failed to delete product", "error");
       }
     } catch (err) {
       console.error("Delete failed:", err);
@@ -247,32 +257,40 @@ export default function ProductsPage() {
       return;
     }
 
-    const headers = ["Title", "Description", "Price", "Discounted Price", "Discount %", "Stock", "SubCategory"];
-    const rows = filteredProducts.map((product) => {
-      const discountPercentage = discountLookup[product._id] || 0;
-      const discountedPrice = getDiscountedPrice(product.price, product._id);
+    try {
+      const headers = ["Title", "Description", "Price", "Discounted Price", "Discount %", "Stock", "SubCategory"];
+      const rows = filteredProducts.map((product) => {
+        const discountPercentage = discountLookup[product._id] || 0;
+        const discountedPrice = getDiscountedPrice(product.price, product._id);
 
-      return [
-        `"${product.title || ""}"`,
-        `"${product.description || ""}"`,
-        product.price || 0,
-        discountedPrice.toFixed(2),
-        `${discountPercentage}%`,
-        product.quantity || 0,
-        `"${product.subCategory || ""}"`,
-      ];
-    });
+        return [
+          `"${(product.title || "").replace(/"/g, '""')}"`,
+          `"${(product.description || "").replace(/"/g, '""')}"`,
+          product.price || 0,
+          discountedPrice.toFixed(2),
+          `${discountPercentage}%`,
+          product.quantity || 0,
+          `"${(product.subCategory?.title || "").replace(/"/g, '""')}"`,
+        ];
+      });
 
-    const csvContent = [headers, ...rows].map((e) => e.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const csvContent = [headers, ...rows].map((e) => e.join(",")).join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
 
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "products_export.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `products_export_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      showToast("CSV exported successfully", "success");
+    } catch (error) {
+      console.error("Export failed:", error);
+      showToast("Failed to export CSV", "error");
+    }
   };
 
   const truncateText = (text, maxLength = 50) => {
@@ -282,7 +300,7 @@ export default function ProductsPage() {
 
   if (loading) {
     return (
-  <div className="rounded-xl bg-white dark:bg-gray-900 p-6 shadow-lg">
+      <div className="rounded-xl bg-white dark:bg-gray-900 p-6 shadow-lg">
         <div className="animate-pulse">
           <div className="mb-6 flex items-center justify-between">
             <div className="h-8 w-48 rounded bg-gray-200 dark:bg-gray-800"></div>
@@ -314,11 +332,11 @@ export default function ProductsPage() {
   };
 
   return (
-  <div className="overflow-hidden rounded-xl bg-gray-50 dark:bg-gray-800 shadow-lg">
+    <div className="overflow-hidden rounded-xl bg-gray-50 dark:bg-gray-800 shadow-lg">
       {/* Header */}
       <div className="p-6 text-white">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <h1 className="text-2xl font-bold text-black">All Products</h1>
+          <h1 className="text-2xl font-bold text-black dark:text-white">All Products</h1>
           <Link
             href="/product"
             className="inline-flex items-center gap-2 rounded-lg bg-white dark:bg-gray-900 px-4 py-2 font-medium text-blue-600 shadow-md transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -336,8 +354,8 @@ export default function ProductsPage() {
       </div>
 
       {/* Search Bar */}
-  <div className="flex justify-between border-b bg-gray-50 dark:bg-gray-800 p-6">
-        <div className="relative max-w-md">
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between border-b bg-gray-50 dark:bg-gray-800 p-6">
+        <div className="relative max-w-md flex-1">
           <FontAwesomeIcon
             icon={faSearch}
             className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400"
@@ -347,7 +365,7 @@ export default function ProductsPage() {
             placeholder="Search products..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           />
         </div>
         <div className="flex gap-3">
@@ -356,7 +374,8 @@ export default function ProductsPage() {
             whileTap={{ scale: 0.95 }}
             onClick={handleExportCSV}
             type="button"
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-3 text-white transition-colors hover:bg-blue-700"
+            disabled={filteredProducts.length === 0}
+            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-3 text-white transition-colors hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Download className="h-4 w-4" />
             Export
@@ -375,9 +394,9 @@ export default function ProductsPage() {
       </div>
 
       {/* Products Count */}
-  <div className="border-b bg-gray-50 dark:bg-gray-800 px-6 py-3">
-        <p className="text-sm text-gray-600">
-          Showing {indexOfFirstItem + 1}-
+      <div className="border-b bg-gray-50 dark:bg-gray-800 px-6 py-3">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          Showing {filteredProducts.length > 0 ? indexOfFirstItem + 1 : 0}-
           {Math.min(indexOfLastItem, filteredProducts.length)} of{" "}
           {filteredProducts.length} products
           {products.length !== filteredProducts.length &&
@@ -388,32 +407,32 @@ export default function ProductsPage() {
       {/* Table Container */}
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="border-b bg-gray-100 dark:bg-gray-800">
+          <thead className="border-b bg-gray-100 dark:bg-gray-700">
             <tr>
-              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">
+              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
                 Image
               </th>
-              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">
+              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
                 Product Details
               </th>
-              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">
+              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
                 Price
               </th>
-              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">
+              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
                 Stock
               </th>
-              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">
+              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
                 Category
               </th>
-              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">
+              <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
                 Discount
               </th>
-              <th className="px-4 py-4 text-center text-sm font-semibold text-gray-700">
+              <th className="px-4 py-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">
                 Actions
               </th>
             </tr>
           </thead>
-          {token && (<tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
             {currentProducts.length > 0 ? (
               currentProducts.map((product, index) => {
                 const discountPercentage = discountLookup[product._id] || 0;
@@ -427,30 +446,26 @@ export default function ProductsPage() {
                     initial="hidden"
                     animate="visible"
                     variants={productRowVariants}
-                    className="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800"
+                    className="transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     {/* Image */}
                     <td className="px-4 py-4">
-                      <div className="flex h-16 w-16 items-center justify-center overflow-hidden border border-gray-200 bg-gray-50 dark:bg-gray-800 rounded-md">
+                      <div className="flex h-16 w-16 items-center justify-center overflow-hidden border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 rounded-md">
                         {product.images?.[0] ? (
                           <Image
                             src={product.images[0]}
-                            alt={product.title}
-                            width={300}
-                            height={300}
+                            alt={product.title || "Product image"}
+                            width={64}
+                            height={64}
                             className="h-full w-full object-contain"
                             onError={(e) => {
-                              e.target.style.display = "none";
-                              e.target.nextSibling.style.display = "flex";
+                              e.currentTarget.style.display = "none";
+                              const fallback = e.currentTarget.nextElementSibling;
+                              if (fallback) fallback.style.display = "flex";
                             }}
                           />
-                        ) : (
-                          <FontAwesomeIcon
-                            icon={faImage}
-                            className="text-xl text-gray-400"
-                          />
-                        )}
-                        <div className="hidden h-full w-full items-center justify-center">
+                        ) : null}
+                        <div className={`${product.images?.[0] ? 'hidden' : 'flex'} h-full w-full items-center justify-center`}>
                           <FontAwesomeIcon
                             icon={faImage}
                             className="text-xl text-gray-400"
@@ -461,10 +476,10 @@ export default function ProductsPage() {
 
                     {/* Product Details */}
                     <td className="px-4 py-4 max-w-xs">
-                      <h3 className="mb-1 font-medium text-gray-900">
+                      <h3 className="mb-1 font-medium text-gray-900 dark:text-white">
                         {truncateText(product.title, 30)}
                       </h3>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         {truncateText(product.description, 60)}
                       </p>
                     </td>
@@ -492,12 +507,13 @@ export default function ProductsPage() {
                     {/* Stock */}
                     <td className="px-4 py-4">
                       <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${product.quantity > 10
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          (product.quantity || 0) > 10
                             ? "bg-green-100 text-green-800"
-                            : product.quantity > 0
+                            : (product.quantity || 0) > 0
                               ? "bg-yellow-100 text-yellow-800"
                               : "bg-red-100 text-red-800"
-                          }`}
+                        }`}
                       >
                         {product.quantity || 0} units
                       </span>
@@ -506,7 +522,7 @@ export default function ProductsPage() {
                     {/* Category */}
                     <td className="px-4 py-4">
                       <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                        {product.subCategory.title}
+                        {product.subCategory?.title || "No Category"}
                       </span>
                     </td>
 
@@ -514,14 +530,15 @@ export default function ProductsPage() {
                     <td className="px-4 py-4">
                       <div className="flex flex-col items-start">
                         <span
-                          className={`text-sm font-semibold ${hasDiscount ? "text-purple-600" : "text-gray-500"
-                            }`}
+                          className={`text-sm font-semibold ${
+                            hasDiscount ? "text-purple-600" : "text-gray-500"
+                          }`}
                         >
                           {discountPercentage}%
                         </span>
                         {hasDiscount && (
                           <span className="text-xs text-green-600 font-medium">
-                            Save ₹{(product.price - discountedPrice).toFixed(2)}
+                            Save ₹{((product.price || 0) - discountedPrice).toFixed(2)}
                           </span>
                         )}
                       </div>
@@ -532,12 +549,12 @@ export default function ProductsPage() {
                       <button
                         onClick={() => toggleDropdown(product._id)}
                         data-dropdown-toggle
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-150 hover:bg-gray-100 dark:hover:bg-gray-800"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors duration-150 hover:bg-gray-100 dark:hover:bg-gray-700"
                         aria-label="Toggle actions menu"
                       >
                         <FontAwesomeIcon
                           icon={faEllipsisVertical}
-                          className="text-sm text-gray-600"
+                          className="text-sm text-gray-600 dark:text-gray-400"
                         />
                       </button>
 
@@ -548,26 +565,25 @@ export default function ProductsPage() {
                             animate="visible"
                             exit="hidden"
                             variants={dropdownVariants}
-                            className="absolute right-0 top-12 z-30 w-32 rounded-lg border bg-white dark:bg-gray-900 shadow-lg"
+                            className="absolute right-0 top-12 z-30 w-32 rounded-lg border bg-white dark:bg-gray-800 shadow-lg"
                             data-dropdown
                           >
                             <Link
                               href={`/edit_product/${product._id}`}
-                              className="flex items-center gap-2 rounded-t-lg px-4 py-2 text-sm text-blue-600 transition-colors duration-150 hover:bg-blue-50"
+                              className="flex items-center gap-2 rounded-t-lg px-4 py-2 text-sm text-blue-600 transition-colors duration-150 hover:bg-blue-50 dark:hover:bg-gray-700"
                             >
                               <FontAwesomeIcon icon={faEdit} className="text-xs" />
                               Edit
                             </Link>
                             <button
                               onClick={() => handleDelete(product._id)}
-                              className="flex w-full items-center gap-2 border-t px-4 py-2 text-sm text-red-600 transition-colors duration-150 hover:bg-red-50"
+                              className="flex w-full items-center gap-2 border-t px-4 py-2 text-sm text-red-600 transition-colors duration-150 hover:bg-red-50 dark:hover:bg-gray-700"
                             >
                               <FontAwesomeIcon icon={faTrash} className="text-xs" />
                               Delete
                             </button>
-
                             <Link
-                              className="flex items-center gap-2 rounded-b-lg border-t px-4 py-2 text-sm text-green-600 transition-colors duration-150 hover:bg-green-50"
+                              className="flex items-center gap-2 rounded-b-lg border-t px-4 py-2 text-sm text-green-600 transition-colors duration-150 hover:bg-green-50 dark:hover:bg-gray-700"
                               href={`/discount/${product._id}`}
                             >
                               <FontAwesomeIcon icon={faTag} className="text-xs" />
@@ -588,7 +604,7 @@ export default function ProductsPage() {
                       icon={faImage}
                       className="text-4xl text-gray-400"
                     />
-                    <p className="text-lg text-gray-500">
+                    <p className="text-lg text-gray-500 dark:text-gray-400">
                       {searchTerm
                         ? "No products found matching your search."
                         : "No products found."}
@@ -596,7 +612,7 @@ export default function ProductsPage() {
                     {searchTerm && (
                       <button
                         onClick={() => setSearchTerm("")}
-                        className="text-sm text-blue-600 hover:text-blue-800"
+                        className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                       >
                         Clear search
                       </button>
@@ -605,16 +621,16 @@ export default function ProductsPage() {
                 </td>
               </tr>
             )}
-          </tbody>)}
+          </tbody>
         </table>
       </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
-  <div className="border-t bg-gray-50 dark:bg-gray-800 px-6 py-4">
+        <div className="border-t bg-gray-50 dark:bg-gray-800 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
                 Page {currentPage} of {totalPages}
               </span>
             </div>
@@ -625,10 +641,11 @@ export default function ProductsPage() {
                 disabled={currentPage === 1}
                 whileHover={currentPage !== 1 ? { scale: 1.05 } : {}}
                 whileTap={currentPage !== 1 ? { scale: 0.95 } : {}}
-                className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${currentPage === 1
-                    ? "cursor-not-allowed bg-gray-100 dark:bg-gray-800 text-gray-400"
-                    : "border border-gray-300 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-600"
-                  }`}
+                className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${
+                  currentPage === 1
+                    ? "cursor-not-allowed bg-gray-100 dark:bg-gray-700 text-gray-400"
+                    : "border border-gray-300 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600"
+                }`}
               >
                 Previous
               </motion.button>
@@ -643,10 +660,11 @@ export default function ProductsPage() {
                       onClick={() => handlePageChange(pageNumber)}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${currentPage === pageNumber
+                      className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${
+                        currentPage === pageNumber
                           ? "bg-blue-600 text-white"
-                          : "border border-gray-300 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-600"
-                        }`}
+                          : "border border-gray-300 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600"
+                      }`}
                     >
                       {pageNumber}
                     </motion.button>
@@ -660,10 +678,11 @@ export default function ProductsPage() {
                 disabled={currentPage === totalPages}
                 whileHover={currentPage !== totalPages ? { scale: 1.05 } : {}}
                 whileTap={currentPage !== totalPages ? { scale: 0.95 } : {}}
-                className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${currentPage === totalPages
-                    ? "cursor-not-allowed bg-gray-100 dark:bg-gray-800 text-gray-400"
-                    : "border border-gray-300 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-600"
-                  }`}
+                className={`rounded-md px-3 py-1 text-sm font-medium transition-colors duration-200 ${
+                  currentPage === totalPages
+                    ? "cursor-not-allowed bg-gray-100 dark:bg-gray-700 text-gray-400"
+                    : "border border-gray-300 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600"
+                }`}
               >
                 Next
               </motion.button>

@@ -15,7 +15,7 @@ export default function AdminProductDetailPage() {
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    fetch(`http://localhost:4000/api/v1/product/${id}`)
+    fetch(`https://e-com-customizer.onrender.com/api/v1/product/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setProduct(data.product || null);

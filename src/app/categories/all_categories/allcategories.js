@@ -60,7 +60,7 @@ const  router = useRouter();
       try {
         setLoading(true);
         const res = await fetch(
-          "http://localhost:4000/api/v1/showAllCategory",
+          "https://e-com-customizer.onrender.com/api/v1/showAllCategory",
         );
 
         if (!res.ok) {
@@ -106,7 +106,7 @@ const  router = useRouter();
     if (confirm("Are you sure you want to delete this category?")) {
       try {
         const res = await fetch(
-          `http://localhost:4000/api/v1/deleteCategory/${id}`,
+          `https://e-com-customizer.onrender.com/api/v1/deleteCategory/${id}`,
           {
             method: "DELETE",
             headers: {

@@ -17,7 +17,7 @@ export default function EditSubcategoryPage() {
       const payload = {
     title: form.title, 
   };
-   const res= await fetch(`http://localhost:4000/api/v1/updateSubCategory/${id}`, {
+   const res= await fetch(`https://e-com-customizer.onrender.com/api/v1/updateSubCategory/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

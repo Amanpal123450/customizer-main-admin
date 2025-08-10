@@ -87,7 +87,7 @@ const AdminLoginPage = () => {
                 return;
             }
 
-            const response = await fetch('http://localhost:4000/api/v1/adminLogin', {
+            const response = await fetch('https://e-com-customizer.onrender.com/api/v1/adminLogin', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

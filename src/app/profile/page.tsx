@@ -21,7 +21,7 @@ export default function Page() {
       const user = localStorage.getItem("Admin_ID");
       try {
         const res = await fetch(
-          `http://localhost:4000/api/v1/getAdminById/${user}`,
+          `https://e-com-customizer.onrender.com/api/v1/getAdminById/${user}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -61,7 +61,7 @@ export default function Page() {
     const userId = localStorage.getItem("Admin_ID");
 
     try {
-      const res = await fetch(`http://localhost:4000/api/v1/updateprofile/${userId}`, {
+      const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/updateprofile/${userId}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

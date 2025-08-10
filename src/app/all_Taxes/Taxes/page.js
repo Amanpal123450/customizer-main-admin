@@ -82,7 +82,7 @@ export default function TaxPage() {
 
   useEffect(() => {
     async function GetAllvariation() {
-      const res = await fetch("http://localhost:4000/api/v1/totalTax", {
+      const res = await fetch("https://e-com-customizer.onrender.com/api/v1/totalTax", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +100,7 @@ export default function TaxPage() {
   const handleAddTax = async () => {
 
     try {
-      const res = await fetch("http://localhost:4000/api/v1/addTax", {
+      const res = await fetch("https://e-com-customizer.onrender.com/api/v1/addTax", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -120,7 +120,7 @@ export default function TaxPage() {
     console.log("sdcs");
     try {
       const res = await fetch(
-        `http://localhost:4000/api/v1/tax/${editId}`, {
+        `https://e-com-customizer.onrender.com/api/v1/tax/${editId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -198,7 +198,7 @@ export default function TaxPage() {
   const confirmed = await confirmDialog("Are you sure you want to delete this Tax?");
   if (confirmed) {
       try {
-        const res = await fetch(`http://localhost:4000/api/v1/tax/${id}`, {
+        const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/tax/${id}`, {
           method: "DELETE",
           headers: {
             "Authorization": `Bearer ${token}`
@@ -224,7 +224,7 @@ export default function TaxPage() {
 
   const toggleStatus = async (id) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/v1/TaxToggle/${id}`, {
+      const response = await fetch(`https://e-com-customizer.onrender.com/api/v1/TaxToggle/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
