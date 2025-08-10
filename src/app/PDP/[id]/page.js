@@ -49,13 +49,13 @@ export default function AdminProductDetailPage() {
   return (
     <div className="max-w-5xl mx-auto p-6">
       <div className="flex items-center gap-4 mb-8">
-  <button onClick={() => router.back()} className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700">
+        <button onClick={() => router.back()} className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700">
           <ArrowLeft className="w-5 h-5 text-blue-600" />
         </button>
         <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Product Details</h1>
       </div>
 
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8">
         {/* Image Gallery */}
         <div className="flex flex-col gap-4">
           <div className="w-full aspect-square bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center overflow-hidden">
