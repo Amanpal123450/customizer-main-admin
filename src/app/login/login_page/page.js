@@ -155,7 +155,7 @@ const AdminLoginPage = () => {
 
                         <h2 className="text-3xl font-extrabold text-black mb-2">Login</h2>
                         <div className="flex items-center text-sm">
-                            <span className="text-black mr-1">Don't have an account?</span>
+                            <span className="text-black mr-1">Don&apos;t have an account?</span>
                             <button className="text-blue-600  cursor-pointer hover:text-blue-700 font-medium">
                                 Contact Administrator
                             </button>
