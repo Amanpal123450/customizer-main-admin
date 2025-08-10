@@ -77,7 +77,6 @@ export default function VariationPage() {
 
   // Add Authorization header if token exists
 
-
   useEffect(() => {
     async function GetAllvariation() {
       const res = await fetch(
@@ -96,9 +95,8 @@ export default function VariationPage() {
       setBrands(result.data); // ✅ Fix: extract the array from result.data
       setFiltered(result.data);
     }
-      
     GetAllvariation();
-  }, []);
+  }, [token]);
 
   const handleAddUnit = async () => {
     // if (!unitName.trim()) return showToast('Unit name is required!');

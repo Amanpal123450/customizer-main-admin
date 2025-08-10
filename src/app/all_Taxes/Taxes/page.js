@@ -80,7 +80,6 @@ export default function TaxPage() {
   //   ? { Authorization: `Bearer ${token}` }
   //   : {};
 
-
   useEffect(() => {
     async function GetAllvariation() {
       const res = await fetch("http://localhost:4000/api/v1/totalTax", {
@@ -88,19 +87,15 @@ export default function TaxPage() {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
-
         },
-      },
-      );
-
+      });
       const result = await res.json();
       console.log(result);
       setBrands(result.data); // ✅ Fix: extract the array from result.data
       setFiltered(result.data);
     }
-
     GetAllvariation();
-  }, []);
+  }, [token]);
 
   const handleAddTax = async () => {
 

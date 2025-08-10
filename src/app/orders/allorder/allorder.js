@@ -1,5 +1,6 @@
 "use client";
 
+
 import React, { useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import axios from 'axios'
@@ -29,11 +30,10 @@ import {
   ExternalLink,
 } from "lucide-react";
 import autoTable from "jspdf-autotable";
-
+import Image from "next/image";
 import "toastify-js/src/toastify.css";
 import Toastify from "toastify-js";
-
-  import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast";
 
 const showToast = (text, type = "success") => {
   toast({
@@ -589,9 +589,11 @@ const OrderManagementPage = () => {
       key={index}
       className="flex items-center gap-4 rounded-lg border p-4"
     >
-      <img
+      <Image
         src={product?.images?.[0] || "/placeholder.jpg"}
         alt={product?.title || "Product Image"}
+        width={64}
+        height={64}
         className="h-16 w-16 rounded object-contain"
       />
       <div className="flex-1">

@@ -13,6 +13,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState([]);
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
 
   // Toggle dropdown
   const toggleDropdown = (id) => {
@@ -35,7 +36,6 @@ export default function UsersPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const router = useRouter();
         const token = localStorage.getItem("adminToken");
         if (!token) {
           router.push('/login');
@@ -64,7 +64,7 @@ export default function UsersPage() {
     };
 
     fetchUsers();
-  }, []);
+  }, [router]);
 
   // Delete user
 

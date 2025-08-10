@@ -53,15 +53,20 @@ export default function ProductsPage() {
   };
 
   const router = useRouter();
-  const token = localStorage.getItem("adminToken");
+  const [token, setToken] = useState(null);
+
+  // Ensure token is set and redirect if not present
+  useEffect(() => {
+    const t = localStorage.getItem("adminToken");
+    setToken(t);
+    if (!t) {
+      router.push('/login');
+    }
+  }, [router]);
+
   if (!token) {
-    router.push('/login');
     return null;
   }
-
-  useEffect(() => {
-
-  }, [token])
   
 
 
