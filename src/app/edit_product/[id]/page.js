@@ -145,12 +145,13 @@ export default function EditProductPage() {
   // Prefill form with existing product data for editing
   useEffect(() => {
     const fetchProduct = async () => {
+      if (!id) {
+        showToast("Invalid product ID", "error");
+        return;
+      }
       try {
-        console.log('Fetching product for id:', id);
-        const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/getProduct/${id}`);
-        console.log('Response status:', res.status);
+        const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/getProductById/${id}`);
         const data = await res.json();
-        console.log('Fetched data:', data);
         if (!res.ok) throw new Error(data.message || "Failed to fetch product");
         setForm({
           title: data.data.title || "",
@@ -162,11 +163,10 @@ export default function EditProductPage() {
         setPreview(data.data.images);
         setImageFilled(!!data.data.images);
       } catch (err) {
-        console.error('Failed to load product:', err);
-        showToast(" Failed to load product");
+        showToast(err.message || "Failed to load product", "error");
       }
     };
-    if (id) fetchProduct();
+    fetchProduct();
   }, [id]);
 
   const handleChange = (e) => {
@@ -185,6 +185,11 @@ export default function EditProductPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Validate required fields
+    if (!form.title || !form.description || !form.price || !form.quantity || !form.color) {
+      showToast("Please fill all required fields", "error");
+      return;
+    }
     setLoading(true);
     const formData = new FormData();
     formData.append("title", form.title);
@@ -196,9 +201,14 @@ export default function EditProductPage() {
       formData.append("images", images);
     }
     try {
-  const token = localStorage.getItem("adminToken");
+      const token = localStorage.getItem("adminToken");
+      if (!token) {
+        showToast("You are not authorized. Please login again.", "error");
+        setLoading(false);
+        return;
+      }
       const res = await fetch(
-        `/api/v1/updateProduct/${id}`,
+        `https://e-com-customizer.onrender.com/api/v1/updateProduct/${id}`,
         {
           method: "PUT",
           headers: {
@@ -207,16 +217,21 @@ export default function EditProductPage() {
           body: formData,
         }
       );
-      const data = await res.json();
-
-      if (!res.ok) {
-        showToast(data.message || " Failed to update");
+      let data;
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        showToast("Invalid server response", "error");
         return;
       }
-      showToast(" Product updated successfully!");
+      if (!res.ok) {
+        showToast(data.message || "Failed to update", "error");
+        return;
+      }
+      showToast("Product updated successfully!");
       router.push("/allproduct");
     } catch (err) {
-      showToast(" Something went wrong!");
+      showToast(err.message || "Something went wrong!", "error");
     } finally {
       setLoading(false);
     }
@@ -311,7 +326,7 @@ export default function EditProductPage() {
                 onChange={handleImageUpload}
                 className="w-full rounded-lg border px-4 py-2 bg-gray-50 dark:bg-gray-800"
               />
-              {preview && (
+              {preview && preview !== "" && (
                 <Image
                   src={preview}
                   alt="Preview"

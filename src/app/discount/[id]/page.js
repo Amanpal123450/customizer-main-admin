@@ -142,6 +142,16 @@ export default function CreateDiscount() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [discounts, setDiscounts] = useState([]);
+  const [token, setToken] = useState(null);
+  // Get token from localStorage (with error handling)
+  useEffect(() => {
+    try {
+      const t = localStorage.getItem("adminToken");
+      setToken(t);
+    } catch (error) {
+      setToken("");
+    }
+  }, []);
 
   // ------------------------
   // Handlers
@@ -172,9 +182,17 @@ export default function CreateDiscount() {
     }
 
     try {
+      if (!token) {
+        setError("Authentication token not found");
+        setLoading(false);
+        return;
+      }
       const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/discounts`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           product: params.id, // product ID from URL
           ...formData,
@@ -199,13 +217,18 @@ export default function CreateDiscount() {
 
   useEffect(() => {
     const fetchDiscounts = async () => {
+      if (!token) return;
       try {
-        const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/discounts`);
+        const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/discounts`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
         console.log("Fetching Discounts...");
 
         if (!res.ok) {
           throw new Error("Failed to fetch discounts");
-
         }
         const data = await res.json();
         setDiscounts(data.data);
@@ -216,7 +239,7 @@ export default function CreateDiscount() {
       }
     };
     fetchDiscounts();
-  }, [])
+  }, [token]);
 
 
   // // compare discount id with product id 
@@ -248,9 +271,17 @@ export default function CreateDiscount() {
     }
 
     try {
+      if (!token) {
+        setError("Authentication token not found");
+        setLoading(false);
+        return;
+      }
       const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/discounts/${filteredDiscounts[0]._id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           product: params.id, // product ID from URL
           ...formData,
@@ -286,8 +317,17 @@ export default function CreateDiscount() {
     setError("");
 
     try {
+      if (!token) {
+        setError("Authentication token not found");
+        setLoading(false);
+        return;
+      }
       const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/discounts/${filteredDiscounts[0]._id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
 
       if (!res.ok) {

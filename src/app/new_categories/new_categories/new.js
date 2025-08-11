@@ -75,42 +75,42 @@ export default function CreateCategory() {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-2xl font-semibold mb-6">Create Category</h1>
+    <div className="max-w-xl mx-auto p-6 bg-white dark:bg-gray-900 shadow-md rounded-lg">
+      <h1 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Create Category</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Title</label>
+          <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">Title</label>
           <input
             type="text"
             name="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full border border-gray-300 px-3 py-2 rounded"
+            className="w-full border border-gray-300 dark:border-gray-700 px-3 py-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">images Image</label>
+          <label className="block text-sm font-medium mb-1 text-gray-800 dark:text-gray-200">images Image</label>
           <input
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="w-full border border-gray-300 px-3 py-2 rounded"
+            className="w-full border border-gray-300 dark:border-gray-700 px-3 py-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
           />
         </div>
 
         {preview && (
           <div>
-            <p className="text-sm text-gray-500 mb-1">Preview:</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Preview:</p>
             <Image src={preview} alt="Preview" width={128} height={128} className="w-32 h-32 object-cover rounded" />
           </div>
         )}
 
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded dark:bg-blue-700 dark:hover:bg-blue-800"
         >
           Create Category
         </button>

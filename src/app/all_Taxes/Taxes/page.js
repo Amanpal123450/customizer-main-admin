@@ -251,16 +251,16 @@ export default function TaxPage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="mx-auto max-w-7xl">
+  <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white p-6">
+  <div className="mx-auto max-w-7xl">
         {/* Header Section */}
-        <div className="mb-6 rounded-lg bg-white p-6 shadow-sm">
+  <div className="mb-6 rounded-lg bg-white dark:bg-gray-800 p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                 Tax Management
               </h1>
-              <nav className="mt-2 flex items-center space-x-2 text-sm text-gray-500">
+              <nav className="mt-2 flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
                 <span>Dashboard</span>
                 <span>/</span>
                 <span>Products</span>
@@ -270,7 +270,7 @@ export default function TaxPage() {
             </div>
             <button
               onClick={() => openAddModal()}
-              className="flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white shadow-lg transition-colors hover:bg-indigo-700"
+              className="flex items-center gap-2 rounded-lg bg-indigo-600 dark:bg-indigo-700 px-6 py-3 font-medium text-white shadow-lg transition-colors hover:bg-indigo-700 dark:hover:bg-indigo-800"
             >
               <Plus size={20} />
               Add New Tax
@@ -279,42 +279,42 @@ export default function TaxPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
-          <div className="rounded-lg bg-white p-6 shadow-sm">
+  <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Tax</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-gray-600 dark:text-gray-300">Total Tax</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {Taxs.length}
                 </p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900">
                 <div className="h-6 w-6 rounded bg-indigo-600"></div>
               </div>
             </div>
           </div>
-          <div className="rounded-lg bg-white p-6 shadow-sm">
+          <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Active Brands</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-sm text-gray-600 dark:text-gray-300">Active Brands</p>
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {Taxs.filter((b) => b.active).length}
                 </p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900">
                 <div className="h-6 w-6 rounded-full bg-green-600"></div>
               </div>
             </div>
           </div>
-          <div className="rounded-lg bg-white p-6 shadow-sm">
+          <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Inactive Brands</p>
-                <p className="text-2xl font-bold text-red-600">
+                <p className="text-sm text-gray-600 dark:text-gray-300">Inactive Brands</p>
+                <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                   {Taxs.filter((b) => !b.active).length}
                 </p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900">
                 <div className="h-6 w-6 rounded-full bg-red-600"></div>
               </div>
             </div>
@@ -322,7 +322,7 @@ export default function TaxPage() {
         </div>
 
         {/* Search and Filter Section */}
-        <div className="mb-6 rounded-lg bg-white p-6 shadow-sm">
+  <div className="mb-6 rounded-lg bg-white dark:bg-gray-800 p-6 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="relative flex-1">
               <Search
@@ -334,7 +334,7 @@ export default function TaxPage() {
                 placeholder="Search Taxs by name..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-700 py-3 pl-10 pr-4 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:border-transparent focus:ring-2 focus:ring-indigo-500"
               />
             </div>
             <div className="relative">
@@ -345,7 +345,7 @@ export default function TaxPage() {
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="min-w-[150px] appearance-none rounded-lg border border-gray-300 bg-white py-3 pl-10 pr-8 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
+                className="min-w-[150px] appearance-none rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white py-3 pl-10 pr-8 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="All">All Status</option>
                 <option value="Active">Active Only</option>
@@ -356,35 +356,35 @@ export default function TaxPage() {
         </div>
 
         {/* Table Section */}
-        <div className="overflow-hidden rounded-lg bg-white shadow-sm">
+  <div className="overflow-hidden rounded-lg bg-white dark:bg-gray-800 shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="border-b border-gray-200 bg-gray-50">
+              <thead className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                     S.No
                   </th>
                   {/* <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Brand</th> */}
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                     Name
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                     Status
                   </th>
                   {/* <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sort Order</th> */}
-                  <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                 {paginatedData.length > 0 ? (
                   paginatedData.map((Tax, index) => (
                     <tr
                       key={Tax._id}
-                      className="transition-colors hover:bg-gray-50"
+                      className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
                     >
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-white">
                         {startIndex + index + 1}
                       </td>
                       {/* <td className="px-6 py-4 whitespace-nowrap">
@@ -402,27 +402,19 @@ export default function TaxPage() {
                         </div>
                       </td> */}
                       <td className="whitespace-nowrap px-6 py-4">
-                        <div className="text-sm font-semibold text-gray-900">
+                        <div className="text-sm font-semibold text-gray-900 dark:text-white">
                           {Tax.name}
                         </div>
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
                         <button
                           onClick={() => toggleStatus(Tax._id)}
-                          className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                          style={{
-                            backgroundColor: Tax.active
-                              ? "#10b981"
-                              : "#d1d5db",
-                          }}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${Tax.active ? "bg-green-500 dark:bg-green-700" : "bg-gray-200 dark:bg-gray-700"}`}
                         >
                           <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-gray-900 transition-transform ${Tax.active ? "translate-x-6" : "translate-x-1"
-                              }`}
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-gray-900 transition-transform ${Tax.active ? "translate-x-6" : "translate-x-1"}`}
                           />
                         </button>
                         <span
-                          className={`ml-3 text-sm font-medium ${Tax.active ? "text-green-600" : "text-red-600"}`}
+                          className={`ml-3 text-sm font-medium ${Tax.active ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
                         >
                           {Tax.active ? "Active" : "Inactive"}
                         </span>
@@ -434,14 +426,14 @@ export default function TaxPage() {
                         <div className="flex justify-end gap-2">
                           <button
                             onClick={() => openEditModal(Tax)}
-                            className="rounded-lg p-2 text-indigo-600 transition-colors hover:bg-indigo-50 hover:text-indigo-900"
+                            className="rounded-lg p-2 text-indigo-600 dark:text-indigo-400 transition-colors hover:bg-indigo-50 dark:hover:bg-gray-800 hover:text-indigo-900"
                             title="Edit Brand"
                           >
                             <Edit size={16} />
                           </button>
                           <button
                             onClick={() => handleDelete(Tax._id)}
-                            className="rounded-lg p-2 text-red-600 transition-colors hover:bg-red-50 hover:text-red-900"
+                            className="rounded-lg p-2 text-red-600 dark:text-red-400 transition-colors hover:bg-red-50 dark:hover:bg-gray-800 hover:text-red-900"
                             title="Delete Brand"
                           >
                             <Trash2 size={16} />
@@ -454,11 +446,11 @@ export default function TaxPage() {
                   <tr>
                     <td
                       colSpan="6"
-                      className="px-6 py-12 text-center text-gray-500"
+                      className="px-6 py-12 text-center text-gray-500 dark:text-gray-400"
                     >
                       <div className="flex flex-col items-center">
-                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-                          <Search size={24} className="text-gray-400" />
+                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+                          <Search size={24} className="text-gray-400 dark:text-gray-500" />
                         </div>
                         <p className="text-lg font-medium">No Taxs found</p>
                         <p className="text-sm">
@@ -474,9 +466,9 @@ export default function TaxPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="border-t border-gray-200 bg-gray-50 px-6 py-4">
+            <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-6 py-4">
               <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-700">
+                <div className="text-sm text-gray-700 dark:text-gray-300">
                   Showing {startIndex + 1} to{" "}
                   {Math.min(startIndex + itemsPerPage, filtered.length)} of{" "}
                   {filtered.length} Taxs
@@ -487,7 +479,7 @@ export default function TaxPage() {
                       setCurrentPage((prev) => Math.max(1, prev - 1))
                     }
                     disabled={currentPage === 1}
-                    className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <ChevronLeft size={16} /> Previous
                   </button>
@@ -497,8 +489,8 @@ export default function TaxPage() {
                         key={i}
                         onClick={() => setCurrentPage(i + 1)}
                         className={`rounded-lg px-3 py-2 text-sm font-medium ${currentPage === i + 1
-                          ? "bg-indigo-600 text-white"
-                          : "border border-gray-300 hover:bg-gray-100"
+                          ? "bg-indigo-600 text-white dark:bg-indigo-700"
+                          : "border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-gray-200"
                           }`}
                       >
                         {i + 1}
@@ -510,7 +502,7 @@ export default function TaxPage() {
                       setCurrentPage((prev) => Math.min(totalPages, prev + 1))
                     }
                     disabled={currentPage === totalPages}
-                    className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Next <ChevronRight size={16} />
                   </button>
@@ -528,12 +520,12 @@ export default function TaxPage() {
             className="fixed inset-0 bg-black bg-opacity-50"
             onClick={closeModal}
           ></div>
-          <div className="z-10 w-full max-w-md transform rounded-xl bg-white shadow-2xl transition-all">
-            <div className="border-b border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900">
+          <div className="z-10 w-full max-w-md transform rounded-xl bg-white dark:bg-gray-900 shadow-2xl transition-all">
+            <div className="border-b border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                 {editing ? "Edit Tax" : "Add New Tax"}
               </h2>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 {editing
                   ? "Update Tax information"
                   : "Create a new Tax entry"}
@@ -542,7 +534,7 @@ export default function TaxPage() {
 
             <div className="space-y-6 p-6">
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">
                   Tax Name *
                 </label>
                 <input
@@ -550,7 +542,7 @@ export default function TaxPage() {
                   placeholder="Enter Tax name"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-transparent focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
 
@@ -589,22 +581,22 @@ export default function TaxPage() {
                       }`}
                   />
                 </button>
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
                   Tax is {form.active ? "active" : "inactive"}
                 </label>
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 border-t border-gray-200 p-6">
+            <div className="flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700 p-6">
               <button
                 onClick={closeModal}
-                className="rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                className="rounded-lg border border-gray-300 dark:border-gray-700 px-6 py-3 font-medium text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 Cancel
               </button>
               <button
                 onClick={() => editing ? handleUpdateTax() : handleAddTax()}
-                className="rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white transition-colors hover:bg-indigo-700"
+                className="rounded-lg bg-indigo-600 dark:bg-indigo-700 px-6 py-3 font-medium text-white transition-colors hover:bg-indigo-700 dark:hover:bg-indigo-800"
               >
                 {editing ? "Update Tax" : "Create Tax"}
               </button>

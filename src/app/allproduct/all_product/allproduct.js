@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { confirmDialog } from "@/components/ui/confirm";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -97,7 +98,12 @@ export default function ProductsPage() {
       if (!token) return;
 
       try {
-        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/discounts");
+        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/discounts", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
@@ -127,16 +133,10 @@ export default function ProductsPage() {
     // Simple console log for now - can be replaced with actual toast library
     console.log(`[${type.toUpperCase()}] ${message}`);
     // In a real app, you'd use react-hot-toast or similar
-    alert(`${type.toUpperCase()}: ${message}`);
+  // Only show toast, never alert
   };
 
-  // Confirmation dialog
-  const confirmDialog = (message) => {
-    return new Promise((resolve) => {
-      const result = window.confirm(message);
-      resolve(result);
-    });
-  };
+  // Use the beautiful confirmDialog from the shared component
 
   // Toggle dropdown
   const toggleDropdown = (id) => {
@@ -150,10 +150,11 @@ export default function ProductsPage() {
     }
   };
 
-  // Filter products based on search term
+  // Filter products based on search term (ignore only spaces)
+  const trimmedSearch = searchTerm.trim();
   const filteredProducts = products.filter((product) => {
-    if (!searchTerm) return true;
-    const searchLower = searchTerm.toLowerCase();
+    if (!trimmedSearch) return true;
+    const searchLower = trimmedSearch.toLowerCase();
     return (
       (product.title || "").toLowerCase().includes(searchLower) ||
       (product.description || "").toLowerCase().includes(searchLower) ||
@@ -223,7 +224,7 @@ export default function ProductsPage() {
         return;
       }
 
-      const confirmed = await confirmDialog("Are you sure you want to delete this product?");
+  const confirmed = await confirmDialog("Are you sure you want to delete this product?");
       if (!confirmed) return;
 
       const response = await fetch(

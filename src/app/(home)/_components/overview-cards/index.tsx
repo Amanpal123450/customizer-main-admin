@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -10,6 +11,7 @@ import * as icons from "./icons";
 
 
 export function OverviewCardsGroup() {
+  const { theme, setTheme } = useTheme();
   const router = useRouter();
   // PDF generation handler
   const handleGeneratePDF = () => {
@@ -259,19 +261,27 @@ export function OverviewCardsGroup() {
 
   return (
     <>
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-between items-center mb-4">
         <button
           onClick={handleGeneratePDF}
           className="px-5 py-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white rounded-lg font-semibold shadow hover:scale-105 transition-transform duration-200"
         >
           Generate PDF Report
         </button>
+        {/* Dark mode toggle button */}
+        <button
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          className="rounded-full bg-gray-100 dark:bg-gray-800 p-2 text-sm text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+          title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+        >
+          {theme === "dark" ? "🌞" : "🌙"}
+        </button>
       </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-8 mt-6">
         {cardConfigs.map((config, index) => (
           <div
             key={index}
-            className="group relative bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 transition-all duration-300 overflow-hidden"
+            className="group relative bg-white dark:bg-gray-dark p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-lg hover:border-gray-200 dark:hover:border-gray-700 transition-all duration-300 overflow-hidden"
           >
             {/* Background Gradient Overlay */}
             <div className={`absolute inset-0 bg-gradient-to-br ${config.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
@@ -280,11 +290,11 @@ export function OverviewCardsGroup() {
             <div className="relative z-10">
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-xl ${config.bgColor} group-hover:scale-110 transition-transform duration-300`}>
-                  <config.Icon className={`w-6 h-6 ${config.iconColor}`} />
+                <div className={`p-3 rounded-xl ${config.bgColor} dark:bg-gray-900/40 group-hover:scale-110 transition-transform duration-300`}>
+                  <config.Icon className={`w-6 h-6 ${config.iconColor} dark:text-white`} />
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className={`text-xs font-medium ${config.changeColor} bg-white px-2 py-1 rounded-full border`}>
+                  <span className={`text-xs font-medium ${config.changeColor} dark:text-white bg-white dark:bg-gray-900/40 px-2 py-1 rounded-full border dark:border-gray-700`}>
                     Live
                   </span>
                 </div>
@@ -293,10 +303,10 @@ export function OverviewCardsGroup() {
               {/* Main Content */}
               <div className="space-y-2">
                 <div className="flex items-baseline gap-2">
-                  <h3 className="text-2xl font-bold text-gray-900 group-hover:text-gray-800 transition-colors duration-300">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white group-hover:text-gray-800 dark:group-hover:text-gray-200 transition-colors duration-300">
                     {config.value}
                   </h3>
-                  <div className={`flex items-center gap-1 ${config.changeColor}`}>
+                  <div className={`flex items-center gap-1 ${config.changeColor} dark:text-green-400`}>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17l9.2-9.2M17 17V7H7" />
                     </svg>
@@ -307,8 +317,8 @@ export function OverviewCardsGroup() {
                 </div>
 
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-gray-700">{config.label}</p>
-                  <p className="text-xs text-gray-500">{config.description}</p>
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{config.label}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{config.description}</p>
                 </div>
               </div>
 
@@ -316,8 +326,8 @@ export function OverviewCardsGroup() {
             </div>
 
             {/* Decorative Elements */}
-            <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
-            <div className="absolute -bottom-2 -left-2 w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+            <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 rounded-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+            <div className="absolute -bottom-2 -left-2 w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 rounded-full opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
           </div>
         ))}
       </div>

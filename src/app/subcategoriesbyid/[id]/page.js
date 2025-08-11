@@ -63,6 +63,8 @@ export default function CategoryDetailPage() {
   const [categories, setCategories] = useState([]);
   const [easterEggMessage, setEasterEggMessage] = useState("");
 
+  const token = localStorage.getItem('adminToken')
+
   useEffect(() => {
     const fetchCategoryData = async () => {
       try {
@@ -103,11 +105,16 @@ export default function CategoryDetailPage() {
   }, [isSubmitting]);
 
   async function handleDelete(id) {
+    const token = localStorage.getItem('adminToken');
     const res = await fetch(
       `https://e-com-customizer.onrender.com/api/v1/deleteSubCategory/${id}`,
       {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+
+        },
       },
     );
 

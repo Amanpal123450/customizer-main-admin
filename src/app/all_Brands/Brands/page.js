@@ -294,16 +294,16 @@ export default function BrandsPage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+  <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       <div className="mx-auto max-w-7xl">
         {/* Header Section */}
-        <div className="mb-6 rounded-lg bg-white p-6 shadow-sm">
+  <div className="mb-6 rounded-lg bg-white dark:bg-gray-900 p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                 Brand Management
               </h1>
-              <nav className="mt-2 flex items-center space-x-2 text-sm text-gray-500">
+              <nav className="mt-2 flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
                 <span>Dashboard</span>
                 <span>/</span>
                 <span>Products</span>
@@ -313,7 +313,7 @@ export default function BrandsPage() {
             </div>
             <button
               onClick={() => openAddModal()}
-              className="flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white shadow-lg transition-colors hover:bg-indigo-700"
+              className="flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white shadow-lg transition-colors hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-800"
             >
               <Plus size={20} />
               Add New Brand
@@ -322,42 +322,42 @@ export default function BrandsPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
-          <div className="rounded-lg bg-white p-6 shadow-sm">
+  <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="rounded-lg bg-white dark:bg-gray-900 p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Brands</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-gray-600 dark:text-gray-300">Total Brands</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {brands.length}
                 </p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900">
                 <div className="h-6 w-6 rounded bg-indigo-600"></div>
               </div>
             </div>
           </div>
-          <div className="rounded-lg bg-white p-6 shadow-sm">
+          <div className="rounded-lg bg-white dark:bg-gray-900 p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Active Brands</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-sm text-gray-600 dark:text-gray-300">Active Brands</p>
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {brands.filter((b) => b.active).length}
                 </p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900">
                 <div className="h-6 w-6 rounded-full bg-green-600"></div>
               </div>
             </div>
           </div>
-          <div className="rounded-lg bg-white p-6 shadow-sm">
+          <div className="rounded-lg bg-white dark:bg-gray-900 p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Inactive Brands</p>
-                <p className="text-2xl font-bold text-red-600">
+                <p className="text-sm text-gray-600 dark:text-gray-300">Inactive Brands</p>
+                <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                   {brands.filter((b) => !b.active).length}
                 </p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900">
                 <div className="h-6 w-6 rounded-full bg-red-600"></div>
               </div>
             </div>
@@ -365,7 +365,7 @@ export default function BrandsPage() {
         </div>
 
         {/* Search and Filter Section */}
-        <div className="mb-6 rounded-lg bg-white p-6 shadow-sm">
+  <div className="mb-6 rounded-lg bg-white dark:bg-gray-900 p-6 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="relative flex-1">
               <Search
@@ -377,7 +377,7 @@ export default function BrandsPage() {
                 placeholder="Search brands by name..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-700 py-3 pl-10 pr-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-transparent focus:ring-2 focus:ring-indigo-500"
               />
             </div>
             <div className="relative">
@@ -388,7 +388,7 @@ export default function BrandsPage() {
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="min-w-[150px] appearance-none rounded-lg border border-gray-300 bg-white py-3 pl-10 pr-8 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
+                className="min-w-[150px] appearance-none rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white py-3 pl-10 pr-8 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="All">All Status</option>
                 <option value="Active">Active Only</option>
@@ -399,44 +399,44 @@ export default function BrandsPage() {
         </div>
 
         {/* Table Section */}
-        <div className="overflow-hidden rounded-lg bg-white shadow-sm">
+  <div className="overflow-hidden rounded-lg bg-white dark:bg-gray-900 shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="border-b border-gray-200 bg-gray-50">
+              <thead className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                     S.No
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                     Brand
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                     Name
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                     Status
                   </th>
                   {/* <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                     Sort Order
                   </th> */}
-                  <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
                 {paginatedData.length > 0 ? (
                   paginatedData.map((brand, index) => (
                     <tr
                       key={brand._id}
-                      className="transition-colors hover:bg-gray-50"
+                      className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
                     >
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-white">
                         {startIndex + index + 1}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center">
-                          <div className="h-12 w-12 overflow-hidden rounded-lg bg-gray-100">
+                          <div className="h-12 w-12 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
                             <Image
 
                               src={
@@ -455,7 +455,7 @@ export default function BrandsPage() {
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
-                        <div className="text-sm font-semibold text-gray-900">
+                        <div className="text-sm font-semibold text-gray-900 dark:text-white">
                           {brand.name}
                         </div>
                       </td>
@@ -475,7 +475,7 @@ export default function BrandsPage() {
                           />
                         </button>
                         <span
-                          className={`ml-3 text-sm font-medium ${brand.active ? "text-green-600" : "text-red-600"}`}
+                          className={`ml-3 text-sm font-medium ${brand.active ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
                         >
                           {brand.active ? "Active" : "Inactive"}
                         </span>
@@ -487,14 +487,14 @@ export default function BrandsPage() {
                         <div className="flex justify-end gap-2">
                           <button
                             onClick={() => openEditModal(brand._id)}
-                            className="rounded-lg p-2 text-indigo-600 transition-colors hover:bg-indigo-50 hover:text-indigo-900"
+                            className="rounded-lg p-2 text-indigo-600 dark:text-indigo-400 transition-colors hover:bg-indigo-50 dark:hover:bg-gray-800 hover:text-indigo-900"
                             title="Edit Brand"
                           >
                             <Edit size={16} />
                           </button>
                           <button
                             onClick={() => handleDelete(brand._id)}
-                            className="rounded-lg p-2 text-red-600 transition-colors hover:bg-red-50 hover:text-red-900"
+                            className="rounded-lg p-2 text-red-600 dark:text-red-400 transition-colors hover:bg-red-50 dark:hover:bg-gray-800 hover:text-red-900"
                             title="Delete Brand"
                           >
                             <Trash2 size={16} />
@@ -507,11 +507,11 @@ export default function BrandsPage() {
                   <tr>
                     <td
                       colSpan="6"
-                      className="px-6 py-12 text-center text-gray-500"
+                      className="px-6 py-12 text-center text-gray-500 dark:text-gray-400"
                     >
                       <div className="flex flex-col items-center">
-                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-                          <Search size={24} className="text-gray-400" />
+                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+                          <Search size={24} className="text-gray-400 dark:text-gray-500" />
                         </div>
                         <p className="text-lg font-medium">No brands found</p>
                         <p className="text-sm">
@@ -527,9 +527,9 @@ export default function BrandsPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="border-t border-gray-200 bg-gray-50 px-6 py-4">
+            <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-6 py-4">
               <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-700">
+                <div className="text-sm text-gray-700 dark:text-gray-300">
                   Showing {startIndex + 1} to{" "}
                   {Math.min(startIndex + itemsPerPage, filtered.length)} of{" "}
                   {filtered.length} brands
@@ -540,7 +540,7 @@ export default function BrandsPage() {
                       setCurrentPage((prev) => Math.max(1, prev - 1))
                     }
                     disabled={currentPage === 1}
-                    className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <ChevronLeft size={16} /> Previous
                   </button>
@@ -550,8 +550,8 @@ export default function BrandsPage() {
                         key={i}
                         onClick={() => setCurrentPage(i + 1)}
                         className={`rounded-lg px-3 py-2 text-sm font-medium ${currentPage === i + 1
-                          ? "bg-indigo-600 text-white"
-                          : "border border-gray-300 hover:bg-gray-100"
+                          ? "bg-indigo-600 text-white dark:bg-indigo-700"
+                          : "border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-gray-200"
                           }`}
                       >
                         {i + 1}
@@ -563,7 +563,7 @@ export default function BrandsPage() {
                       setCurrentPage((prev) => Math.min(totalPages, prev + 1))
                     }
                     disabled={currentPage === totalPages}
-                    className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Next <ChevronRight size={16} />
                   </button>
@@ -582,13 +582,13 @@ export default function BrandsPage() {
             onClick={closeModal}
           ></div>
 
-          <div className="z-10 my-10 max-h-[90vh] w-full max-w-md transform overflow-y-auto rounded-xl bg-white shadow-2xl transition-all">
+          <div className="z-10 my-10 max-h-[90vh] w-full max-w-md transform overflow-y-auto rounded-xl bg-white dark:bg-gray-900 shadow-2xl transition-all">
             {/* Header */}
-            <div className="border-b border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900">
+            <div className="border-b border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                 {editing ? "Edit Brand" : "Add New Brand"}
               </h2>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 {editing
                   ? "Update brand information"
                   : "Create a new brand entry"}
@@ -599,7 +599,7 @@ export default function BrandsPage() {
             <div className="space-y-6 p-6">
               {/* Brand Name */}
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">
                   Brand Name *
                 </label>
                 <input
@@ -607,7 +607,7 @@ export default function BrandsPage() {
                   placeholder="Enter brand name"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-transparent focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
 
@@ -626,7 +626,7 @@ export default function BrandsPage() {
 
               {/* Sort Order */}
               {/* <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">
                   Sort Order
                 </label>
                 <input
@@ -652,13 +652,13 @@ export default function BrandsPage() {
                   onChange={(e) =>
                     setForm({ ...form, metaTitle: e.target.value })
                   }
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-transparent focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
 
               {/* Meta Description */}
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">
                   Meta Description
                 </label>
                 <textarea
@@ -667,14 +667,14 @@ export default function BrandsPage() {
                   onChange={(e) =>
                     setForm({ ...form, metaDescription: e.target.value })
                   }
-                  className="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
+                  className="w-full resize-none rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-transparent focus:ring-2 focus:ring-indigo-500"
                   rows={3}
                 />
               </div>
 
               {/* Meta Keywords */}
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-200">
                   Meta Keywords
                 </label>
                 <input
@@ -684,9 +684,9 @@ export default function BrandsPage() {
                   onChange={(e) =>
                     setForm({ ...form, keywords: e.target.value })
                   }
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-transparent focus:ring-2 focus:ring-indigo-500"
                 />
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                   Comma separated keywords for SEO
                 </p>
               </div>
@@ -722,10 +722,10 @@ export default function BrandsPage() {
             </div>
 
             {/* Footer Buttons */}
-            <div className="flex justify-end gap-3 border-t border-gray-200 p-6">
+            <div className="flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700 p-6">
               <button
                 onClick={closeModal}
-                className="rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                className="rounded-lg border border-gray-300 dark:border-gray-700 px-6 py-3 font-medium text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 Cancel
               </button>
@@ -733,7 +733,7 @@ export default function BrandsPage() {
                 onClick={() =>
                   editing ? handleUpdateUnit(form) : handleAddUnit(form)
                 }
-                className="rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white transition-colors hover:bg-indigo-700"
+                className="rounded-lg bg-indigo-600 dark:bg-indigo-700 px-6 py-3 font-medium text-white transition-colors hover:bg-indigo-700 dark:hover:bg-indigo-800"
               >
                 {editing ? "Update Brand" : "Create Brand"}
               </button>

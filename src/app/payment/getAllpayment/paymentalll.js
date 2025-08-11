@@ -84,17 +84,17 @@ export default function PaymentHistoryPagesss() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
+            <div className="h-8 bg-gray-200 dark:bg-gray-800 rounded w-1/4 mb-6"></div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
               {[1,2,3,4].map(i => (
-                <div key={i} className="h-24 bg-gray-200 rounded-xl"></div>
+                <div key={i} className="h-24 bg-gray-200 dark:bg-gray-800 rounded-xl"></div>
               ))}
             </div>
-            <div className="h-10 bg-gray-200 rounded mb-4"></div>
-            <div className="h-96 bg-gray-200 rounded"></div>
+            <div className="h-10 bg-gray-200 dark:bg-gray-800 rounded mb-4"></div>
+            <div className="h-96 bg-gray-200 dark:bg-gray-800 rounded"></div>
           </div>
         </div>
       </div>
@@ -102,17 +102,17 @@ export default function PaymentHistoryPagesss() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 text-gray-900 dark:text-white">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Payment History</h1>
-          <p className="text-gray-600">Monitor and manage all payment transactions</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Payment History</h1>
+          <p className="text-gray-600 dark:text-gray-300">Monitor and manage all payment transactions</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Payments</p>
@@ -124,7 +124,7 @@ export default function PaymentHistoryPagesss() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Successful</p>
@@ -136,7 +136,7 @@ export default function PaymentHistoryPagesss() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Failed</p>
@@ -148,7 +148,7 @@ export default function PaymentHistoryPagesss() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Revenue</p>
@@ -162,7 +162,7 @@ export default function PaymentHistoryPagesss() {
         </div>
 
         {/* Filters and Actions */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Search */}
             <div className="flex-1 relative">
@@ -215,22 +215,22 @@ export default function PaymentHistoryPagesss() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200 ">
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S.No</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                <tr className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 ">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">S.No</th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Order ID</th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Customer</th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Amount</th>
                   {/* <th className="px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th> */}
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Action</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {currentPayments.map((payment, index) => (
                   <tr key={payment._id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -246,9 +246,9 @@ export default function PaymentHistoryPagesss() {
                         </div>
                         <div className="ml-3">
                           <div className="text-sm font-medium text-gray-900">
-                            {payment.user.firstName} {payment.user.lastName}
+                            {(payment.user?.firstName || "")} {(payment.user?.lastName || "")}
                           </div>
-                          <div className="text-sm text-gray-500">{payment.user.email}</div>
+                          <div className="text-sm text-gray-500">{payment.user?.email || "N/A"}</div>
                         </div>
                       </div>
                     </td>
@@ -332,15 +332,15 @@ export default function PaymentHistoryPagesss() {
         {/* Modal */}
         {selectedPayment && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto">
-              <div className="p-6 border-b border-gray-200">
+            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto text-gray-900 dark:text-white">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-bold text-gray-900">Payment Details</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Payment Details</h2>
                   <button
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                     onClick={() => setSelectedPayment(null)}
                   >
-                    <X className="h-5 w-5 text-gray-500" />
+                    <X className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                   </button>
                 </div>
               </div>
@@ -348,7 +348,7 @@ export default function PaymentHistoryPagesss() {
               <div className="p-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Transaction Info</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Transaction Info</h3>
                     <div className="space-y-3">
                       <div>
                         <label className="text-sm font-medium text-gray-500">Order ID</label>
@@ -384,11 +384,11 @@ export default function PaymentHistoryPagesss() {
                     <div className="space-y-3">
                       <div>
                         <label className="text-sm font-medium text-gray-500">Name</label>
-                        <p className="text-sm text-gray-900">{selectedPayment.user.firstName} {selectedPayment.user.lastName}</p>
+                        <p className="text-sm text-gray-900">{(selectedPayment.user?.firstName || "")} {(selectedPayment.user?.lastName || "")}</p>
                       </div>
                       <div>
                         <label className="text-sm font-medium text-gray-500">Email</label>
-                        <p className="text-sm text-gray-900">{selectedPayment.user.email}</p>
+                        <p className="text-sm text-gray-900">{selectedPayment.user?.email || "N/A"}</p>
                       </div>
                       <div>
                         <label className="text-sm font-medium text-gray-500">Transaction Time</label>
@@ -399,9 +399,9 @@ export default function PaymentHistoryPagesss() {
                 </div>
               </div>
 
-              <div className="p-6 border-t border-gray-200 flex justify-end">
+              <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end">
                 <button
-                  className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                  className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                   onClick={() => setSelectedPayment(null)}
                 >
                   Close

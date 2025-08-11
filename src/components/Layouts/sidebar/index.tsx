@@ -82,7 +82,7 @@
                       className="flex items-center gap-3 text-lg font-semibold text-gray-900 dark:text-white"
                     >
                       <Logo />
-                      <span>Brand</span>
+                      <span>DesignTailor</span>
                     </Link>
 
                     {isMobile && (

@@ -77,10 +77,11 @@ export default function VariationPage() {
 
   // Add Authorization header if token exists
 
+
   useEffect(() => {
     async function GetAllvariation() {
       const res = await fetch(
-        "https://e-com-customizer.onrender.com/api/v1/totalVariation",
+        "http://localhost:4000/api/v1/totalVariation",
         {
           method: "GET",
           headers: {
@@ -95,8 +96,9 @@ export default function VariationPage() {
       setBrands(result.data); // ✅ Fix: extract the array from result.data
       setFiltered(result.data);
     }
+      
     GetAllvariation();
-  }, [token]);
+  }, []);
 
   const handleAddUnit = async () => {
     // if (!unitName.trim()) return showToast('Unit name is required!');
@@ -104,7 +106,7 @@ export default function VariationPage() {
     // setLoading(true);
     try {
       const res = await fetch(
-        "https://e-com-customizer.onrender.com/api/v1/addVariation",
+        "http://localhost:4000/api/v1/addVariation",
         {
           method: "POST",
           headers: {
@@ -134,7 +136,7 @@ export default function VariationPage() {
     console.log("sdcs");
     try {
       const res = await fetch(
-        `https://e-com-customizer.onrender.com/api/v1/variation/${editId}`,
+        `http://localhost:4000/api/v1/variation/${editId}`,
         {
           method: "PUT",
           headers: {
@@ -219,7 +221,7 @@ export default function VariationPage() {
   const handleDelete = async (id) => {
     if (confirm("Are you sure you want to delete this unit?")) {
       try {
-        const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/variation/${id}`, {
+        const res = await fetch(`http://localhost:4000/api/v1/variation/${id}`, {
           method: "DELETE",
           headers: {
             "Authorization": `Bearer ${token}`
@@ -245,7 +247,7 @@ export default function VariationPage() {
 
   const toggleStatus = async (id) => {
     try {
-      const response = await fetch(`https://e-com-customizer.onrender.com/api/v1/variationToggle/${id}`, {
+      const response = await fetch(`http://localhost:4000/api/v1/variationToggle/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -272,16 +274,16 @@ export default function VariationPage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+  <div className="min-h-screen bg-gray-50 dark:bg-[#0a1929] p-6">
       <div className="mx-auto max-w-7xl">
         {/* Header Section */}
-        <div className="mb-6 rounded-lg bg-white p-6 shadow-sm">
+  <div className="mb-6 rounded-lg bg-white dark:bg-gray-dark p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                 Variation Management
               </h1>
-              <nav className="mt-2 flex items-center space-x-2 text-sm text-gray-500">
+              <nav className="mt-2 flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
                 <span>Dashboard</span>
                 <span>/</span>
                 <span>Products</span>
@@ -300,42 +302,42 @@ export default function VariationPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
-          <div className="rounded-lg bg-white p-6 shadow-sm">
+  <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="rounded-lg bg-white dark:bg-gray-dark p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Variation</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total Variation</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {variations.length}
                 </p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/40">
                 <div className="h-6 w-6 rounded bg-indigo-600"></div>
               </div>
             </div>
           </div>
-          <div className="rounded-lg bg-white p-6 shadow-sm">
+          <div className="rounded-lg bg-white dark:bg-gray-dark p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Active Variation</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Active Variation</p>
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {variations.filter((b) => b.active).length}
                 </p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/40">
                 <div className="h-6 w-6 rounded-full bg-green-600"></div>
               </div>
             </div>
           </div>
-          <div className="rounded-lg bg-white p-6 shadow-sm">
+          <div className="rounded-lg bg-white dark:bg-gray-dark p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Inactive Variation</p>
-                <p className="text-2xl font-bold text-red-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Inactive Variation</p>
+                <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                   {variations.filter((b) => !b.active).length}
                 </p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/40">
                 <div className="h-6 w-6 rounded-full bg-red-600"></div>
               </div>
             </div>
@@ -343,11 +345,11 @@ export default function VariationPage() {
         </div>
 
         {/* Search and Filter Section */}
-        <div className="mb-6 rounded-lg bg-white p-6 shadow-sm">
+  <div className="mb-6 rounded-lg bg-white dark:bg-gray-dark p-6 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="relative flex-1">
               <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400"
+                className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400 dark:text-gray-500"
                 size={20}
               />
               <input
@@ -355,18 +357,18 @@ export default function VariationPage() {
                 placeholder="Search variations by name..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-dark dark:text-white py-3 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
               />
             </div>
             <div className="relative">
               <Filter
-                className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400"
+                className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400 dark:text-gray-500"
                 size={20}
               />
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="min-w-[150px] appearance-none rounded-lg border border-gray-300 bg-white py-3 pl-10 pr-8 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
+                className="min-w-[150px] appearance-none rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-dark dark:text-white py-3 pl-10 pr-8 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="All">All Status</option>
                 <option value="Active">Active Only</option>
@@ -377,35 +379,35 @@ export default function VariationPage() {
         </div>
 
         {/* Table Section */}
-        <div className="overflow-hidden rounded-lg bg-white shadow-sm">
+  <div className="overflow-hidden rounded-lg bg-white dark:bg-gray-dark shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="border-b border-gray-200 bg-gray-50">
+              <thead className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     S.No
                   </th>
                   {/* <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Brand</th> */}
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Name
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Status
                   </th>
                   {/* <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sort Order</th> */}
-                  <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-4 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-dark">
                 {paginatedData.length > 0 ? (
                   paginatedData.map((variation, index) => (
                     <tr
                       key={variation._id}
                       className="transition-colors hover:bg-gray-50"
                     >
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-white">
                         {startIndex + index + 1}
                       </td>
                       {/* <td className="px-6 py-4 whitespace-nowrap">
@@ -423,7 +425,7 @@ export default function VariationPage() {
                         </div>
                       </td> */}
                       <td className="whitespace-nowrap px-6 py-4">
-                        <div className="text-sm font-semibold text-gray-900">
+                        <div className="text-sm font-semibold text-gray-900 dark:text-white">
                           {variation.name}
                         </div>
                       </td>
@@ -445,7 +447,7 @@ export default function VariationPage() {
                           />
                         </button>
                         <span
-                          className={`ml-3 text-sm font-medium ${variation.active ? "text-green-600" : "text-red-600"}`}
+                          className={`ml-3 text-sm font-medium ${variation.active ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
                         >
                           {variation.active ? "Active" : "Inactive"}
                         </span>
@@ -457,14 +459,14 @@ export default function VariationPage() {
                         <div className="flex justify-end gap-2">
                           <button
                             onClick={() => openEditModal(variation)}
-                            className="rounded-lg p-2 text-indigo-600 transition-colors hover:bg-indigo-50 hover:text-indigo-900"
+                            className="rounded-lg p-2 text-indigo-600 dark:text-indigo-400 transition-colors hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-900"
                             title="Edit Brand"
                           >
                             <Edit size={16} />
                           </button>
                           <button
                             onClick={() => handleDelete(variation._id)}
-                            className="rounded-lg p-2 text-red-600 transition-colors hover:bg-red-50 hover:text-red-900"
+                            className="rounded-lg p-2 text-red-600 dark:text-red-400 transition-colors hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-900"
                             title="Delete Brand"
                           >
                             <Trash2 size={16} />
@@ -477,13 +479,13 @@ export default function VariationPage() {
                   <tr>
                     <td
                       colSpan="6"
-                      className="px-6 py-12 text-center text-gray-500"
+                      className="px-6 py-12 text-center text-gray-500 dark:text-gray-400"
                     >
                       <div className="flex flex-col items-center">
-                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-                          <Search size={24} className="text-gray-400" />
+                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-900/40">
+                          <Search size={24} className="text-gray-400 dark:text-gray-500" />
                         </div>
-                        <p className="text-lg font-medium">No Variations found</p>
+                        <p className="text-lg font-medium dark:text-white">No Variations found</p>
                         <p className="text-sm">
                           Try adjusting your search or filter criteria
                         </p>
@@ -546,17 +548,17 @@ export default function VariationPage() {
 
       {/* Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="fixed inset-0 bg-black bg-opacity-50"
+            className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70"
             onClick={closeModal}
           ></div>
-          <div className="z-10 w-full max-w-md transform rounded-xl bg-white shadow-2xl transition-all">
-            <div className="border-b border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900">
+          <div className="z-10 w-full max-w-md transform rounded-xl bg-white dark:bg-gray-dark shadow-2xl transition-all">
+            <div className="border-b border-gray-200 dark:border-gray-700 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                 {editing ? "Edit Unit" : "Add New Unit"}
               </h2>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 {editing
                   ? "Update variation information"
                   : "Create a new variation entry"}
@@ -565,7 +567,7 @@ export default function VariationPage() {
 
             <div className="space-y-6 p-6">
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">
+                <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                   variation Name *
                 </label>
                 <input
@@ -573,61 +575,38 @@ export default function VariationPage() {
                   placeholder="Enter variation name"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-dark dark:text-white px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
-
-              {/* <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Logo URL</label>
-                <input
-                  type="url"
-                  placeholder="https://example.com/logo.png"
-                  value={form.logo}
-                  onChange={e => setForm({ ...form, logo: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-                <p className="text-xs text-gray-500 mt-1">Leave empty to auto-generate logo</p>
-              </div> */}
-
-              {/* <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Sort Order</label>
-                <input
-                  type="number"
-                  placeholder="0"
-                  value={form.sortOrder}
-                  onChange={e => setForm({ ...form, sortOrder: +e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div> */}
 
               <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={() => setForm({ ...form, active: !form.active })}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${form.active ? "bg-indigo-600" : "bg-gray-200"
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${form.active ? "bg-indigo-600" : "bg-gray-200 dark:bg-gray-700"
                     }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${form.active ? "translate-x-6" : "translate-x-1"
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-gray-200 transition-transform ${form.active ? "translate-x-6" : "translate-x-1"
                       }`}
                   />
                 </button>
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   variation is {form.active ? "active" : "inactive"}
                 </label>
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 border-t border-gray-200 p-6">
+            <div className="flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700 p-6">
               <button
                 onClick={closeModal}
-                className="rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                className="rounded-lg border border-gray-300 dark:border-gray-700 px-6 py-3 font-medium text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900/20"
               >
                 Cancel
               </button>
               <button
                 onClick={() => editing ? handleUpdateUnit() : handleAddUnit()}
-                className="rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white transition-colors hover:bg-indigo-700"
+                className="rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white transition-colors hover:bg-indigo-700 dark:hover:bg-indigo-500"
               >
                 {editing ? "Update variation" : "Create variation"}
               </button>

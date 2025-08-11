@@ -123,7 +123,7 @@ const OrderManagementPage = () => {
       //     ],
       //   },
       //   {
-      //     _id: "ORD002",
+      //     _id: "ORD002",  
       //     customerName: "Priya Singh",
       //     customerEmail: "priya@example.com",
       //     orderDate: "2025-01-19",
@@ -157,10 +157,10 @@ const OrderManagementPage = () => {
       //       { status: "Out for Delivery", date: "", completed: false },
       //       { status: "Delivered", date: "", completed: false },
       //     ],
-      //   },
+      // ];
       // ];
 
-      setOrders(data.orders.reverse());
+  setOrders(Array.isArray(data.orders) ? [...data.orders].reverse() : []);
       console.log(data)
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -309,7 +309,7 @@ const OrderManagementPage = () => {
 
   const handleRefund = (orderId) => {
     // Handle refund logic
-  toast.alert(`Refund initiated for order ${orderId}`);
+    showToast(`Refund initiated for order ${orderId}`, "info");
   };
 
   const handlePrintInvoice = (order) => {
@@ -690,62 +690,62 @@ const OrderManagementPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-7xl p-6">
+  <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
+  <div className="mx-auto max-w-7xl p-6">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">
+          <h1 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
             Order Management
           </h1>
-          <p className="text-gray-600">Manage and track all customer orders</p>
+          <p className="text-gray-600 dark:text-gray-300">Manage and track all customer orders</p>
         </div>
 
         {/* Stats Cards */}
-        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
-          <div className="rounded-lg bg-white p-6 shadow">
+  <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
+          <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
                   Total Orders
                 </p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {orders.length}
                 </p>
               </div>
               <Package className="h-8 w-8 text-blue-600" />
             </div>
           </div>
-          <div className="rounded-lg bg-white p-6 shadow">
+          <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
                   Pending Orders
                 </p>
-                <p className="text-2xl font-bold text-yellow-600">
+                <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
                   {orders.filter((o) => o.orderStatus === "Pending").length}
                 </p>
               </div>
               <AlertCircle className="h-8 w-8 text-yellow-600" />
             </div>
           </div>
-          <div className="rounded-lg bg-white p-6 shadow">
+          <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
                   Shipped Orders
                 </p>
-                <p className="text-2xl font-bold text-purple-600">
+                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                   {orders.filter((o) => o.orderStatus === "Shipped").length}
                 </p>
               </div>
               <Truck className="h-8 w-8 text-purple-600" />
             </div>
           </div>
-          <div className="rounded-lg bg-white p-6 shadow">
+          <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Revenue</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Revenue</p>
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   ₹
                   {orders
                     .reduce((sum, order) => sum + order.totalAmount, 0)
@@ -758,14 +758,14 @@ const OrderManagementPage = () => {
         </div>
 
         {/* Filters and Search */}
-        <div className="mb-6 rounded-lg bg-white p-6 shadow">
+  <div className="mb-6 rounded-lg bg-white dark:bg-gray-800 p-6 shadow">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400 dark:text-gray-500" />
               <input
                 type="text"
                 placeholder="Search orders..."
-                className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white py-2 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                 value={filters.search.trim()}
                 onChange={(e) =>
                   setFilters({ ...filters, search: e.target.value })
@@ -774,7 +774,7 @@ const OrderManagementPage = () => {
             </div>
 
             <select
-              className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+              className="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
               value={filters.status}
               onChange={(e) =>
                 setFilters({ ...filters, status: e.target.value })
@@ -789,7 +789,7 @@ const OrderManagementPage = () => {
             </select>
 
             <select
-              className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+              className="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
               value={filters.paymentStatus}
               onChange={(e) =>
                 setFilters({ ...filters, paymentStatus: e.target.value })
@@ -802,7 +802,7 @@ const OrderManagementPage = () => {
             </select>
 
             <select
-              className="rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+              className="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
               value={filters.paymentMethod}
               onChange={(e) =>
                 setFilters({ ...filters, paymentMethod: e.target.value })
@@ -814,10 +814,10 @@ const OrderManagementPage = () => {
               <option value="Stripe">Stripe</option>
             </select>
 
-            <div className="flex gap-2">
+      <div className="flex gap-2">
               <button
                 onClick={() => exportOrders(currentOrders)}
-                className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+                className="flex items-center gap-2 rounded-lg bg-green-600 dark:bg-green-700 px-4 py-2 text-white hover:bg-green-700 dark:hover:bg-green-800"
               >
                 <Download className="h-4 w-4" />
                 Export CSV
@@ -827,33 +827,33 @@ const OrderManagementPage = () => {
         </div>
 
         {/* Orders Table */}
-        <div className="overflow-hidden rounded-lg bg-white shadow">
+  <div className="overflow-hidden rounded-lg bg-white dark:bg-gray-800 shadow">
           {loading ? (
             <div className="p-8 text-center">
               <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
-              <p className="mt-2 text-gray-600">Loading orders...</p>
+              <p className="mt-2 text-gray-600 dark:text-gray-300">Loading orders...</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 dark:bg-gray-900">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                       Order
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                       Customer
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                       Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                       Payment
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                       Amount
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">
                       Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
@@ -861,27 +861,24 @@ const OrderManagementPage = () => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {currentOrders.map((order) => (
-                    <tr key={order._id} className="hover:bg-gray-50">
+                    <tr key={order._id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
                       <td className="whitespace-nowrap px-6 py-4">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">
                             {order._id}
                           </div>
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">
                             {order.userId ? `${order.userId.firstName} ${order.userId.lastName}` : "N/A"}
                           </div>
-                          {/* <div className="text-sm text-gray-500">
-                            {order.userId ? ${order.userId.email.slice(1.10)}...: "N/A"}
-                          </div> */}
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-white">
                         {new Date(order.createdAt).toLocaleDateString()}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
@@ -892,12 +889,12 @@ const OrderManagementPage = () => {
                             {/* {order.paymentStatus} */}
                             {order.paymentMethod}
                           </span>
-                          <div className="mt-1 text-xs text-gray-500">
+                          <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
 
                           </div>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
                         ₹{order.totalAmount.toLocaleString()}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
@@ -942,7 +939,7 @@ const OrderManagementPage = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3">
+            <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
               <div className="flex flex-1 justify-between sm:hidden">
                 <button
                   onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
@@ -963,7 +960,7 @@ const OrderManagementPage = () => {
               </div>
               <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
                     Showing{" "}
                     <span className="font-medium">{indexOfFirstOrder + 1}</span>{" "}
                     to{" "}
@@ -982,8 +979,8 @@ const OrderManagementPage = () => {
                         key={i + 1}
                         onClick={() => setCurrentPage(i + 1)}
                         className={`relative inline-flex items-center border px-4 py-2 text-sm font-medium ${currentPage === i + 1
-                          ? "z-10 border-blue-500 bg-blue-50 text-blue-600"
-                          : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
+                          ? "z-10 border-blue-500 bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-300"
+                          : "border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
                           }`}
                       >
                         {i + 1}

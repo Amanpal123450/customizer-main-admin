@@ -34,35 +34,31 @@ function ProgressSection({ formData }) {
   };
 
   return (
-    <div className="w-full md:w-72 ml-0 md:ml-8 mt-8 md:mt-0 bg-gray-50 rounded shadow p-6 flex flex-col items-center">
-      <h2 className="text-lg font-semibold mb-6">Progress</h2>
+    <div className="w-full md:w-72 ml-0 md:ml-8 mt-8 md:mt-0 bg-gray-50 dark:bg-gray-800 rounded shadow p-6 flex flex-col items-center">
+      <h2 className="text-lg font-semibold mb-6 dark:text-white">Progress</h2>
       {/* --- Progress Steps --- */}
-      <div className="relative flex flex-col items-center pt-2" style={{ minHeight: `${fields.length * 46}px` }}>
+      <div
+        className="relative flex flex-col items-center pt-2"
+        style={{ minHeight: `${fields.length * 46}px` }}
+      >
         {fields.map((field, idx) => {
           const filled = isFilled(field.name);
-          const prevFilled = idx === 0 ? false : isFilled(fields[idx - 1].name);
-
           return (
             <div key={field.name} className="flex flex-col items-center">
               {/* --- Connector Line Above --- */}
               {idx > 0 && (
-                <motion.div
+                <motion.span
                   layout
                   initial={false}
                   animate={{
-                    background:
-                      prevFilled
-                        ? "linear-gradient(to bottom, #4ADE80, #4ADE80)" // green-400
-                        : "linear-gradient(to bottom, #E5E7EB, #E5E7EB)", // gray-200
-                    height: "28px"
+                    color: filled ? "#22C55E" : "#6B7280",
+                    fontWeight: filled ? 700 : 500,
+                    scale: filled ? 1.04 : 1,
                   }}
-                  transition={{ duration: 0.35 }}
-                  className="w-1 rounded-full"
-                  style={{
-                    width: "3px", minHeight: "28px",
-                    marginBottom: "0.2rem"
-                  }}
-                ></motion.div>
+                  className="ml-2 dark:text-white"
+                  style={{ fontSize: "1rem", display: "inline-block", marginBottom: "0.2rem" }}
+                  transition={{ type: "spring", stiffness: 300, damping: 18 }}
+                />
               )}
 
               {/* --- Bullet/Point --- */}
@@ -70,18 +66,16 @@ function ProgressSection({ formData }) {
                 layout
                 initial={false}
                 animate={{
-                  backgroundColor: filled ? "#bbf7d0" : "#E5E7EB", // green-200 : gray-200
-                  borderColor: filled ? "#4ADE80" : "#D1D5DB", // green-400 : gray-300
+                  backgroundColor: filled ? "#bbf7d0" : "#E5E7EB",
+                  borderColor: filled ? "#4ADE80" : "#D1D5DB",
                   scale: filled ? 1.14 : 1,
-                  boxShadow: filled
-                    ? "0 0 0px 6px #bbf7d066"
-                    : "0 0 0px 0px transparent",
+                  boxShadow: filled ? "0 0 0px 6px #bbf7d066" : "0 0 0px 0px transparent",
                 }}
                 transition={{
                   duration: 0.24,
                   scale: { type: "spring", stiffness: 300, damping: 15 },
                 }}
-                className={`z-10 border-2 flex items-center justify-center`}
+                className="z-10 border-2 flex items-center justify-center"
                 style={{
                   width: 28,
                   height: 28,
@@ -90,7 +84,6 @@ function ProgressSection({ formData }) {
                   marginTop: 2,
                 }}
               >
-                {/* Animated check if filled */}
                 <AnimatePresence>
                   {filled && (
                     <motion.svg
@@ -106,7 +99,7 @@ function ProgressSection({ formData }) {
                     >
                       <motion.path
                         d="M6 10.5l3 3 5-5"
-                        stroke="#22C55E" // green-500
+                        stroke="#22C55E"
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -125,7 +118,7 @@ function ProgressSection({ formData }) {
                   layout
                   initial={false}
                   animate={{
-                    color: filled ? "#22C55E" : "#6B7280", // green-500 or gray-600
+                    color: filled ? "#22C55E" : "#6B7280",
                     fontWeight: filled ? 700 : 500,
                     scale: filled ? 1.04 : 1,
                   }}
@@ -147,10 +140,9 @@ function ProgressSection({ formData }) {
 // 🟢 Toast helper (simple fallback, replace with your preferred toast library if needed)
 function showToast(message, type = "info") {
   if (typeof window !== "undefined") {
-
-  if(type === "success") toast.success(message);
-  else if(type === "error") toast.error(message);
-  else toast.alert(message);
+    if(type === "success") toast.success(message);
+    else if(type === "error") toast.error(message);
+    else toast.success(message); // fallback to success for info
   }
 }
 
@@ -419,11 +411,11 @@ export default function CreateProduct() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row mx-auto mt-8 max-w-5xl">
+    <div className="flex flex-col  dark:bg-gray-800 md:flex-row mx-auto mt-8 max-w-5xl">
       {/* --- Left: the form --- */}
       <div className="flex-1">
-        <div className="mx-auto max-w-full rounded bg-white p-6 shadow-md">
-          <h1 className="mb-6 text-center text-2xl font-bold text-gray-800">
+  <div className="mx-auto max-w-full rounded bg-white dark:bg-gray-900 p-6 shadow-md">
+          <h1 className="mb-6 text-center text-2xl font-bold text-gray-800 dark:text-white">
             Add New Product
           </h1>
           <motion.form
@@ -434,7 +426,7 @@ export default function CreateProduct() {
             animate="visible"
           >
             <motion.div variants={itemVariant}>
-              <label className="mb-1 block font-bold text-gray-800">Title</label>
+              <label className="mb-1 block font-bold text-gray-800 dark:text-white">Title</label>
               <input
                 type="text"
                 name="title"
@@ -442,13 +434,13 @@ export default function CreateProduct() {
                 value={formData.title}
                 onChange={handleChange}
                 required
-                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
+                className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 dark:bg-gray-800 dark:text-white"
               />
             </motion.div>
 
             <motion.div variants={itemVariant}>
               <label className="block">
-                <span className="text-gray-700 font-semibold">Description</span>
+                <span className="text-gray-700 font-semibold dark:text-white">Description</span>
                 <ReactQuill
                   theme="snow"
                   placeholder="Write detailed product description here..."
@@ -463,7 +455,7 @@ export default function CreateProduct() {
                       descriptionText: plainText
                     }));
                   }}
-                  className="mt-2 mb-5 rounded-lg focus:ring-2 focus:border-indigo-400 focus:ring-indigo-100 font-medium transition"
+                  className="mt-2 mb-5 rounded-lg focus:ring-2 focus:border-indigo-400 focus:ring-indigo-100 font-medium transition dark:bg-gray-800 dark:text-white"
                 />
               </label>
             </motion.div>
@@ -472,7 +464,7 @@ export default function CreateProduct() {
             <motion.div variants={itemVariant} className="space-y-6">
               {/* Category Selection */}
               <div>
-                <label className="mb-1 block font-bold text-gray-800">
+                <label className="mb-1 block font-bold text-gray-800 dark:text-white">
                   Select Category <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -480,7 +472,7 @@ export default function CreateProduct() {
                   value={formData.categoryId}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
+                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 dark:bg-gray-800 dark:text-white"
                 >
                   <option value="">-- Select Category First --</option>
                   {categories.map((category) => (
@@ -493,7 +485,7 @@ export default function CreateProduct() {
 
               {/* SubCategory Selection */}
               <div>
-                <label className="mb-1 block font-bold text-gray-800">
+                <label className="mb-1 block font-bold text-gray-800 dark:text-white">
                   Select SubCategory <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -502,7 +494,7 @@ export default function CreateProduct() {
                   onChange={handleChange}
                   required
                   disabled={!formData.categoryId || loadingSubCategories}
-                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 dark:bg-gray-800 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="">
                     {!formData.categoryId
@@ -521,7 +513,7 @@ export default function CreateProduct() {
 
                 {/* Show subcategory count */}
                 {formData.categoryId && !loadingSubCategories && (
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                     {subCategories.length} subcategories available
                   </p>
                 )}
@@ -531,7 +523,7 @@ export default function CreateProduct() {
             {/* Price + Quantity in a row */}
             <motion.div variants={itemVariant} className="flex flex-col md:flex-row gap-6">
               <div className="flex-1">
-                <label className="mb-1 block font-bold text-gray-800">Price (₹)</label>
+                <label className="mb-1 block font-bold text-gray-800 dark:text-white">Price (₹)</label>
                 <input
                   type="number"
                   name="price"
@@ -541,11 +533,11 @@ export default function CreateProduct() {
                   required
                   min="0"
                   step="0.01"
-                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
+                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 dark:bg-gray-800 dark:text-white"
                 />
               </div>
               <div className="flex-1">
-                <label className="mb-1 block font-bold text-gray-800">Quantity</label>
+                <label className="mb-1 block font-bold text-gray-800 dark:text-white">Quantity</label>
                 <input
                   type="number"
                   name="quantity"
@@ -554,7 +546,7 @@ export default function CreateProduct() {
                   onChange={handleChange}
                   required
                   min="0"
-                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
+                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 dark:bg-gray-800 dark:text-white"
                 />
               </div>
             </motion.div>
@@ -562,7 +554,7 @@ export default function CreateProduct() {
             {/* Color + Brand + Variant in a row */}
             <motion.div variants={itemVariant} className="flex flex-col md:flex-row gap-6">
               <div className="flex-1">
-                <label className="mb-1 block font-bold text-gray-800">Color</label>
+                <label className="mb-1 block font-bold text-gray-800 dark:text-white">Color</label>
                 <input
                   type="text"
                   name="color"
@@ -570,17 +562,17 @@ export default function CreateProduct() {
                   onChange={handleChange}
                   required
                   placeholder="e.g. Red, Black, Blue"
-                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
+                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 dark:bg-gray-800 dark:text-white"
                 />
               </div>
               <div className="flex-1">
-                <label className="mb-1 block font-bold text-gray-800">Brand</label>
+                <label className="mb-1 block font-bold text-gray-800 dark:text-white">Brand</label>
                 <select
                   name="brand"
                   value={formData.brand}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
+                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 dark:bg-gray-800 dark:text-white"
                 >
                   <option value="">-- Select Brand --</option>
                   {Brands.map((brand) => (
@@ -591,13 +583,13 @@ export default function CreateProduct() {
                 </select>
               </div>
               <div className="flex-1">
-                <label className="mb-1 block font-bold text-gray-800">Variant</label>
+                <label className="mb-1 block font-bold text-gray-800 dark:text-white">Variant</label>
                 <select
                   name="variant"
                   value={formData.variant}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50"
+                  className="w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm bg-gray-50 dark:bg-gray-800 dark:text-white"
                 >
                   <option value="">-- Select Variant --</option>
                   {Variants.map((variant) => (
@@ -611,7 +603,7 @@ export default function CreateProduct() {
 
             {/* images Images */}
             <motion.div variants={itemVariant}>
-              <label className="mb-1 block font-bold text-gray-800">
+              <label className="mb-1 block font-bold text-gray-800 dark:text-white">
                 Product Images <span className="text-red-500">*</span>
               </label>
               <input
@@ -620,12 +612,12 @@ export default function CreateProduct() {
                 multiple
                 onChange={handleImageUpload}
                 required
-                className="w-full rounded-lg border px-4 py-2 bg-gray-50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                className="w-full rounded-lg border px-4 py-2 bg-gray-50 dark:bg-gray-800 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
 
               {previews.length > 0 && (
                 <div className="mt-4">
-                  <p className="text-sm font-medium text-gray-700 mb-2">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Preview ({previews.length} image{previews.length !== 1 ? 's' : ''})
                   </p>
                   <div className="flex flex-wrap gap-3">

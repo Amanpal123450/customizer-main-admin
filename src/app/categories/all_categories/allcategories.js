@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { confirmDialog } from "@/components/ui/confirm";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
@@ -43,16 +44,25 @@ const  router = useRouter();
     setOpenDropdownId((prev) => (prev === id ? null : id));
   };
 
+
+  // Always filter categories when categories or searchTerm changes
+  useEffect(() => {
+    const search = (searchTerm || "").trim().toLowerCase();
+    let filtered;
+    if (!search) {
+      filtered = categories;
+    } else {
+      filtered = categories.filter((cat) =>
+        ((cat.title || "") + " " + (cat.description || "")).toLowerCase().includes(search)
+      );
+    }
+    // Sort alphabetically by title
+    filtered = [...filtered].sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+    setFilteredCategories(filtered);
+  }, [categories, searchTerm]);
+
   const handleSearch = (term) => {
     setSearchTerm(term);
-    if (term.trim() === "") {
-      setFilteredCategories(categories);
-    } else {
-      const filtered = categories.filter((cat) =>
-        cat.title.toLowerCase().includes(term.toLowerCase()),
-      );
-      setFilteredCategories(filtered);
-    }
   };
 
   useEffect(() => {
@@ -95,44 +105,59 @@ const  router = useRouter();
   }, []);
 
   const handleDelete = async (id) => {
-  const token = localStorage.getItem("adminToken");
-
+    const token = localStorage.getItem("adminToken");
     if (!token) {
       showToast("Authentication required. Please login first.");
       router.push('/login')
       return;
     }
 
-    if (confirm("Are you sure you want to delete this category?")) {
-      try {
-        const res = await fetch(
-          `https://e-com-customizer.onrender.com/api/v1/deleteCategory/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+    const confirmed = await confirmDialog("Are you sure you want to delete this category?");
+    if (!confirmed) return;
+
+    try {
+      // Fetch product and subcategory counts before deleting
+      const [prodRes, subRes] = await Promise.all([
+        fetch(`https://e-com-customizer.onrender.com/api/v1/getProductsByCategoryId/${id}`),
+        fetch(`https://e-com-customizer.onrender.com/api/v1/fetchAllSubCategoryOfCategory/${id}`)
+      ]);
+      const prodData = await prodRes.json();
+      const subData = await subRes.json();
+      const productCount = Array.isArray(prodData.products) ? prodData.products.length : 0;
+      const subCatCount = Array.isArray(subData.data) ? subData.data.length : 0;
+
+      const res = await fetch(
+        `https://e-com-customizer.onrender.com/api/v1/deleteCategory/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
-
-        const data = await res.json();
-
-        if (res.ok) {
-          showToast(data.message || "Category deleted successfully");
-          const updatedCategories = categories.filter((c) => c._id !== id);
-          setCategories(updatedCategories);
-          setFilteredCategories(
-            updatedCategories.filter((cat) =>
-              cat.title.toLowerCase().includes(searchTerm.toLowerCase()),
-            ),
-          );
+        },
+      );
+      const data = await res.json();
+      if (res.ok) {
+        showToast(`Category deleted. It had ${productCount} product(s) and ${subCatCount} subcategory(ies).`, "success");
+        const updatedCategories = categories.filter((c) => c._id !== id);
+        setCategories(updatedCategories);
+        // Re-apply filter after delete
+        const search = (searchTerm || "").trim().toLowerCase();
+        let filtered;
+        if (!search) {
+          filtered = updatedCategories;
         } else {
-          showToast(data.message || "Failed to delete category");
+          filtered = updatedCategories.filter((cat) =>
+            ((cat.title || "") + " " + (cat.description || "")).toLowerCase().includes(search)
+          );
         }
-      } catch (err) {
-        console.error("Delete failed:", err);
-        showToast("Failed to delete category. Please try again.");
+        filtered = [...filtered].sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+        setFilteredCategories(filtered);
+      } else {
+        showToast(data.message || "Failed to delete category");
       }
+    } catch (err) {
+      console.error("Delete failed:", err);
+      showToast("Failed to delete category. Please try again.");
     }
   };
 
@@ -147,21 +172,21 @@ const  router = useRouter();
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6">
       <div className="mx-auto max-w-7xl">
-        <div className="rounded-2xl border border-gray-200 bg-gray-50 shadow-sm">
-          <div className="border-gray-200 px-6 py-8">
+        <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 shadow-sm">
+          <div className="border-gray-200 dark:border-gray-700 px-6 py-8">
             <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
               <div>
-                <h1 className="text-3xl font-bold text-black">Categories</h1>
-                <p className="mt-1 text-blue-400">
+                <h1 className="text-3xl font-bold text-black dark:text-white">Categories</h1>
+                <p className="mt-1 text-blue-400 dark:text-blue-300">
                   Manage your product categories • {filteredCategories.length}{" "}
                   of {categories.length} categories
                 </p>
               </div>
               <Link
                 href="/new_categories"
-                className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 font-medium text-blue-600 shadow-md transition-colors duration-200 hover:bg-gray-100"
+                className="inline-flex items-center gap-2 rounded-lg bg-white dark:bg-gray-800 px-4 py-2 font-medium text-blue-600 dark:text-blue-400 shadow-md transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <FontAwesomeIcon icon={faPlus} className="text-sm" />
                 Add Category
@@ -169,32 +194,32 @@ const  router = useRouter();
             </div>
           </div>
 
-          <div className="border-b border-gray-200 bg-gray-50 p-6">
+          <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-6">
             <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
               <div className="relative max-w-md flex-1">
                 <FontAwesomeIcon
                   icon={faSearch}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400 dark:text-gray-500"
                 />
                 <input
                   type="text"
                   placeholder="Search categories..."
                   value={searchTerm}
                   onChange={(e) => handleSearch(e.target.value)}
-                  className="w-full rounded-xl border border-gray-200 py-3 pl-10 pr-4 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 py-3 pl-10 pr-4 text-black dark:text-white focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-600 dark:text-gray-300">
                   {filteredCategories.length}{" "}
                   {filteredCategories.length === 1 ? "category" : "categories"}
                 </span>
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 transition-colors hover:bg-gray-50"
+                  className="inline-flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
                 >
-                  <FontAwesomeIcon icon={faFilter} className="text-gray-500" />
-                  <span className="text-sm text-gray-600">Filter</span>
+                  <FontAwesomeIcon icon={faFilter} className="text-gray-500 dark:text-gray-400" />
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Filter</span>
                 </button>
               </div>
             </div>
@@ -203,11 +228,11 @@ const  router = useRouter();
           <div className="p-6">
             {filteredCategories.length === 0 ? (
               <div className="py-16 text-center">
-                <div className="mb-6 text-8xl text-gray-300">📂</div>
-                <h3 className="mb-2 text-xl font-semibold text-gray-900">
+                <div className="mb-6 text-8xl text-gray-300 dark:text-gray-700">📂</div>
+                <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
                   {searchTerm ? "No categories found" : "No categories yet"}
                 </h3>
-                <p className="mx-auto mb-6 max-w-md text-gray-600">
+                <p className="mx-auto mb-6 max-w-md text-gray-600 dark:text-gray-400">
                   {searchTerm
                     ? `No categories match "${searchTerm}". Try adjusting your search.`
                     : "Get started by creating your first category to organize your products."}
@@ -227,11 +252,11 @@ const  router = useRouter();
                 {filteredCategories.map((cat) => (
                   <div
                     key={cat._id}
-                    className="group relative rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:border-blue-200 hover:shadow-lg"
+                    className="group relative rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-all duration-300 hover:border-blue-200 dark:hover:border-blue-400 hover:shadow-lg"
                   >
                     {/* 🔥 overflow-hidden removed above in this div */}
                     <Link href={`/subcategoriesbyid/${cat._id}`}>
-                      <div className="relative aspect-video overflow-hidden rounded-lg bg-gray-100">
+                      <div className="relative aspect-video overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
                         {cat.images ? (
                           <Image
                             src={cat.images}
@@ -246,7 +271,7 @@ const  router = useRouter();
                           />
                         ) : null}
                         <div
-                          className="absolute inset-0 flex items-center justify-center bg-gray-50 text-gray-400"
+                          className="absolute inset-0 flex items-center justify-center bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-600"
                           style={{ display: cat.images ? "none" : "flex" }}
                         >
                           <FontAwesomeIcon
@@ -258,50 +283,54 @@ const  router = useRouter();
                       </div>
                     </Link>
 
-                    <div className="p-4">
+                    <div className="p-4 bg-white dark:bg-gray-800">
                       <div className="flex items-center justify-between">
                         <div className="min-w-0 flex-1">
-                          <h3 className="truncate font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
+                          <h3 className="truncate font-semibold text-gray-900 dark:text-white transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">
                             {cat.title}
                           </h3>
-                          <p className="mt-1 text-sm text-gray-500">Category</p>
+                          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Category</p>
                         </div>
 
                         <div className="dropdown-container relative">
                           <button
                             onClick={() => toggleDropdown(cat._id)}
-                            className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-gray-100"
+                            className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 bg-white dark:bg-gray-800"
                           >
                             <FontAwesomeIcon
                               icon={faEllipsisVertical}
-                              className="text-gray-500 hover:text-gray-700"
+                              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
                             />
                           </button>
 
                           {openDropdownId === cat._id && (
-                            <div className="animate-in fade-in slide-in-from-top-2 absolute right-0 top-10 z-30 w-40 rounded-xl border border-gray-200 bg-white py-2 shadow-lg duration-200">
+                            <div className="animate-in fade-in slide-in-from-top-2 absolute right-0 top-10 z-30 w-40 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 py-2 shadow-lg duration-200">
                               <Link
                                 href={`/edit_categories/${cat._id}`}
-                                className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+                                className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
                                 onClick={() => setOpenDropdownId(null)}
                               >
                                 <FontAwesomeIcon
                                   icon={faEdit}
-                                  className="w-4 text-blue-600"
+                                  className="w-4 text-blue-600 dark:text-blue-400"
                                 />
                                 Edit
                               </Link>
-                              <hr className="my-1 border-gray-100" />
+                              <hr className="my-1 border-gray-100 dark:border-gray-700" />
                               <button
-                                onClick={() => {
-                                  handleDelete(cat._id);
+                                onClick={async () => {
+                                  // Prevent multiple modals
+                                  if (window.__confirmDialogOpen) return;
+                                  window.__confirmDialogOpen = true;
+                                  await handleDelete(cat._id);
                                   setOpenDropdownId(null);
+                                  window.__confirmDialogOpen = false;
                                 }}
-                                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600"
+                                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 transition-colors hover:bg-red-50 dark:hover:bg-red-900 hover:text-red-600 dark:hover:text-red-400"
                               >
                                 <FontAwesomeIcon
                                   icon={faTrash}
-                                  className="w-4 text-red-500"
+                                  className="w-4 text-red-500 dark:text-red-400"
                                 />
                                 Delete
                               </button>
