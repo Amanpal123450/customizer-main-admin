@@ -179,7 +179,7 @@ export default function CreateProduct() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/showAllCategory");
+        const res = await fetch("https://backend-customizer.onrender.com/api/v1/showAllCategory");
         const data = await res.json();
         if (data.success) {
           setCategories(data.data || []);
@@ -204,7 +204,7 @@ export default function CreateProduct() {
       setLoadingSubCategories(true);
       try {
         const res = await fetch(
-          `https://e-com-customizer.onrender.com/api/v1/fetchAllSubCategoryOfCategory/${formData.categoryId}`
+          `https://backend-customizer.onrender.com/api/v1/fetchAllSubCategoryOfCategory/${formData.categoryId}`
         );
         const data = await res.json();
         console.log("Subcategory API response:", data);
@@ -236,7 +236,7 @@ export default function CreateProduct() {
   useEffect(() => {
     const fetchVariants = async () => {
       try {
-        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/totalVariation");
+        const res = await fetch("https://backend-customizer.onrender.com/api/v1/totalVariation");
         const data = await res.json();
         const activeVariants = (data.data || []).filter((variant) => variant.active);
         setVariants(activeVariants);
@@ -257,7 +257,7 @@ export default function CreateProduct() {
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/totalBrands");
+        const res = await fetch("https://backend-customizer.onrender.com/api/v1/totalBrands");
         const data = await res.json();
         const activeBrands = (data || []).filter((brand) => brand.active);
         setBrands(activeBrands);
@@ -278,7 +278,7 @@ export default function CreateProduct() {
   useEffect(() => {
     const fetchUnits = async () => {
       try {
-        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/totalUnit");
+        const res = await fetch("https://backend-customizer.onrender.com/api/v1/totalUnit");
         const data = await res.json();
         const activeUnits = (data.data || []).filter((unit) => unit.active);
         setUnits(activeUnits);
@@ -362,7 +362,7 @@ export default function CreateProduct() {
     });
 
     try {
-      const res = await fetch("https://e-com-customizer.onrender.com/api/v1/createProduct", {
+      const res = await fetch("https://backend-customizer.onrender.com/api/v1/createProduct", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

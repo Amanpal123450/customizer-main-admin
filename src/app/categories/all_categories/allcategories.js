@@ -70,7 +70,7 @@ const  router = useRouter();
       try {
         setLoading(true);
         const res = await fetch(
-          "https://e-com-customizer.onrender.com/api/v1/showAllCategory",
+          "https://backend-customizer.onrender.com/api/v1/showAllCategory",
         );
 
         if (!res.ok) {
@@ -118,8 +118,8 @@ const  router = useRouter();
     try {
       // Fetch product and subcategory counts before deleting
       const [prodRes, subRes] = await Promise.all([
-        fetch(`https://e-com-customizer.onrender.com/api/v1/getProductsByCategoryId/${id}`),
-        fetch(`https://e-com-customizer.onrender.com/api/v1/fetchAllSubCategoryOfCategory/${id}`)
+        fetch(`https://backend-customizer.onrender.com/api/v1/getProductsByCategoryId/${id}`),
+        fetch(`https://backend-customizer.onrender.com/api/v1/fetchAllSubCategoryOfCategory/${id}`)
       ]);
       const prodData = await prodRes.json();
       const subData = await subRes.json();
@@ -127,7 +127,7 @@ const  router = useRouter();
       const subCatCount = Array.isArray(subData.data) ? subData.data.length : 0;
 
       const res = await fetch(
-        `https://e-com-customizer.onrender.com/api/v1/deleteCategory/${id}`,
+        `https://backend-customizer.onrender.com/api/v1/deleteCategory/${id}`,
         {
           method: "DELETE",
           headers: {

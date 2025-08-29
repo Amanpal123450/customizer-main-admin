@@ -74,7 +74,7 @@ export default function ProductsPage() {
       
       try {
         setLoading(true);
-        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/totalProduct");
+        const res = await fetch("https://backend-customizer.onrender.com/api/v1/totalProduct");
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
@@ -98,7 +98,7 @@ export default function ProductsPage() {
       if (!token) return;
 
       try {
-        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/discounts", {
+        const res = await fetch("https://backend-customizer.onrender.com/api/v1/discounts", {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -228,7 +228,7 @@ export default function ProductsPage() {
       if (!confirmed) return;
 
       const response = await fetch(
-        `https://e-com-customizer.onrender.com/api/v1/deleteProduct/${id}`,
+        `https://backend-customizer.onrender.com/api/v1/deleteProduct/${id}`,
         {
           method: "DELETE",
           headers: {

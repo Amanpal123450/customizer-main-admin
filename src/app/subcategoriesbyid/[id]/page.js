@@ -69,7 +69,7 @@ export default function CategoryDetailPage() {
     const fetchCategoryData = async () => {
       try {
         const res = await fetch(
-          "https://e-com-customizer.onrender.com/api/v1/showAllCategory",
+          "https://backend-customizer.onrender.com/api/v1/showAllCategory",
         );
         const data = await res.json();
 
@@ -107,7 +107,7 @@ export default function CategoryDetailPage() {
   async function handleDelete(id) {
     const token = localStorage.getItem('adminToken');
     const res = await fetch(
-      `https://e-com-customizer.onrender.com/api/v1/deleteSubCategory/${id}`,
+      `https://backend-customizer.onrender.com/api/v1/deleteSubCategory/${id}`,
       {
         method: "DELETE",
         headers: {
@@ -183,7 +183,7 @@ export default function CategoryDetailPage() {
       // 🎭 Easter Egg: Add some dramatic pause
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      const res = await fetch("https://e-com-customizer.onrender.com/api/v1/createSubCategory", {
+      const res = await fetch("https://backend-customizer.onrender.com/api/v1/createSubCategory", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("adminToken")}`,

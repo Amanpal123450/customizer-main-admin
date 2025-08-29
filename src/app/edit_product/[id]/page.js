@@ -150,7 +150,7 @@ export default function EditProductPage() {
         return;
       }
       try {
-        const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/getProductById/${id}`);
+        const res = await fetch(`https://backend-customizer.onrender.com/api/v1/getProductById/${id}`);
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Failed to fetch product");
         setForm({
@@ -208,7 +208,7 @@ export default function EditProductPage() {
         return;
       }
       const res = await fetch(
-        `https://e-com-customizer.onrender.com/api/v1/updateProduct/${id}`,
+        `https://backend-customizer.onrender.com/api/v1/updateProduct/${id}`,
         {
           method: "PUT",
           headers: {

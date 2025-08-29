@@ -7,7 +7,7 @@ import { toast } from "@/components/ui/toast";
 
 export default function EditCategoryPage() {
   const API_BASE = "https://ecomm-backend-7g4k.onrender.com/api/v1";
-  const API_UPDATE = "https://e-com-customizer.onrender.com/api/v1";
+  const API_UPDATE = "https://backend-customizer.onrender.com/api/v1";
   const { id } = useParams();
   const router = useRouter();
   const [title, setTitle] = useState("");

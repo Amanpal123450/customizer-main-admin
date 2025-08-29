@@ -97,7 +97,7 @@ export default function BrandsPage() {
     }
 
     try {
-      const res = await fetch("https://e-com-customizer.onrender.com/api/v1/createBrand", {
+      const res = await fetch("https://backend-customizer.onrender.com/api/v1/createBrand", {
 
         method: "POST",
         body: formData,
@@ -130,7 +130,7 @@ export default function BrandsPage() {
     formData.append("images", form.images);
     try {
       const res = await fetch(
-        `https://e-com-customizer.onrender.com/api/v1/brand/${editId}`,
+        `https://backend-customizer.onrender.com/api/v1/brand/${editId}`,
         {
           method: "PUT",
 
@@ -161,7 +161,7 @@ export default function BrandsPage() {
   useEffect(() => {
     async function GetAllvariation() {
       const res = await fetch(
-        "https://e-com-customizer.onrender.com/api/v1/totalBrands",
+        "https://backend-customizer.onrender.com/api/v1/totalBrands",
         {
           method: "GET",
           headers: {
@@ -242,7 +242,7 @@ export default function BrandsPage() {
     if (!confirm("Are you sure you want to delete this brand?")) return;
 
     try {
-      const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/brand/${id}`, {
+      const res = await fetch(`https://backend-customizer.onrender.com/api/v1/brand/${id}`, {
         method: 'DELETE',
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -266,7 +266,7 @@ export default function BrandsPage() {
 
   const toggleStatus = async (id) => {
     try {
-      const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/brand/toggle/${id}`, {
+      const res = await fetch(`https://backend-customizer.onrender.com/api/v1/brand/toggle/${id}`, {
         method: "PUT",
         headers: {
           "Authorization": `Bearer ${token}`,

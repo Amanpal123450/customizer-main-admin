@@ -43,7 +43,7 @@ export default function UsersPage() {
         }
 
         const res = await fetch(
-          "https://e-com-customizer.onrender.com/api/v1/getAllUsers",
+          "https://backend-customizer.onrender.com/api/v1/getAllUsers",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -75,7 +75,7 @@ export default function UsersPage() {
       const token = localStorage.getItem("adminToken");
 
       const res = await fetch(
-        `https://e-com-customizer.onrender.com/api/v1/deleteUser/${id}`,
+        `https://backend-customizer.onrender.com/api/v1/deleteUser/${id}`,
         {
           method: "DELETE",
           headers: {

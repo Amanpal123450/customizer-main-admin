@@ -30,7 +30,7 @@ export default function EditUserPage() {
 
     try {
       const res = await fetch(
-        `https://e-com-customizer.onrender.com/api/v1/updateDetails/${id}`,
+        `https://backend-customizer.onrender.com/api/v1/updateDetails/${id}`,
         {
           method: "PUT",
           headers: {

@@ -83,7 +83,7 @@ export function OverviewCardsGroup() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-// https://e-com-customizer.onrender.com/api/v1/admin/dashboard
+// https://backend-customizer.onrender.com/api/v1/admin/dashboard
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -98,7 +98,7 @@ export function OverviewCardsGroup() {
           router.push('/login');
           return;
         }
-        const res = await fetch("https://e-com-customizer.onrender.com/api/v1/admin/dashboard", {
+        const res = await fetch("https://backend-customizer.onrender.com/api/v1/admin/dashboard", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

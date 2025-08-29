@@ -14,7 +14,7 @@ export default function OrderDetailPage() {
       try {
   const token = localStorage.getItem("adminToken");
 
-        const res = await fetch(`https://e-com-customizer.onrender.com/api/v1/orders/${id}`, {
+        const res = await fetch(`https://backend-customizer.onrender.com/api/v1/orders/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
