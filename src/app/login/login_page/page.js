@@ -87,7 +87,7 @@ const AdminLoginPage = () => {
                 return;
             }
 
-            const response = await fetch('http://localhost:4000/api/v1/adminLogin', {
+            const response = await fetch('https://backend-customizer.onrender.com/api/v1/adminLogin', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -141,7 +141,7 @@ const AdminLoginPage = () => {
                     <div className="text-6xl font-extrabold mb-4 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-lg">DesignTailor</div>
                     <div className="text-2xl font-semibold opacity-90 text-center">
                         Welcome to the Admin Panel<br />
-                        <span className="text-lg font-medium">Please login to manage your store</span>
+                        <span className="text-lg font-medium">Please login to manage your store </span>
                     </div>
                 </div>
             </div>
