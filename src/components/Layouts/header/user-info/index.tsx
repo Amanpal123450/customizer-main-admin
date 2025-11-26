@@ -46,7 +46,7 @@ export function UserInfo() {
         setIsLoading(true);
 
         const res = await fetch(
-          `https://backend-customizer.onrender.com/api/v1/getAdminById/${userId}`,
+          `https://backend-customizer-1.onrender.com/api/v1/getAdminById/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

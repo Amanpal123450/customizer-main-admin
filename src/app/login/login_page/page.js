@@ -87,7 +87,7 @@ const AdminLoginPage = () => {
                 return;
             }
 
-            const response = await fetch('https://backend-customizer.onrender.com/api/v1/adminLogin', {
+            const response = await fetch('https://backend-customizer-1.onrender.com/api/v1/adminLogin', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
