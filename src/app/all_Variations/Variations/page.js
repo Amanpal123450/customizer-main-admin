@@ -81,7 +81,7 @@ export default function VariationPage() {
   useEffect(() => {
     async function GetAllvariation() {
       const res = await fetch(
-        "http://localhost:4000/api/v1/totalVariation",
+        "https://backend-customizer-1.onrender.com/api/v1/totalVariation",
         {
           method: "GET",
           headers: {
@@ -106,7 +106,7 @@ export default function VariationPage() {
   }
 
   try {
-    const res = await fetch("http://localhost:4000/api/v1/addVariation", {
+    const res = await fetch("https://backend-customizer-1.onrender.com/api/v1/addVariation", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -135,7 +135,7 @@ export default function VariationPage() {
     console.log("sdcs");
     try {
       const res = await fetch(
-        `http://localhost:4000/api/v1/variation/${editId}`,
+        `https://backend-customizer-1.onrender.com/api/v1/variation/${editId}`,
         {
           method: "PUT",
           headers: {
@@ -220,7 +220,7 @@ export default function VariationPage() {
   const handleDelete = async (id) => {
     if (confirm("Are you sure you want to delete this unit?")) {
       try {
-        const res = await fetch(`http://localhost:4000/api/v1/variation/${id}`, {
+        const res = await fetch(`https://backend-customizer-1.onrender.com/api/v1/variation/${id}`, {
           method: "DELETE",
           headers: {
             "Authorization": `Bearer ${token}`
@@ -246,7 +246,7 @@ export default function VariationPage() {
 
   const toggleStatus = async (id) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/v1/variationToggle/${id}`, {
+      const response = await fetch(`https://backend-customizer-1.onrender.com/api/v1/variationToggle/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
