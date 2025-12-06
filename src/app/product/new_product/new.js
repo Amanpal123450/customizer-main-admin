@@ -204,7 +204,7 @@ export default function CreateProduct() {
       setLoadingSubCategories(true);
       try {
         const res = await fetch(
-          `https://backend-customizer-1.onrender.com/api/v1/fetchAllSubCategoryOfCategory/${formData.categoryId}`
+          `http://localhost:4000/api/v1/fetchAllSubCategoryOfCategory/${formData.categoryId}`
         );
         const data = await res.json();
         console.log("Subcategory API response:", data);
