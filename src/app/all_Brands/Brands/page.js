@@ -121,7 +121,7 @@ export default function BrandsPage() {
   const handleUpdateUnit = async (id) => {
     console.log("sdcs");
 
-    const formData = new FormData();
+    const formData = new FormData()
     formData.append("name", form.name);
 
     formData.append("metaTitle", form.metaTitle);
