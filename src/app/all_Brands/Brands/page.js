@@ -92,7 +92,8 @@ useEffect(() => {
   formData.append("keywords", form.keywords);
 
   if (form.images) {
-    formData.append("logoUrl", form.images);
+    formData.append("images", form.images);
+
   }
 
   const token = localStorage.getItem("adminToken");
@@ -132,7 +133,8 @@ useEffect(() => {
     formData.append("metaTitle", form.metaTitle);
     formData.append("metaDescription", form.metaDescription);
     formData.append("keywords", form.keywords);
-    formData.append("images", form.images);
+    formData.append("logoUrl", form.images);
+
     try {
       const res = await fetch(
         `https://backend-customizer-1.onrender.com/api/v1/brand/${editId}`,
@@ -444,20 +446,23 @@ useEffect(() => {
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center">
                           <div className="h-12 w-12 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
-                            <Image
+                           <Image
+  src={
+    brand.logoUrl &&
+    brand.logoUrl !== "null" &&
+    brand.logoUrl !== "undefined"
+      ? brand.logoUrl
+      : `https://ui-avatars.com/api/?name=${brand.name}&background=6366f1&color=fff`
+  }
+  alt={brand.name}
+  width={50}
+  height={50}
+  className="h-full w-full object-contain"
+  onError={(e) => {
+    e.currentTarget.src = `https://ui-avatars.com/api/?name=${brand.name}&background=6366f1&color=fff`;
+  }}
+/>
 
-                              src={
-                                brand.logoUrl ||
-                                `https://ui-avatars.com/api/?name=${brand.name}&background=6366f1&color=fff`
-                              }
-                              alt={brand.name}
-                              width={50}
-                              height={50}
-                              className="h-full w-full object-contain "
-                              onError={(e) => {
-                                e.target.src = `https://ui-avatars.com/api/?name=${brand.name}&background=6366f1&color=fff`;
-                              }}
-                            />
                           </div>
                         </div>
                       </td>
