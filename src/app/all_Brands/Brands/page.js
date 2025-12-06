@@ -125,7 +125,6 @@ useEffect(() => {
 
 
   const handleUpdateUnit = async (id) => {
-    console.log("sdcs");
 
     const formData = new FormData();
     formData.append("name", form.name);
