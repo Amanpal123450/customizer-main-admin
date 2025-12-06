@@ -47,7 +47,7 @@ export default function BrandsPage() {
     metaTitle: "",
     metaDescription: "",
     keywords: "",
-    images: "",
+    images: null,
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -57,17 +57,18 @@ export default function BrandsPage() {
   const token = typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
 
 
-  useEffect(() => {
-    const filteredData = brands.filter(
-      (brand) =>
-        brand.name.toLowerCase().includes(search.toLowerCase()) &&
-        (status === "All" ||
-          (status === "Active" && brand.active) ||
-          (status === "Inactive" && !brand.active)),
-    );
-    setFiltered(filteredData);
-    setCurrentPage(1);
-  }, [search, status, brands]);
+useEffect(() => {
+  const filteredData = brands.filter(
+    (brand) =>
+      (brand?.name ?? "").toLowerCase().includes(search.toLowerCase()) &&
+      (status === "All" ||
+        (status === "Active" && brand?.active) ||
+        (status === "Inactive" && !brand?.active))
+  );
+  setFiltered(filteredData);
+  setCurrentPage(1);
+}, [search, status, brands]);
+
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -80,42 +81,47 @@ export default function BrandsPage() {
   };
 
   const handleAddUnit = async () => {
-    const formData = new FormData();
-    formData.append("name", form.name);
+  if (!form.name.trim()) {
+    return showToast("Brand name is required", "error");
+  }
 
-    formData.append("metaTitle", form.metaTitle);
-    formData.append("metaDescription", form.metaDescription);
-    formData.append("keywords", form.keywords);
-    formData.append("images", form.images); // binary file
+  const formData = new FormData();
+  formData.append("name", form.name);
+  formData.append("metaTitle", form.metaTitle);
+  formData.append("metaDescription", form.metaDescription);
+  formData.append("keywords", form.keywords);
 
-    // Get token from localStorage
+  if (form.images) {
+    formData.append("logoUrl", form.images);
+  }
+
   const token = localStorage.getItem("adminToken");
 
-    // Add Authorization header if token exists
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
+  try {
+    const res = await fetch("https://backend-customizer-1.onrender.com/api/v1/createBrand", {
+      method: "POST",
+      body: formData,
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      showToast("✅ Brand added successfully!", "success");
+      setModalOpen(false);
+      // Optionally refresh list
+      setBrands((prev) => [...prev, data.data]);
+    } else {
+      showToast("❌ " + (data.message || "Something went wrong"), "error");
     }
+  } catch (err) {
+    console.error(err);
+    showToast("❌ Network error", "error");
+  }
+};
 
-    try {
-      const res = await fetch("https://backend-customizer-1.onrender.com/api/v1/createBrand", {
-
-        method: "POST",
-        body: formData,
-        headers: {
-          "Authorization": `Bearer ${token}`,
-
-        },
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        showToast("✅ Brand added: " + data.name, "success");
-      }
-    } catch (err) {
-      console.error(err);
-      showToast("❌ Network error", "error");
-    }
-  };
 
 
   const handleUpdateUnit = async (id) => {
@@ -341,7 +347,8 @@ export default function BrandsPage() {
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-300">Active Brands</p>
                 <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                  {brands.filter((b) => b.active).length}
+                  {brands.filter((b) => b?.active).length}
+
                 </p>
               </div>
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900">
@@ -354,7 +361,8 @@ export default function BrandsPage() {
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-300">Inactive Brands</p>
                 <p className="text-2xl font-bold text-red-600 dark:text-red-400">
-                  {brands.filter((b) => !b.active).length}
+                 {brands.filter((b) => !b?.active).length}
+
                 </p>
               </div>
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900">

@@ -81,7 +81,7 @@ export default function VariationPage() {
   useEffect(() => {
     async function GetAllvariation() {
       const res = await fetch(
-        "http://localhost:4000/api/v1/totalVariation",
+        "https://backend-customizer-1.onrender.com/api/v1/totalVariation",
         {
           method: "GET",
           headers: {
@@ -101,42 +101,41 @@ export default function VariationPage() {
   }, []);
 
   const handleAddUnit = async () => {
-    // if (!unitName.trim()) return showToast('Unit name is required!');
+  if (!form.name.trim()) {
+    return showToast("Variation name is required!", "error");
+  }
 
-    // setLoading(true);
-    try {
-      const res = await fetch(
-        "http://localhost:4000/api/v1/addVariation",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({ name: form.name, active: form.active }),
-        },
-      );
+  try {
+    const res = await fetch("https://backend-customizer-1.onrender.com/api/v1/addVariation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ name: form.name, active: form.active }),
+    });
 
-      const data = await res.json();
-      console.log(data);
-      if (res.ok) {
-        showToast("✅ Unit added: " + data.name, "success");
-        // setUnitName('');
+    const data = await res.json();
+    console.log(data);
 
-        main("/units");
-      } else {
-        showToast("❌ Error: " + (data.message || "Something went wrong"), "error");
-      }
-    } catch (error) {
-      showToast("❌ Network error: " + error.message, "error");
+    if (res.ok) {
+      showToast(`✅ Variation added: ${data.data.name}`, "success");
+      setModalOpen(false); // close modal
+      // Refresh list without reload
+      setBrands((prev) => [...prev, data.data]); 
+    } else {
+      showToast("❌ Error: " + (data.message || "Something went wrong"), "error");
     }
-  };
+  } catch (error) {
+    showToast("❌ Network error: " + error.message, "error");
+  }
+};
 
   const handleUpdateUnit = async (id) => {
     console.log("sdcs");
     try {
       const res = await fetch(
-        `http://localhost:4000/api/v1/variation/${editId}`,
+        `https://backend-customizer-1.onrender.com/api/v1/variation/${editId}`,
         {
           method: "PUT",
           headers: {
@@ -221,7 +220,7 @@ export default function VariationPage() {
   const handleDelete = async (id) => {
     if (confirm("Are you sure you want to delete this unit?")) {
       try {
-        const res = await fetch(`http://localhost:4000/api/v1/variation/${id}`, {
+        const res = await fetch(`https://backend-customizer-1.onrender.com/api/v1/variation/${id}`, {
           method: "DELETE",
           headers: {
             "Authorization": `Bearer ${token}`
@@ -247,7 +246,7 @@ export default function VariationPage() {
 
   const toggleStatus = async (id) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/v1/variationToggle/${id}`, {
+      const response = await fetch(`https://backend-customizer-1.onrender.com/api/v1/variationToggle/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

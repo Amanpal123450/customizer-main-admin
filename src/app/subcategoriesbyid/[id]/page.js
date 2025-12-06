@@ -177,7 +177,7 @@ export default function CategoryDetailPage() {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("categoryId", id); // Use current category ID
-    formData.append("images", images);
+    formData.append("thumbnail", images);
 
     try {
       // 🎭 Easter Egg: Add some dramatic pause
@@ -305,7 +305,7 @@ export default function CategoryDetailPage() {
                   className="rounded border bg-white p-4 shadow"
                 >
                   <Image
-                    src={product.images?.[0]}
+                    src={product.thumbnail?.[0]}
                     alt={product.title}
                     width={300}
                     height={160}

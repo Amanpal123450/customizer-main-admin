@@ -38,9 +38,9 @@ export default function CreateCategory() {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("title", title);
+    formData.append("title", title)
     if (images) {
-      formData.append("images", images); // Must match backend key
+      formData.append("thumbnail", images); // Must match backend key
     }
 
     const token = localStorage.getItem("adminToken"); // make sure token is stored on login

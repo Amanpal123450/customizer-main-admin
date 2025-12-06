@@ -80,6 +80,7 @@ export default function ProductsPage() {
         }
         const data = await res.json();
         const productsList = data.AllProduct || data.products || [];
+        console.log("Fetched products:", productsList);
         setProducts(Array.isArray(productsList) ? productsList.reverse() : []);
       } catch (err) {
         console.error("Failed to fetch products:", err);
@@ -452,26 +453,21 @@ export default function ProductsPage() {
                     {/* Image */}
                     <td className="px-4 py-4">
                       <div className="flex h-16 w-16 items-center justify-center overflow-hidden border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 rounded-md">
-                        {product.images?.[0] ? (
+                        {product.thumbnail?.[0] ? (
                           <Image
-                            src={product.images[0]}
-                            alt={product.title || "Product image"}
-                            width={64}
-                            height={64}
-                            className="h-full w-full object-contain"
-                            onError={(e) => {
-                              e.currentTarget.style.display = "none";
-                              const fallback = e.currentTarget.nextElementSibling;
-                              if (fallback) fallback.style.display = "flex";
-                            }}
-                          />
+    src={product.thumbnail[0]}
+    alt={product.title || "Product image"}
+    width={64}
+    height={64}
+    className="h-full w-full object-contain"
+    onError={(e) => {
+      e.currentTarget.style.display = "none";
+      const fallback = e.currentTarget.nextElementSibling;
+      if (fallback) fallback.style.display = "flex";
+    }}
+  />
                         ) : null}
-                        <div className={`${product.images?.[0] ? 'hidden' : 'flex'} h-full w-full items-center justify-center`}>
-                          <FontAwesomeIcon
-                            icon={faImage}
-                            className="text-xl text-gray-400"
-                          />
-                        </div>
+                        
                       </div>
                     </td>
 

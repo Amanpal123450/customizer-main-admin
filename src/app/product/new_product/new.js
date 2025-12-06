@@ -357,9 +357,9 @@ export default function CreateProduct() {
     form.append("brand", formData.brand.trim());
     form.append("variant", formData.variant.trim());
     form.append("unit", formData.unit.trim());
-    imageFiles.forEach((file) => {
-      form.append("images", file);
-    });
+   imageFiles.forEach((file) => {
+  form.append("thumbnail", file);
+});
 
     try {
       const res = await fetch("https://backend-customizer-1.onrender.com/api/v1/createProduct", {
@@ -426,7 +426,7 @@ export default function CreateProduct() {
             animate="visible"
           >
             <motion.div variants={itemVariant}>
-              <label className="mb-1 block font-bold text-gray-800 dark:text-white">Title</label>
+              <label className="mb-1 block font-bold text-gray-800 dark:text-black">Title</label>
               <input
                 type="text"
                 name="title"
